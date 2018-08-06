@@ -20,7 +20,7 @@ Required Python libraries:
 
 ```bash
 pip install numpy scipy sqlalchemy pylab scikit-image intervaltree
-git clone git@git.wur.nl:akdel001/photomap.git
+git clone https://gitlab.com/akdel/OptiScan.git
 cd photomap
 python setup.py install
 cd pipelines
@@ -30,7 +30,7 @@ chmod +x ./write_bnx
 
 ## Usage
 
-`photomap/pipelines/` folder contains two pipeline scripts for running photomap.
+`optiscan/pipelines/` folder contains two pipeline scripts for running optiscan.
 
 
 1. `extract_molecules` is for extracting and recording OM signals into disk.
