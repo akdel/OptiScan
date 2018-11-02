@@ -1,4 +1,4 @@
-# Photomap Tool
+# OptiScan Tool
 
 Photomap is an open source tool for extraction of nick and backbone signals from provided Bionano optical map tiff images. Photomap is able to transform nick signals into nicking site coordinates and write in BNX format.
 
