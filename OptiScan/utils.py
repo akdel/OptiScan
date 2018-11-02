@@ -539,6 +539,19 @@ class XmapParser:
         plt.imsave("test.png", all_om)
         return all_om
 
+    def xmap_line_details(self, xmap_line:list):
+        res = {'chr_no': None, 'chr_start': None, 'chr_end': None, 'ori': None, 'mol_id': None}
+        res['ori'] = xmap_line[-7]
+        res['chr_no'] = int(xmap_line[2]) - 1
+        res['mol_id'] = int(xmap_line[1]) - 1
+        if res['ori'] == '+':
+            res['chr_start'] = int(float(xmap_line[5])) - int(float(xmap_line[3]))
+            res['chr_end'] = res['chr_start'] + int(float(xmap_line[-4]))
+        elif res['ori'] == '-':
+            res['chr_start'] = int(float(xmap_line[5])) - (int(float(xmap_line[-4])) - int(float(xmap_line[3])))
+            res['chr_end'] = res['chr_start'] + int(float(xmap_line[-4]))
+        return res
+
 
 class LinkXmapToBnx(BnxParser, XmapParser):
     def __init__(self, bnx_file_path, xmap_file_path):
