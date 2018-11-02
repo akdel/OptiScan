@@ -2,7 +2,7 @@ from scipy import signal, ndimage
 from numpy import array, median, ones
 
 """
-OptiScan crosscorr based aligner. This is different from the Photoasm nick label aligner.
+OptiScan crosscorr based aligner. This is different from the OptiMap nick label aligner.
 """
 
 

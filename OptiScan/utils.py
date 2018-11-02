@@ -6,6 +6,15 @@ from scipy import ndimage
 import numpy as np
 from numba import njit, jit, vectorize, prange
 
+CMAP_HEADER = """
+# CMAP File Version:    0.1
+# Label Channels:       1
+# Nickase Recognition Site 1:   %s
+# Enzyme1:      %s
+# Number of Consensus Nanomaps: 13
+#h CMapId       ContigLength    NumSites        SiteID  LabelChannel    Position        StdDev  Coverage        Occurrence
+#f int  float   int     int     int     float   float   int     int
+"""
 
 __author__ = "MAkdel"
 
@@ -56,10 +65,6 @@ def get_bnx_info_with_upsampling_with_forced_median(nick_signal: np.ndarray, snr
     bnx_info["nick_distances"] = [x*final_ratio for x in bnx_info["nick_distances"]]
     return bnx_info
 
-
-class FastaArray:
-    def __init__(self, fasta_input):
-        pass
 
 class MolStats:
     """
@@ -418,11 +423,11 @@ class XmapParser:
         self.total_overlaps = 0
 
     def _initiate2(self):
-        self.read_and_load_cmap_file()
+        self.read_and_load_xmap_file()
         self.get_intervals()
         self.obtain_molecule_match_info()
 
-    def read_and_load_cmap_file(self):
+    def read_and_load_xmap_file(self):
         f = open(self.xmap_file_location, "r")
         self.xmap_lines = f.readlines()
         f.close()
@@ -595,6 +600,14 @@ class FastaObject:
         values being the corresponding sequence.
         :param fasta_file_path: filte path to fasta file
         :return:
+
+        NOTE example usage:
+        >>> digestion_sequence = "ACCTGACCA"
+        >>> fasta = FastaObject("/path/to/file.fasta")
+        ... fasta.fill_complete_fasta_array() # fills in array with sequence
+        ... fasta.digest_array(digestion_sequence) # in-silico digestion of the sequence
+        ... fasta.clean_fasta_dict() # removes the arbitary sequence from memory
+        >>> np.where(np.sum(fasta.fasta_digestion_array, axis=0) > 0) # This returns the digestion indices
         """
         self.file_path = fasta_file_path
         self.fasta = dict()
@@ -681,8 +694,68 @@ class FastaObject:
         self.fasta_digestion_array[1] = numba_funcs.digest_fasta(self.fasta_array[1].view("int8"), digestion_array, self.fasta_digestion_array[1])
         self.fasta_digestion_array[1] = self.fasta_digestion_array[1][::-1]
 
-    def write_fasta_to_cmap(self, digestion_sequence:str, output_file_name:str):
+    def write_fasta_to_cmap(self, digestion_sequence:str, output_file_name:str, enzyme_name="BSP1Q", channel=1):
         """
         Writes the sequences into a CMAP file with an in silico digestion by the given digestion sequence.
         """
-        pass
+        def gen_line():
+            return '%s\t%s\t%s\t%s\t%s\t%s\t1.0\t1\t1\n'
+
+        self.digest_fasta_array(digestion_sequence)
+        digested_array = np.sum(self.digest_fasta_array, axis=1)
+
+        f = open(output_file_name, 'w')
+        f.write(CMAP_HEADER % digestion_sequence, enzyme_name)
+        
+        for i in range(len(self.lengths)-1):
+            start = sum(self.lengths[:i])
+            end = sum(self.lengths[i+1])
+            _id = i + 1
+            nicking_sites = np.where(digested_array[start:end] > 0.0)[0]
+            length = end-start
+            for j in range(nicking_sites.shape[0]):
+                line = gen_line() % (_id, length, nicking_sites.shape[0], j+1, channel, nicking_sites[j])
+                f.write(line)
+            line = gen_line()
+            line = line % (_id, length, nicking_sites.shape[0], nicking_sites.shape[0]+1, 0, length)
+            f.write(line)
+        f.close()
+
+
+class MQR:
+    """
+    Generates molequle quality report.
+    """
+    def __init__(self, output_folder, ref_align_path, score="1e-10"):
+        """
+        Sets and stores the output folder and refaligner part. Also sets the BNG command.
+
+        output_folder: Output folder path where refaligner will use.
+        ref_align_path: Path to the refaligner software.
+        score: Score for filtering results. default is 1e-10
+
+        NOTE usage example of this class:
+        >>> mqr = MQR("/path/to/folder/", "/path/to/RefAlign", score="1e-11")
+        ... mqr.run_ref_align()
+        ... mqr.load_results()
+        ... xmap = mqr.xmap                     # This is an XmapParser instance which can 
+        ... xmap.read_and_load_xmap_file()      # be used to work on the resulting xmap file.
+        ... print(xmap.xmap_lines[0])    # This prints the first line of results.
+        """
+        self.ref_align = ref_align_path
+        self.output_dir = output_folder
+        self.command = """%s -f -ref %s -i %s -o %s -nosplit 2 -BestRef 1 -biaswt 0 -Mfast 0 -FP 1.5 -FN 0.05 \
+            -sf 0.2 -sd 0.0 -A 5 -outlier 1e-3 -outlierMax 40 -endoutlier 1e-4 -S -1000 -sr 0.03 -se 0.2 -MaxSF\
+             0.3 -MaxSE 0.5 -MaxSD 0.12 -resbias 4 64 -maxmem 64 -M 3 3 -minlen 50  -T %s -maxthreads 12 \
+             -hashgen 5 3 2.4 1.5 0.05 5.0 1 1 3 -hash -hashdelta 10 -hashoffset 1 -hashmaxmem 64 -insertThreads 4 \
+             -maptype 0 -PVres 2 -PVendoutlier -AlignRes 2.0 -rres 0.9 -resEstimate -ScanScaling 2 -RepeatMask 5 0.01 \
+             -RepeatRec 0.7 0.6 1.4 -maxEnd 50 -usecolor 1 -stdout -stderr -subset 1 10000""" % score
+        self.xmap = None
+
+    def run_ref_align(self, reference_cmap_path, bnx_file):
+        from subprocess import check_call as ck
+        ck(self.command % (self.ref_align, reference_cmap_path, bnx_file, self.output_dir + "bnx_quality"), shell=True)
+
+    def load_results(self):
+        xmap_file = self.output_dir + 'bnx_quality.xmap'
+        self.xmap = XmapParser(xmap_file)
