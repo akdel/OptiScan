@@ -1,8 +1,13 @@
 from OptiScan import *
+from OptiScan import database as db
+from OptiScan import numba_funcs
 from scipy import signal
 from scipy import ndimage
-__author__ = "MAkdel"
+import numpy as np
+from numba import njit, jit, vectorize, prange
 
+
+__author__ = "MAkdel"
 
 
 """
@@ -51,6 +56,10 @@ def get_bnx_info_with_upsampling_with_forced_median(nick_signal: np.ndarray, snr
     bnx_info["nick_distances"] = [x*final_ratio for x in bnx_info["nick_distances"]]
     return bnx_info
 
+
+class FastaArray:
+    def __init__(self, fasta_input):
+        pass
 
 class MolStats:
     """
@@ -574,3 +583,106 @@ class LinkXmapToBnx(BnxParser, XmapParser):
             for i in range(len(ref_map_index)):
                 self.mapped_mols[mol_rank, ref_map_index[i] - 5:ref_map_index[i] + 5] = bnx_snr[i]
             mol_rank += 1
+
+
+class FastaObject:
+    """
+    Fasta file is transformed into numpy arrays and numba functions are used on it to compute string matching in parallel.
+    """
+    def __init__(self, fasta_file_path: str):
+        """
+        Opens the fasta/multifasta file and creates a dictionary from it's content. Keys being the fasta title and
+        values being the corresponding sequence.
+        :param fasta_file_path: filte path to fasta file
+        :return:
+        """
+        self.file_path = fasta_file_path
+        self.fasta = dict()
+        self.pattern = str()
+        self.info_txt = 'This is a fasta sequence object.'
+        self.contig_order_in_fasta = list()
+        self.lengths = list()
+        if fasta_file_path:
+            fasta_file = open(self.file_path, 'r')
+            fasta_lines = fasta_file.readlines()
+            fasta_file.close()
+        else:
+            fasta_lines = None
+
+        if fasta_lines:
+            for line in fasta_lines:
+                if line.startswith('>'):
+                    current_header = line[1:].strip()
+                    self.contig_order_in_fasta.append(current_header)
+                    self.fasta[current_header] = []
+                else:
+                    current_sequence = line.strip()
+                    try:
+                        self.fasta[current_header] += [current_sequence]
+                    except KeyError:
+                        print("Incorrect file format. (file not fasta)")
+            for entry in self.fasta:
+                self.fasta[entry] = "".join(self.fasta[entry])
+            self._get_lengths()
+        self.fasta_array = None
+        self.fasta_digestion_array = None
+
+    def initiate_fasta_array(self):
+        """
+        Initiates the fasta array in both directions.
+        """
+        self.fasta_array = np.zeros((2, np.sum(self.lengths)), dtype=np.dtype("|S1"))
+
+    def fill_fasta_chrom(self, chromosome_name, chromosome_index):
+        """
+        Fills in a chromosome within the array with the corresponding sequence.
+        """
+        string = self.fasta[chromosome_name]
+        numba_funcs.fill_chromosomes_with_fasta(string, chromosome_index, self.fasta_array[0])
+
+    def fill_reverse_complement(self):
+        """
+        Fills in the reverse complement.
+        """
+        self.fasta_array[1] = numba_funcs.reverse_complement_v2(self.fasta_array[0].view("int8")).view("S1")
+
+    def clean_fasta_dict(self):
+        """
+        Deletes the fasta sequence to save memory.
+        """
+        del self.fasta
+
+    def fill_complete_fasta_array(self):
+        """
+        Fills in the fasta array with sequences.
+        """
+        for i in range(len(self.contig_order_in_fasta)):
+            chromosome_name = self.contig_order_in_fasta[i]
+            print(chromosome_name)
+            chromosome_index = np.sum(self.lengths[:i])
+            self.fill_fasta_chrom(chromosome_name, chromosome_index)
+        self.fill_reverse_complement()
+
+    def _get_lengths(self):
+        """
+        Obtains the chromosome lengths.
+        """
+        for header in self.contig_order_in_fasta:
+            contig_sequence_length = len(self.fasta[header])
+            self.lengths.append(contig_sequence_length)
+
+    def digest_fasta_array(self, digestion_sequence:str):
+        """
+        Digests the fasta array with a given digestion sequence.
+        """
+        self.fasta_digestion_array = np.zeros((2, self.fasta_array[0].shape[0]), dtype=np.bool)
+        digestion_array = np.array(tuple(digestion_sequence), dtype="|S1").view("int8")
+        self.fasta_digestion_array[0] = numba_funcs.digest_fasta(self.fasta_array[0].view("int8"), digestion_array, self.fasta_digestion_array[0])
+        self.fasta_digestion_array[1] = numba_funcs.digest_fasta(self.fasta_array[1].view("int8"), digestion_array, self.fasta_digestion_array[1])
+        self.fasta_digestion_array[1] = self.fasta_digestion_array[1][::-1]
+
+    def write_fasta_to_cmap(self, digestion_sequence:str, output_file_name:str):
+        """
+        Writes the sequences into a CMAP file with an in silico digestion by the given digestion sequence.
+        """
+        pass

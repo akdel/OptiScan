@@ -1,6 +1,7 @@
 from OptiScan.database_orms import *
 from OptiScan.scan import Runs
 from OptiScan import *
+import numpy as np
 import types
 from OptiScan.utils import get_bnx_info_with_upsampling
 
@@ -367,15 +368,15 @@ def molecules_to_bnx(molecule_stream: types.GeneratorType, zoom_ratio: float, fi
     signals.
     Parameters
     ----------
-    molecule_stream :       Stream of molecule signal pairs from the memmap.
-                             See MoleculeConnector.yield_molecule_signals..
-    zoom_ratio :            This is the zoom factor to be applied before label detection. Improves the method.
-                             Suggested to be set to 10.
-    final_ratio :           The final zoom factor which indicates bases per pixel. This is usually around 480 - 520.
-    bnx_filename :          Output file name.
-    bnx_template_path :     Path to Template for BNX headers. Default is set to the standard template provided by
-                             the OptiScan tool.
-    filter_function :       Any function which filters molecule pairs and returns None or modified molecule pairs.
+    molecule_stream: Stream of molecule signal pairs from the memmap.
+        See MoleculeConnector.yield_molecule_signals..
+    zoom_ratio: This is the zoom factor to be applied before label detection. Improves the method. 
+        Suggested to be set to 10.
+    final_ratio: The final zoom factor which indicates bases per pixel. This is usually around 480 - 520.
+    bnx_filename: Output file name.
+    bnx_template_path: Path to Template for BNX headers. Default is set to the standard template provided by
+        the OptiScan tool.
+    filter_function: Any function which filters molecule pairs and returns None or modified molecule pairs.
     signal_to_noise_ratio : Signal to noise ratio filter for peak finding method.
 
     Returns

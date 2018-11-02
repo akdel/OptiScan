@@ -1,25 +1,26 @@
 # Photomap Tool
 
-Photomap is an opensource tool for extraction of nick and backbone signals from provided Bionano optical map tiff images. Photomap is able to transform nick signals into nicking site coordinates and write in BNX format.
+Photomap is an open source tool for extraction of nick and backbone signals from provided Bionano optical map tiff images. Photomap is able to transform nick signals into nicking site coordinates and write in BNX format.
 
 
 ## Requirements
 
-**Python >3.5** and 
-**sqlite**
+**`Python >3.5`** and 
+**`sqlite`**
 
 Required Python libraries:
 
-* Numpy and Scipy
-* Sqlalchemy
-* intervaltree
-* scikit-image
+* [Numpy and Scipy](http://www.numpy.org)
+* [Numba](http://numba.pydata.org)
+* [Sqlalchemy](https://www.sqlalchemy.org)
+* [intervaltree](https://pypi.org/project/intervaltree)
+* [scikit-image](https://scikit-image.org)
 
 
-## Installition
+## Installation
 
 ```bash
-pip install numpy scipy sqlalchemy pylab scikit-image intervaltree
+pip install numpy numba scipy sqlalchemy pylab scikit-image intervaltree
 git clone https://gitlab.com/akdel/OptiScan.git
 cd photomap
 python setup.py install
@@ -30,7 +31,7 @@ chmod +x ./write_bnx
 
 ## Usage
 
-`optiscan/pipelines/` folder contains two pipeline scripts for running optiscan.
+`optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
 
 
 1. `extract_molecules` is for extracting and recording OM signals into disk.
