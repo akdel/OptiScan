@@ -725,13 +725,16 @@ class FastaObject:
             end = sum(self.lengths[:i+1])
             _id = i + 1
             nicking_sites = np.where(digested_array[start:end] > 0.0)[0]
-            length = end-start
-            for j in range(nicking_sites.shape[0]):
-                line = gen_line() % (_id, length, nicking_sites.shape[0], j+1, channel, nicking_sites[j])
+            if nicking_sites.shape[0] == 0:
+                continue
+            else:
+                length = end-start
+                for j in range(nicking_sites.shape[0]):
+                    line = gen_line() % (_id, length, nicking_sites.shape[0], j+1, channel, nicking_sites[j])
+                    f.write(line)
+                line = gen_line()
+                line = line % (_id, length, nicking_sites.shape[0], nicking_sites.shape[0]+1, 0, length)
                 f.write(line)
-            line = gen_line()
-            line = line % (_id, length, nicking_sites.shape[0], nicking_sites.shape[0]+1, 0, length)
-            f.write(line)
         f.close()
 
 
