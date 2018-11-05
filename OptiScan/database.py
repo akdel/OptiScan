@@ -99,7 +99,7 @@ class MoleculeDB(Runs):
                           )
         self.db.add(column)
         self.db.commit()
-        col_shape = (column_info["mem_end"] - column_info["mem_start"]) / np.float64().itemsize
+        col_shape = (column_info["mem_end"] - column_info["mem_start"]) / np.float64(0).itemsize
         assert col_shape % 2 == 0
         try:
             number_of_molecules = col_shape / (column_info["longest_shape"] * 2)
@@ -290,7 +290,7 @@ class MoleculeConnector:
         assert column_info[column_id]["memmap_start"] != 0
         start_mem = column_info[column_id]["memmap_start"]
         end_mem = column_info[column_id]["memmap_end"]
-        assert (end_mem - start_mem) % np.float64().itemsize == 0
+        assert (end_mem - start_mem) % np.float64(0).itemsize == 0
         column_shape = int((end_mem - start_mem) / np.float64().itemsize)
         new_array = np.zeros(column_shape, dtype=np.float64)
         memmap_path = self.db_runs[run_id][scan_id]["mem_path"]
