@@ -718,7 +718,7 @@ class FastaObject:
         digested_array = np.sum(self.fasta_digestion_array , axis=1)
 
         f = open(output_file_name, 'w')
-        f.write(CMAP_HEADER % digestion_sequence, enzyme_name)
+        f.write(CMAP_HEADER % (digestion_sequence, enzyme_name))
         
         for i in range(len(self.lengths)-1):
             start = sum(self.lengths[:i])
