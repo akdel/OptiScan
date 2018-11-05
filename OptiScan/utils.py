@@ -6,8 +6,7 @@ from scipy import ndimage
 import numpy as np
 from numba import njit, jit, vectorize, prange
 
-CMAP_HEADER = """
-# CMAP File Version:    0.1
+CMAP_HEADER = """# CMAP File Version:    0.1
 # Label Channels:       1
 # Nickase Recognition Site 1:   %s
 # Enzyme1:      %s
