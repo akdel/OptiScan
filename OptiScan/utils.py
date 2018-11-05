@@ -722,7 +722,7 @@ class FastaObject:
         
         for i in range(len(self.lengths)-1):
             start = sum(self.lengths[:i])
-            end = sum(self.lengths[i+1])
+            end = sum(self.lengths[:i+1])
             _id = i + 1
             nicking_sites = np.where(digested_array[start:end] > 0.0)[0]
             length = end-start
