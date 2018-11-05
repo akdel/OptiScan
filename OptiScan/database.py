@@ -446,7 +446,7 @@ def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, b
         assert nick_signal.shape == backbone_signal.shape
         if nick_signal.shape[0] == 0 or backbone_signal.shape[0] == 0:
             continue
-        bnx_info = db.get_bnx_info_with_upsampling(nick_signal, signal_to_noise_ratio, zoom_ratio, final_ratio)
+        bnx_info = get_bnx_info_with_upsampling(nick_signal, signal_to_noise_ratio, zoom_ratio, final_ratio)
         if len(bnx_info["nick_snrs"]) > 1:
             backbone_signal_avg = np.mean(backbone_signal)
             first_line = "0\t" + "\t".join([str(mol_id), str(int(bnx_info["nick_distances"][-1])),
