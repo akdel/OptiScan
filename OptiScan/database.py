@@ -439,7 +439,6 @@ def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, b
     out_file = open(bnx_filename, "w")
     out_file.write(bnx_head)
     mol_id = 0
-    
     for nick_signal, backbone_signal in molecule_stream:
         mol_id += 1
         nick_signal, backbone_signal = filter_function(nick_signal, backbone_signal)
