@@ -250,8 +250,6 @@ class AnalyzeScan(Scan):
         else:
             self.current_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             self.current_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
-            self.current_mol_column = ndimage.zoom(self.current_mol_column, 0.3333)
-            self.current_lab_column = ndimage.zoom(self.current_lab_column, 0.3333)
             
 
     def annotate_column(self, intensity=1000) -> np.ndarray:

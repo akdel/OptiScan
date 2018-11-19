@@ -1,7 +1,7 @@
-from Photo_map import *
-from Photo_map.rotation_optimisation import *
+from OptiScan import *
+from OptiScan.rotation_optimisation import *
 from scipy import ndimage
-from Photo_map.folder_searcher import FolderSearcher
+from OptiScan.folder_searcher import FolderSearcher
 from os import listdir
 import imageio
 
@@ -250,7 +250,8 @@ class AnalyzeScan(Scan):
         else:
             self.current_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             self.current_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
-            
+            self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(6))
+            self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(6))
 
     def annotate_column(self, intensity=1000) -> np.ndarray:
         """
