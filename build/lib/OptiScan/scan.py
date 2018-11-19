@@ -54,6 +54,7 @@ class Scan:
             self.frames[0] = sorted(self.frames[0])
             self.frames[1] = sorted(self.frames[1])
             self.nof_frames = len(self.frames[0])
+            self.chip_dimension = (1, self.nof_frames)
 
 
             
