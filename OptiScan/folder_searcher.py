@@ -8,12 +8,13 @@ class FolderSearcher:
     This class traverses all the folders below the given main dirctory and extracts relevant bionano files.
      The main directory should correspond to a single run.
     """
-    def __init__(self, main_directory):
+    def __init__(self, main_directory, saphyr=False):
         """
         Initiates the class. Uses all methods in the class. The scans dictionary contains files specific to each scan.
         The mqr_map_file, scafforld_cmap_file, main_bnx_file and the autofocus file directories are for all scans.
         :param main_directory: Directory of the run with possibly multiple scans; str
         """
+        self.saphyr = saphyr
         self.dir = main_directory
         self.fasta = str()
         self.file_dirs = list()
@@ -68,16 +69,25 @@ class FolderSearcher:
         dictionary with the info.
         :return:
         """
-        tiff_scan_files = self._search_file("Scan")
-        for i in range(len(tiff_scan_files))[::-1]:
-            scan_name_end_index = tiff_scan_files[i].find("Scan")
-            scan_id = tiff_scan_files[i][scan_name_end_index+4:]
-            scan_id = scan_id[:scan_id.find(".tiff")]
-            try:
-                scan_id = int(scan_id)
-            except ValueError:
-                continue
-            self.scans[scan_id] = {"tiff_location": tiff_scan_files[i]}
+        if self.saphyr:
+            tiff_scan_files = self._search_file("Bank", include_dirs=True)
+            def filt(f):
+                if "_CH1_" in f or "_CH2_" in f:
+                    return True
+                else:
+                    return False
+            tiff_scan_files = sorted(list(filter(filt, tiff_scan_files)))
+            self.scans[0] = {"tiff_location": tiff_scan_files}
+        else:
+            for i in range(len(tiff_scan_files))[::-1]:
+                scan_name_end_index = tiff_scan_files[i].find("Scan")
+                scan_id = tiff_scan_files[i][scan_name_end_index+4:]
+                scan_id = scan_id[:scan_id.find(".tiff")]
+                try:
+                    scan_id = int(scan_id)
+                except ValueError:
+                    continue
+                self.scans[scan_id] = {"tiff_location": tiff_scan_files[i]}
 
     def _update_corresponding_id_with_a_file(self, file_prefix, file_extension, files):
         """

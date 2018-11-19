@@ -14,7 +14,8 @@ class Scan:
     """
     This is for reading and recording the scan frames. Add lower level functionality only.
     """
-    def __init__(self, tiff_file_location: str, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False):
+    def __init__(self, tiff_file_location: str, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False,
+                 saphyr_folder_searcher=False):
         """
         Parameters
         ----------
@@ -38,19 +39,28 @@ class Scan:
                 self._record_frames()
         else:
             self.frames = [[], []]
-            def filt(f):
-                if f.startswith("B"):
-                    return True
-                else:
-                    return False
-            files = list(filter(filt, listdir(tiff_file_location)))
-            for f in files:
-                if "CH1" in f:
-                    self.frames[0].append(tiff_file_location+f)
-                elif "CH2" in f:
-                    self.frames[1].append(tiff_file_location+f)
-                else:
-                    print("Unknown file: ", f)
+            if saphyr_folder_searcher:
+                for f in saphyr_folder_searcher:
+                    if "CH1" in f:
+                        self.frames[0].append(tiff_file_location+f)
+                    elif "CH2" in f:
+                        self.frames[1].append(tiff_file_location+f)
+                    else:
+                        print("Unknown file: ", f)
+            else:
+                def filt(f):
+                    if f.startswith("B"):
+                        return True
+                    else:
+                        return False
+                files = list(filter(filt, listdir(tiff_file_location)))
+                for f in files:
+                    if "CH1" in f:
+                        self.frames[0].append(tiff_file_location+f)
+                    elif "CH2" in f:
+                        self.frames[1].append(tiff_file_location+f)
+                    else:
+                        print("Unknown file: ", f)
             self.frames[0] = sorted(self.frames[0])
             self.frames[1] = sorted(self.frames[1])
             self.nof_frames = len(self.frames[0])
@@ -77,7 +87,7 @@ class AnalyzeScan(Scan):
     """
     This class is for molecule boundary detection and signal extraction from a single BNG scan data-set.
     """
-    def __init__(self, tiff_file_location, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False):
+    def __init__(self, tiff_file_location, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False, saphyr_folder_searcher=False):
         """
         Initiation function. Tiff image frames from BNG is the only compulsory data to be provided.
         Parameters
@@ -88,7 +98,8 @@ class AnalyzeScan(Scan):
         scan_no : Scan id.
         """
         Scan.__init__(self, tiff_file_location, chip_dimension=chip_dimension,
-                      scan_no=scan_no, load_frames=load_frames, saphyr=saphyr)
+                      scan_no=scan_no, load_frames=load_frames, saphyr=saphyr, 
+                      saphyr_folder_searcher=saphyr_folder_searcher)
         self.current_column_id = 0
         self.current_lab_column = None
         self.current_mol_column = None
@@ -414,7 +425,7 @@ class Run(FolderSearcher):
     This class extends FolderSearcher to locate BNG files and split them into scan. Each scan is then loaded
     with AnalyzeScan.
     """
-    def __init__(self, run_directory, chip_dimension=(12, 95)):
+    def __init__(self, run_directory, chip_dimension=(12, 95), saphyr=False):
         """
         Initiates class.
         Parameters
@@ -422,7 +433,8 @@ class Run(FolderSearcher):
         run_directory : BNG run directory which holds at least a set of scan tiffs.
         chip_dimension : This is user defined according to chip version.
         """
-        FolderSearcher.__init__(self, run_directory)
+        if saphyr:
+            FolderSearcher.__init__(self, run_directory,)
         self.analyzed_scans = {i:AnalyzeScan(self.scans[i]["tiff_location"], chip_dimension=chip_dimension,
                                              scan_no=run_directory + str(i),
                                              load_frames=False) for i in self.scans.keys()}
