@@ -96,7 +96,7 @@ class AnalyzeScan(Scan):
         self.lab_slices = list()
         self.slice_coordinates = list()
 
-        self.molecules = {i: list() for i in range(chip_dimension[1])}
+        self.molecules = {i: list() for i in range(self.chip_dimension[1])}
         self.column_info = {i: {"extracted": False,
                                 "number_of_molecules": 0,
                                 "mean_molecule_length": 0,
@@ -105,7 +105,7 @@ class AnalyzeScan(Scan):
                                 "longest_shape": 0,
                                 "mem_start": 0,
                                 "mem_end": 0
-                                } for i in range(chip_dimension[1])}
+                                } for i in range(self.chip_dimension[1])}
         self.memmap_path = "%s_scan.mem" % scan_no
         self.memmap_status = False
 
