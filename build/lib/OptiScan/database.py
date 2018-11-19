@@ -11,7 +11,7 @@ class MoleculeDB(Runs):
     Molecule database creator. Molecule extraction can be performed in batch as it inherits Runs class.
     """
     def __init__(self, database_location: str, bionano_directories: [str], organism: str,
-                 chip_dimension=(12, 95), date="2016"):
+                 chip_dimension=(12, 95), date="2016", saphyr=False):
         """
         Initiates class.
         Parameters
@@ -23,7 +23,7 @@ class MoleculeDB(Runs):
         date :                Date
         """
         bionano_directories = [fix_directory_end(x) for x in bionano_directories]
-        Runs.__init__(self, bionano_directories, chip_dimension=chip_dimension)
+        Runs.__init__(self, bionano_directories, chip_dimension=chip_dimension, saphyr=saphyr)
         self.db_location = database_location
         self.db = None
         self.organism = organism
@@ -61,13 +61,23 @@ class MoleculeDB(Runs):
                 scan_ana = self.analyzed_runs[run].analyzed_scans[scan_id]
                 current_scan = self.analyzed_runs[run].scans[scan_id]
                 self.ids[run][scan_id] = unique_id
-                scan = ScanLinage(id=unique_id, scan=scan_id, run_id=run,
+                if not self.saphyr:
+                    scan = ScanLinage(id=unique_id, scan=scan_id, run_id=run,
+                                    bnx_path=current_scan["RawMolecules_file_location"],
+                                    mol_path=current_scan["Molecules_file_location"],
+                                    stitch_path=current_scan["Stitch_file_location"],
+                                    lab_path=current_scan["Labels_file_location"],
+                                    tiff_path=current_scan["tiff_location"],
+                                    mem_path=scan_ana.memmap_path)
+                else:
+                    scan = ScanLinage(id=unique_id, scan=scan_id, run_id=run,
                                   bnx_path=current_scan["RawMolecules_file_location"],
                                   mol_path=current_scan["Molecules_file_location"],
                                   stitch_path=current_scan["Stitch_file_location"],
                                   lab_path=current_scan["Labels_file_location"],
-                                  tiff_path=current_scan["tiff_location"],
+                                  tiff_path="None",
                                   mem_path=scan_ana.memmap_path)
+
                 unique_id += 1
                 self.db.add(scan)
                 self.db.commit()

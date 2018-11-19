@@ -71,13 +71,19 @@ class FolderSearcher:
         """
         if self.saphyr:
             tiff_scan_files = self._search_file("Bank", include_dirs=True)
-            def filt(f):
-                if "_CH1_C" in f or "_CH2_C" in f:
-                    return True
+            l1, l2 = [],[]
+            for f in tiff_scan_files:
+                if "_CH1_C" in f:
+                    l1.append(f)
+                elif "_CH2_C" in f:
+                    l2.append(f)
                 else:
-                    return False
-            tiff_scan_files = sorted(list(filter(filt, tiff_scan_files)))
-            self.scans[0] = {"tiff_location": tiff_scan_files}
+                    continue
+            l1 = sorted(l1)
+            l2 = sorted(l2)
+            assert len(l1) == len(l2)
+            for i in range(0, len(l1), 100):
+                self.scans[i] = {"tiff_location": l1[:i] + l2[:i]}
         else:
             for i in range(len(tiff_scan_files))[::-1]:
                 scan_name_end_index = tiff_scan_files[i].find("Scan")
