@@ -46,9 +46,9 @@ class Scan:
             files = list(filter(filt, listdir(tiff_file_location)))
             for f in files:
                 if "CH1" in f:
-                    self.frames[0].append(f)
+                    self.frames[0].append(tiff_file_location+f)
                 elif "CH2" in f:
-                    self.frames[1].append(f)
+                    self.frames[1].append(tiff_file_location+f)
                 else:
                     print("Unknown file: ", f)
             self.frames[0] = sorted(self.frames[0])
