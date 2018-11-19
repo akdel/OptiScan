@@ -2,14 +2,19 @@ from Photo_map import *
 from Photo_map.rotation_optimisation import *
 from scipy import ndimage
 from Photo_map.folder_searcher import FolderSearcher
+from os import listdir
+import imageio
 
 
+class SaphyrColumn:
+    def __init__(self):
+        pass
 
 class Scan:
     """
     This is for reading and recording the scan frames. Add lower level functionality only.
     """
-    def __init__(self, tiff_file_location: str, chip_dimension=(12, 95), scan_no=1, load_frames=True):
+    def __init__(self, tiff_file_location: str, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False):
         """
         Parameters
         ----------
@@ -19,16 +24,39 @@ class Scan:
         scan_no : Scan id.
         load_frames : If True, loads frames when the class is initiated.
         """
+        self.saphyr = saphyr
         self.scan_id = scan_no
         self.tiff_file_location = tiff_file_location
-        self.im = Image.open(self.tiff_file_location)
-        self.nof_frames = self.im.n_frames
-        self.frames = list()
-        self.frame_dimension = None
-        self.chip_dimension = chip_dimension
-        print("number of frames: %s" % self.nof_frames)
-        if load_frames:
-            self._record_frames()
+        if not saphyr:
+            self.im = Image.open(self.tiff_file_location)
+            self.nof_frames = self.im.n_frames
+            self.frames = list()
+            self.frame_dimension = None
+            self.chip_dimension = chip_dimension
+            print("number of frames: %s" % self.nof_frames)
+            if load_frames:
+                self._record_frames()
+        else:
+            self.frames = [[], []]
+            def filt(f):
+                if f.startswith("B"):
+                    return True
+                else:
+                    return False
+            files = list(filter(filt, listdir(tiff_file_location)))
+            for f in files:
+                if "CH1" in f:
+                    self.frames[0].append(f)
+                elif "CH2" in f:
+                    self.frames[1].append(f)
+                else:
+                    print("Unknown file: ", f)
+            self.frames[0] = sorted(self.frames[0])
+            self.frames[1] = sorted(self.frames[1])
+            self.nof_frames = len(self.frames[0])
+
+
+            
 
     def _record_frames(self):
         """
@@ -48,7 +76,7 @@ class AnalyzeScan(Scan):
     """
     This class is for molecule boundary detection and signal extraction from a single BNG scan data-set.
     """
-    def __init__(self, tiff_file_location, chip_dimension=(12, 95), scan_no=1, load_frames=True):
+    def __init__(self, tiff_file_location, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False):
         """
         Initiation function. Tiff image frames from BNG is the only compulsory data to be provided.
         Parameters
@@ -59,8 +87,7 @@ class AnalyzeScan(Scan):
         scan_no : Scan id.
         """
         Scan.__init__(self, tiff_file_location, chip_dimension=chip_dimension,
-                      scan_no=scan_no, load_frames=load_frames)
-
+                      scan_no=scan_no, load_frames=load_frames, saphyr=saphyr)
         self.current_column_id = 0
         self.current_lab_column = None
         self.current_mol_column = None
@@ -214,11 +241,18 @@ class AnalyzeScan(Scan):
         -------
         Stitched nick and backbone columns for the current column id.
         """
-        backbone_label_column, nick_label_column = return_column(self.frames, self.current_column_id,
-                                                                 self.chip_dimension)
-        backbone_label_column, nick_label_column = stitch_column(backbone_label_column, nick_label_column)
-        self.current_lab_column = ndimage.zoom(nick_label_column, 0.3333)
-        self.current_mol_column = ndimage.zoom(backbone_label_column, 0.3333)
+        if not self.saphyr:
+            backbone_label_column, nick_label_column = return_column(self.frames, self.current_column_id,
+                                                                    self.chip_dimension)
+            backbone_label_column, nick_label_column = stitch_column(backbone_label_column, nick_label_column)
+            self.current_lab_column = ndimage.zoom(nick_label_column, 0.3333)
+            self.current_mol_column = ndimage.zoom(backbone_label_column, 0.3333)
+        else:
+            self.current_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
+            self.current_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
+            self.current_mol_column = ndimage.zoom(self.current_mol_column, 0.3333)
+            self.current_lab_column = ndimage.zoom(self.current_lab_column, 0.3333)
+            
 
     def annotate_column(self, intensity=1000) -> np.ndarray:
         """
