@@ -426,7 +426,11 @@ def get_optimal_zoom_and_obtain_new_image(image, ref_image, _start=0.990, _to=0.
     optimal_mag = get_optimal_magnification_for_overlay(image, ref_image, _start=_start, _to=_to, _space=_space)
     return zoom_out_and_center_on_original(image, optimal_mag)
 
-
+def overlay_saphyr_columns(mol_col, label_col, _start=0.990, _to=1.01, _space=0.001):
+    optimized_mol_col, angle =rotate_with_optimal_rotation(mol_col)
+    rotated_label_col = ndimage.rotate(label_col, reshape=False)
+    optimized_label_col = get_optimal_zoom_and_obtain_new_image(rotated_label_col, optimized_mol_col, _start=_start, _to=_to, _space=0.001)
+    return optimized_mol_col, optimized_label_col
 
 """
 
