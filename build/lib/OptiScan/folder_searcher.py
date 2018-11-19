@@ -72,7 +72,7 @@ class FolderSearcher:
         if self.saphyr:
             tiff_scan_files = self._search_file("Bank", include_dirs=True)
             def filt(f):
-                if "_CH1_" in f or "_CH2_" in f:
+                if "_CH1_C" in f or "_CH2_C" in f:
                     return True
                 else:
                     return False

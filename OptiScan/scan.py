@@ -14,8 +14,8 @@ class Scan:
     """
     This is for reading and recording the scan frames. Add lower level functionality only.
     """
-    def __init__(self, tiff_file_location: str, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False,
-                 saphyr_folder_searcher=False):
+    def __init__(self, tiff_file_location: str, chip_dimension=(12, 95), scan_no=1, load_frames=True,
+                 saphyr=False, saphyr_folder_searcher=False):
         """
         Parameters
         ----------
@@ -503,6 +503,7 @@ class Runs:
         run_directories : BNG run directories in which each one of them at least have a set of scan tiffs.
         chip_dimension : This is user defined according to chip version.
         """
+        self.saphyr = saphyr
         self.analyzed_runs = {x: Run(x, chip_dimension=chip_dimension, saphyr=saphyr) for x in run_directories}
 
     def extract_molecules_from_scan_in_run(self, run_id: str, scan_id: int):
