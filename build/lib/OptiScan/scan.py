@@ -433,11 +433,18 @@ class Run(FolderSearcher):
         run_directory : BNG run directory which holds at least a set of scan tiffs.
         chip_dimension : This is user defined according to chip version.
         """
+        self.saphyr = saphyr
         if saphyr:
-            FolderSearcher.__init__(self, run_directory,)
-        self.analyzed_scans = {i:AnalyzeScan(self.scans[i]["tiff_location"], chip_dimension=chip_dimension,
-                                             scan_no=run_directory + str(i),
-                                             load_frames=False) for i in self.scans.keys()}
+            FolderSearcher.__init__(self, run_directory, saphyr=True)
+            self.analyzed_scans = {i:AnalyzeScan(self.scans[i]["tiff_location"], chip_dimension=chip_dimension,
+                                                scan_no=run_directory + str(i),
+                                                load_frames=False, saphyr=saphyr,
+                                                saphyr_folder_searcher=saphyr) for i in self.scans.keys()}
+        else:
+            FolderSearcher.__init__(self, run_directory)
+            self.analyzed_scans = {i:AnalyzeScan(self.scans[i]["tiff_location"], chip_dimension=chip_dimension,
+                                                scan_no=run_directory + str(i),
+                                                load_frames=False) for i in self.scans.keys()}
 
     def read_frames_in_scan(self, scan_id: int):
         """
@@ -450,7 +457,10 @@ class Run(FolderSearcher):
         -------
         tiff images in given scan class. ie// scan.frames
         """
-        self.analyzed_scans[scan_id]._record_frames()
+        if self.saphyr:
+            pass
+        else:
+            self.analyzed_scans[scan_id]._record_frames()
 
     def read_frames_in_all_scans(self):
         """
@@ -485,7 +495,7 @@ class Runs:
     """
     This collects all runs under one hood.
     """
-    def __init__(self, run_directories: [str], chip_dimension=(12, 95)):
+    def __init__(self, run_directories: [str], chip_dimension=(12, 95), saphyr=False):
         """
         Initiates class.
         Parameters
@@ -493,7 +503,7 @@ class Runs:
         run_directories : BNG run directories in which each one of them at least have a set of scan tiffs.
         chip_dimension : This is user defined according to chip version.
         """
-        self.analyzed_runs = {x: Run(x, chip_dimension=chip_dimension) for x in run_directories}
+        self.analyzed_runs = {x: Run(x, chip_dimension=chip_dimension, saphyr=saphyr) for x in run_directories}
 
     def extract_molecules_from_scan_in_run(self, run_id: str, scan_id: int):
         """
