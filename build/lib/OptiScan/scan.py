@@ -156,8 +156,8 @@ class AnalyzeScan(Scan):
         self.column_info[self.current_column_id]["abstract_threshold"] = int(abstraction_threshold)
         molecule_abstract = np.zeros(self.current_mol_column.shape)
         if self.saphyr:
-            mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.],
-                             [1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.]])
+            mask = np.array([[-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1],
+                             [-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1]])
         else:
             mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.]])
 
