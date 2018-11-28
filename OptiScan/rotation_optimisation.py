@@ -316,7 +316,7 @@ def slide_and_score(array1, array2):
 
 def top_bottom_to_slide_scores(top_image_bottom, bottom_image_top, return_score=False):
     pairs = [x for x in get_molecule_pairs(top_image_bottom, bottom_image_top)]
-    xmed = (650*top_image_bottom.shape[0])/10
+    xmed = (350*top_image_bottom.shape[0])/10
     pairs = [(x, y) for x, y in pairs if sum(x) >= xmed or sum(y) >= xmed]
     if len(pairs) == 0:
         return 0
