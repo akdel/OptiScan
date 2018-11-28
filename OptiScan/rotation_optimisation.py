@@ -357,9 +357,9 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
     :return:
     """
     if tophat:
-        list_of_frames = [ndimage.white_tophat(x, structure=disk(6)) for x in list_of_frames] # 6 for irys
+        list_of_frames = [ndimage.white_tophat(x, structure=disk(7)) for x in list_of_frames] # 6 for irys
         if additional_set:
-            additional_set = [ndimage.white_tophat(x, structure=disk(6)) for x in additional_set]
+            additional_set = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
     list_of_frames_with_angles = [rotate_with_optimal_rotation(x) for x in list_of_frames]
     list_of_frames = [x[0] for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
@@ -395,13 +395,26 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
     return np.argmax(corr_sum[:60])
 
 
-def get_yshift(top_image_bottom, bottom_image_top):
+def get_yshift(top_image_bottom, bottom_image_top, debug=False):
+    import matplotlib.pyplot as plt
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     xmed = np.median([sum(x) for x, y in pairs])
     ymed = np.median([sum(y) for x, y in pairs])
     filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
     corrs = np.array([np.correlate(y, x, mode="full") for x, y in filtered_pairs], dtype=float)
-    corr_sum = np.sum(corrs, axis=0)
+    if debug:
+        plt.imshow(top_image_bottom)
+        plt.show()
+        plt.imshow(bottom_image_top)
+        plt.show()
+        [plt.plot(corr) for corr in corrs]
+        plt.show()
+
+        corr_sum = np.sum(corrs, axis=0)
+        plt.plot(corr_sum)
+        plt.show()
+    else:
+        pass
     return np.argmax(corr_sum[:60])
 
 
