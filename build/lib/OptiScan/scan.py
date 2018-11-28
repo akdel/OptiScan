@@ -155,11 +155,7 @@ class AnalyzeScan(Scan):
         self.column_info[self.current_column_id]["minimum_allowed_length"] = int(minimum_molecule_length)
         self.column_info[self.current_column_id]["abstract_threshold"] = int(abstraction_threshold)
         molecule_abstract = np.zeros(self.current_mol_column.shape)
-        if self.saphyr:
-            mask = np.array([[-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1],
-                             [-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1],[-1,-1,-1,1,1,1]])
-        else:
-            mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.]])
+        mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
 
         molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
         molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
@@ -208,6 +204,10 @@ class AnalyzeScan(Scan):
         label_slice = self.lab_slices[molecule_id]
         backbone_slice = self.mol_slices[molecule_id]
         signal_set = label_slice[:,:]
+        if self.saphyr:
+            label_slice,r = rotate_with_optimal_rotation(label_slice, _from=-1, _to=1)
+            self.lab_slices[molecule_id] = label_slice
+            signal_set = label_slice[:,:]
         try:
             signal_averages = np.average(signal_set, axis=0)
         except ZeroDivisionError:
@@ -267,8 +267,8 @@ class AnalyzeScan(Scan):
         else:
             self.current_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             self.current_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
-            self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(6))
-            self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(6))
+            self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(12))
+            self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(12))
 
     def annotate_column(self, intensity=1000) -> np.ndarray:
         """
@@ -285,7 +285,7 @@ class AnalyzeScan(Scan):
         annotated_mol = np.array(self.current_mol_column)
         for _slice in self.slice_coordinates:
             y, x = _slice
-            annotated_mol[y.start:y.stop, x.stop] = intensity
+            annotated_mol[y.start:y.stop, x.stop-1:x.stop+1] = intensity
         return annotated_mol
 
     def stitch_extract_molecules_in_column(self, minimum_molecule_length=50*5, abstraction_threshold=100):

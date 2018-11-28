@@ -5,6 +5,11 @@ from OptiScan.folder_searcher import FolderSearcher
 from os import listdir
 import imageio
 
+"""
+TODO 1. split each col frame into frames and then stich them.
+TODO 2. add the third set of frames as the second channel.
+TODO 3. focus both channels on the backbone channel.
+"""
 
 class SaphyrColumn:
     def __init__(self):
@@ -155,7 +160,7 @@ class AnalyzeScan(Scan):
         self.column_info[self.current_column_id]["minimum_allowed_length"] = int(minimum_molecule_length)
         self.column_info[self.current_column_id]["abstract_threshold"] = int(abstraction_threshold)
         molecule_abstract = np.zeros(self.current_mol_column.shape)
-        mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.], [1., -1.]])
+        mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
 
         molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
         molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
@@ -169,7 +174,7 @@ class AnalyzeScan(Scan):
         print("%s of these are longer than %s pixels (about %s kbp) and taken as molecule set." % \
               (len(slices), minimum_molecule_length, (minimum_molecule_length * 500)/1000))
         for _slice in slices:
-            new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+2] #+3]
+            new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+6] #+3]
             self.mol_slices.append(self.current_mol_column[new_slice])
             self.lab_slices.append(self.current_lab_column[new_slice])
 
@@ -261,10 +266,14 @@ class AnalyzeScan(Scan):
             self.current_lab_column = ndimage.zoom(nick_label_column, 0.3333)
             self.current_mol_column = ndimage.zoom(backbone_label_column, 0.3333)
         else:
+            unstiched_backbone_column = []
+            unstiched_label_column = []
+            backbone_frames = []
+            lab_frames = []
             self.current_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             self.current_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
-            self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(6))
-            self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(6))
+            self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(12))
+            self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(12))
 
     def annotate_column(self, intensity=1000) -> np.ndarray:
         """
@@ -281,7 +290,7 @@ class AnalyzeScan(Scan):
         annotated_mol = np.array(self.current_mol_column)
         for _slice in self.slice_coordinates:
             y, x = _slice
-            annotated_mol[y.start:y.stop, x.stop] = intensity
+            annotated_mol[y.start:y.stop, x.stop-1:x.stop+1] = intensity
         return annotated_mol
 
     def stitch_extract_molecules_in_column(self, minimum_molecule_length=50*5, abstraction_threshold=100):
