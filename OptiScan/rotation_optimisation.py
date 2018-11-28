@@ -211,7 +211,7 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
             top_bottom = get_2d_bottom(top_image)
             bottom_top = get_2d_top(bottom_image)
             try:
-                _y = top_bottom_to_slide_scores(top_bottom, bottom_top)
+                _y = get_yshift(top_bottom, bottom_top)
             except ZeroDivisionError:
                 _y = 0
             # _y = 0
@@ -372,7 +372,7 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
     else:
         return x_shift_list_of_frames(list_of_frames, additional_set=additional_set, y_shift=y_shift)
 
-"""
+
 def get_yshift(top_image_bottom, bottom_image_top, return_score=False):
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     if len(pairs) == 0:
@@ -381,7 +381,7 @@ def get_yshift(top_image_bottom, bottom_image_top, return_score=False):
     ymed = np.median([sum(y) for x, y in pairs])
     print(xmed, ymed)
     filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
-    corrs = [xcorr(y, x, norm="unbiased")[0] for x, y in filtered_pairs]
+    corrs = [np.correlate(y, x, mode="full")[0] for x, y in filtered_pairs]
     if not corrs:
         if return_score:
             return 0,0
@@ -391,7 +391,7 @@ def get_yshift(top_image_bottom, bottom_image_top, return_score=False):
     if return_score:
         return corr_sum, corrs
     return np.argmax(corr_sum[:60])
-"""
+
 
 def zoom_out_and_center_on_original(image, zoom_out_ratio):
     if zoom_out_ratio == 1:
