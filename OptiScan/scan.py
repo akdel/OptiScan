@@ -171,7 +171,8 @@ class AnalyzeScan(Scan):
         print("%s of these are longer than %s pixels (about %s kbp) and taken as molecule set." % \
               (len(slices), minimum_molecule_length, (minimum_molecule_length * 500)/1000))
         for _slice in slices:
-            new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+6] #+3]
+            # new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+6] #+3]
+            new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+2] #+3]
             self.mol_slices.append(self.current_mol_column[new_slice])
             self.lab_slices.append(self.current_lab_column[new_slice])
 
