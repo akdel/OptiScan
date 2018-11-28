@@ -291,8 +291,8 @@ def _vector_function_1(cell1, cell2):
 
 
 def molecule_arrays_to_masks(top_bottom_array, bottom_top_array):
-    top = np.where(top_bottom_array >= 600, 1, np.where(600 > top_bottom_array, 0, top_bottom_array))
-    bot = np.where(bottom_top_array >= 600, 1, np.where(600 > bottom_top_array, 0, bottom_top_array))
+    top = np.where(top_bottom_array >= 300, 1, np.where(300 > top_bottom_array, 0, top_bottom_array))
+    bot = np.where(bottom_top_array >= 300, 1, np.where(300 > bottom_top_array, 0, bottom_top_array))
     return top, bot
 
 
@@ -316,7 +316,7 @@ def slide_and_score(array1, array2):
 
 def top_bottom_to_slide_scores(top_image_bottom, bottom_image_top, return_score=False):
     pairs = [x for x in get_molecule_pairs(top_image_bottom, bottom_image_top)]
-    xmed = (350*top_image_bottom.shape[0])/10
+    xmed = (650*top_image_bottom.shape[0])/10
     pairs = [(x, y) for x, y in pairs if sum(x) >= xmed or sum(y) >= xmed]
     if len(pairs) == 0:
         return 0
