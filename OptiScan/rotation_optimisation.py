@@ -206,7 +206,7 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
     if y_shift:
         if prey_shift:
             if prey_shift is not 0:
-                top_image = top_image[:-prey_shift]
+                top_image = top_image[: -1 * prey_shift]
         else:
             top_bottom = get_2d_bottom(top_image)
             bottom_top = get_2d_top(bottom_image)
@@ -216,7 +216,7 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
                 _y = 0
             # _y = 0
             if _y != 0:
-                top_image = top_image[:-_y]
+                top_image = top_image[: -1 *_y]
 
     if return_y_shift:
         return np.concatenate((top_image, bottom_image)), _y
@@ -229,8 +229,10 @@ def x_shift_list_of_frames(list_of_frames_in_order, additional_set=None, y_shift
         current_additional_frame = additional_set[0]
     for i in range(1, len(list_of_frames_in_order), 1):
         shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i])
+        print(shift_value)
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
                                               return_y_shift=True)
+        print(_y)
         if additional_set:
             current_additional_frame = x_shift_and_merge(current_additional_frame, additional_set[i], shift_value,
                                                          y_shift=True, prey_shift=_y)
@@ -373,7 +375,7 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
         return x_shift_list_of_frames(list_of_frames, additional_set=additional_set, y_shift=y_shift)
 
 
-def get_yshift(top_image_bottom, bottom_image_top, return_score=False):
+def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     if len(pairs) == 0:
         return 0
@@ -381,7 +383,7 @@ def get_yshift(top_image_bottom, bottom_image_top, return_score=False):
     ymed = np.median([sum(y) for x, y in pairs])
     print(xmed, ymed)
     filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
-    corrs = [np.correlate(y, x, mode="full")[0] for x, y in filtered_pairs]
+    corrs = [np.correlate(y, x, mode="full") for x, y in filtered_pairs]
     if not corrs:
         if return_score:
             return 0,0
@@ -391,6 +393,17 @@ def get_yshift(top_image_bottom, bottom_image_top, return_score=False):
     if return_score:
         return corr_sum, corrs
     return np.argmax(corr_sum[:60])
+
+
+def get_yshift(top_image_bottom, bottom_image_top):
+    pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
+    xmed = np.median([sum(x) for x, y in pairs])
+    ymed = np.median([sum(y) for x, y in pairs])
+    filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
+    corrs = np.array([np.correlate(y, x, mode="full") for x, y in filtered_pairs], dtype=float)
+    corr_sum = np.sum(corrs, axis=0)
+    return np.argmax(corr_sum[:60])
+
 
 
 def zoom_out_and_center_on_original(image, zoom_out_ratio):
