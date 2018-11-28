@@ -71,9 +71,6 @@ class Scan:
             self.nof_frames = len(self.frames[0])
             self.chip_dimension = (1, self.nof_frames)
 
-
-            
-
     def _record_frames(self):
         """
         Loads all the frames to memory (stored as numpy arrays in self.frames).

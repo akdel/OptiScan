@@ -356,6 +356,8 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
     """
     if tophat:
         list_of_frames = [ndimage.white_tophat(x, structure=disk(6)) for x in list_of_frames] # 6 for irys
+        if additional_set:
+            additional_set = [ndimage.white_tophat(x, structure=disk(6)) for x in additional_set]
     list_of_frames_with_angles = [rotate_with_optimal_rotation(x) for x in list_of_frames]
     list_of_frames = [x[0] for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
