@@ -5,6 +5,7 @@ from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
 
 
+
 def white_tophat_to_image(image_array, disk_radius=6):
     """
     Performs white tophat by using a disk structure. (Wrapper for ndimage.white_tophat + disk)
@@ -415,13 +416,13 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
 
 def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     import matplotlib.pyplot as plt
-    if saphyr:
-        filtered_pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
-    else:
-        pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
-        xmed = np.median([sum(x) for x, y in pairs])
-        ymed = np.median([sum(y) for x, y in pairs])
-        filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
+    # if saphyr:
+    #     filtered_pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
+    # else:
+    pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
+    xmed = np.median([sum(x) for x, y in pairs])
+    ymed = np.median([sum(y) for x, y in pairs])
+    filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
     corrs = np.array([np.correlate(y, x, mode="full") for x, y in filtered_pairs], dtype=float)
     corr_sum = np.sum(corrs, axis=0)
     if debug:
