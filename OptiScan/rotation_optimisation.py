@@ -387,10 +387,10 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
         if magnification_optimisation:
             additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
                                     in range(len(additional_input))]
-            return x_shift_list_of_frames(list_of_frames, additional_set=additional_mag_input, y_shift=y_shift)
-        return x_shift_list_of_frames(list_of_frames, additional_set=additional_input, y_shift=y_shift)
+            return x_shift_list_of_frames(list_of_frames, additional_set=additional_mag_input, y_shift=y_shift, saphyr=saphyr)
+        return x_shift_list_of_frames(list_of_frames, additional_set=additional_input, y_shift=y_shift, saphyr=saphyr)
     else:
-        return x_shift_list_of_frames(list_of_frames, additional_set=additional_set, y_shift=y_shift)
+        return x_shift_list_of_frames(list_of_frames, additional_set=additional_set, y_shift=y_shift, saphyr=saphyr)
 
 
 def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
