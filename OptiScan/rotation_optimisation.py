@@ -3,6 +3,7 @@ from scipy import signal
 import numpy as np
 from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
+from OptiMap.align import normalized_correlation as ncorr
 
 
 
@@ -423,8 +424,8 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 4) or (sum(y) >= ymed * 4)]
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
-    corrs = np.array([np.correlate(y, x, mode="full") for x, y in filtered_pairs], dtype=float)
-    corr_sum = np.median(corrs, axis=0)
+    corrs = np.array([ncorr(y, x, limit=25) for x, y in filtered_pairs], dtype=float)
+    corr_sum = np.sum(corrs, axis=0)
     if debug:
         plt.imshow(top_image_bottom)
         plt.show()
