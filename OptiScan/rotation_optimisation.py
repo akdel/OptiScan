@@ -142,22 +142,28 @@ def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05,
     return ndimage.rotate(image, angle, reshape=False), angle
 
 
-def get_1d_bottom(image):
+def get_1d_bottom(image, saphyr=False):
     current_max = np.max(np.sum(image[-6:-1, :], axis=0))
     n = -1
-    while (current_max <= 600*5) and (n != -50):
-        n -= 1
-        current_max = np.max(np.sum(image[n-5:n, :], axis=0))
-    return np.sum(image[n - 5:, :], axis=0)
+    if saphyr:
+        return np.sum(image[-200:], axis=0)
+    else:
+        while (current_max <= 600*5) and (n != -50):
+            n -= 1
+            current_max = np.max(np.sum(image[n-5:n, :], axis=0))
+        return np.sum(image[n - 5:, :], axis=0)
 
 
-def get_1d_top(image):
+def get_1d_top(image, saphyr=False):
     current_max = np.max(np.sum(image[0:5, :], axis=0))
     n = 0
-    while (current_max <= 300*5) and (n != 50):
-        n += 1
-        current_max = np.max(np.sum(image[n:n+5, :], axis=0))
-    return np.sum(image[n:n+5, :], axis=0)
+    if saphyr:
+        return np.sum(image[:200], axis=0)
+    else:
+        while (current_max <= 300*5) and (n != 50):
+            n += 1
+            current_max = np.max(np.sum(image[n:n+5, :], axis=0))
+        return np.sum(image[n:n+5, :], axis=0)
 
 
 def get_2d_bottom(image):
@@ -168,14 +174,14 @@ def get_2d_top(image):
     return image[:120, :]
 
 
-def x_shift_for_bottom_image(top_image, bottom_image, debug=True):
+def x_shift_for_bottom_image(top_image, bottom_image, debug=True, saphyr=True):
     """
     :param top_image:
     :param bottom_image:
     :return:
     """
-    bottom_image_top = get_1d_top(bottom_image)
-    top_image_bottom = get_1d_bottom(top_image)
+    bottom_image_top = get_1d_top(bottom_image, saphyr=saphyr)
+    top_image_bottom = get_1d_bottom(top_image, saphyr=saphyr)
     if debug:
         import matplotlib.pyplot as plt
         plt.plot(top_image_bottom)
