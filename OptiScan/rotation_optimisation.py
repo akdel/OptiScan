@@ -229,14 +229,13 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
             top_bottom = get_2d_bottom(top_image, saphyr=saphyr)
             bottom_top = get_2d_top(bottom_image, saphyr=saphyr)
             try:
-                _y = get_yshift(top_bottom, bottom_top)
+                _y = get_yshift(top_bottom, bottom_top, saphyr=saphyr)
             except ZeroDivisionError:
                 print("zero div error")
                 _y = 0
             # _y = 0
             if _y != 0:
                 top_image = top_image[: -_y]
-
     if return_y_shift:
         return np.concatenate((top_image, bottom_image)), _y
     return np.concatenate((top_image, bottom_image))
