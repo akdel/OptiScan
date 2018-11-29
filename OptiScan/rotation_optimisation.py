@@ -146,7 +146,7 @@ def get_1d_bottom(image, saphyr=False):
     current_max = np.max(np.sum(image[-6:-1, :], axis=0))
     n = -1
     if saphyr:
-        return np.sum(image[-200:], axis=0)
+        return np.mean(image[-200:], axis=0)
     else:
         while (current_max <= 600*5) and (n != -50):
             n -= 1
@@ -158,7 +158,7 @@ def get_1d_top(image, saphyr=False):
     current_max = np.max(np.sum(image[0:5, :], axis=0))
     n = 0
     if saphyr:
-        return np.sum(image[:200], axis=0)
+        return np.mean(image[:200], axis=0)
     else:
         while (current_max <= 300*5) and (n != 50):
             n += 1
@@ -166,11 +166,16 @@ def get_1d_top(image, saphyr=False):
         return np.sum(image[n:n+5, :], axis=0)
 
 
-def get_2d_bottom(image):
+def get_2d_bottom(image, saphyr=False):
+    if saphyr:
+        return image[-300:, :]
     return image[-120:, :]
 
 
-def get_2d_top(image):
+def get_2d_top(image, saphyr=False):
+    print("sap:",saphyr)
+    if saphyr:
+        return image[:300, :]
     return image[:120, :]
 
 
@@ -209,7 +214,7 @@ def x_shift_image_while_keeping_default_xshape(shape, image, shift):
         return None
 
 
-def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, return_y_shift=False, prey_shift=None):
+def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, return_y_shift=False, prey_shift=None, saphyr=False):
     if top_image.shape[1] != bottom_image.shape[1]:
         return None
     if shift_value[1] == "bottom":
@@ -221,8 +226,8 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
             if prey_shift is not 0:
                 top_image = top_image[: -1 * prey_shift]
         else:
-            top_bottom = get_2d_bottom(top_image)
-            bottom_top = get_2d_top(bottom_image)
+            top_bottom = get_2d_bottom(top_image, saphyr=saphyr)
+            bottom_top = get_2d_top(bottom_image, saphyr=saphyr)
             try:
                 _y = get_yshift(top_bottom, bottom_top)
             except ZeroDivisionError:
@@ -236,15 +241,15 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
     return np.concatenate((top_image, bottom_image))
 
 
-def x_shift_list_of_frames(list_of_frames_in_order, additional_set=None, y_shift=False):
+def x_shift_list_of_frames(list_of_frames_in_order, additional_set=None, y_shift=False, saphyr=False):
     current_frame = list_of_frames_in_order[0]
     if additional_set:
         current_additional_frame = additional_set[0]
     for i in range(1, len(list_of_frames_in_order), 1):
-        shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i])
+        shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i], saphyr=saphyr)
         print(shift_value)
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
-                                              return_y_shift=True)
+                                              return_y_shift=True, saphyr=saphyr)
         print(_y)
         if additional_set:
             current_additional_frame = x_shift_and_merge(current_additional_frame, additional_set[i], shift_value,
