@@ -420,7 +420,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     xmed = np.median([sum(x) for x, y in pairs])
     ymed = np.median([sum(y) for x, y in pairs])
     if saphyr:
-        filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 3) or (sum(y) >= ymed * 3)]
+        filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 6) or (sum(y) >= ymed * 6)]
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
     corrs = np.array([np.correlate(y, x, mode="full") for x, y in filtered_pairs], dtype=float)
