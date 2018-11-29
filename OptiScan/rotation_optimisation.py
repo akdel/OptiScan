@@ -168,7 +168,7 @@ def get_2d_top(image):
     return image[:120, :]
 
 
-def x_shift_for_bottom_image(top_image, bottom_image):
+def x_shift_for_bottom_image(top_image, bottom_image, debug=True):
     """
     :param top_image:
     :param bottom_image:
@@ -176,6 +176,13 @@ def x_shift_for_bottom_image(top_image, bottom_image):
     """
     bottom_image_top = get_1d_top(bottom_image)
     top_image_bottom = get_1d_bottom(top_image)
+    if debug:
+        import matplotlib.pyplot as plt
+        plt.plot(top_image_bottom)
+        plt.plot(bottom_image_top)
+        plt.show()
+        plt.plot(signal.correlate(top_image_bottom, bottom_image_top))
+        plt.show()
     answer = ((np.argmax(signal.correlate(top_image_bottom, bottom_image_top)))
               - (-1 + len(bottom_image_top))) * -1
     if answer < 0:
