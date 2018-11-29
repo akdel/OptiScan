@@ -171,6 +171,7 @@ class AnalyzeScan(Scan):
         print("%s of these are longer than %s pixels (about %s kbp) and taken as molecule set." % \
               (len(slices), minimum_molecule_length, (minimum_molecule_length * 500)/1000))
         for _slice in slices:
+            # if self.saphyr:
             # new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+6] #+3]
             new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+2] #+3]
             self.mol_slices.append(self.current_mol_column[new_slice])
@@ -264,14 +265,16 @@ class AnalyzeScan(Scan):
             self.current_lab_column = ndimage.zoom(nick_label_column, 0.3333)
             self.current_mol_column = ndimage.zoom(backbone_label_column, 0.3333)
         else:
-            unstiched_backbone_column = []
-            unstiched_label_column = []
-            backbone_frames = []
-            lab_frames = []
-            self.current_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
-            self.current_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
-            self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(12))
-            self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(12))
+            concat_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
+            concat_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
+            backbone_frames = [concat_mol_column[i:i+2048] for i in range(0, concat_mol_column.shape[0], 2048)]
+            lab_frames = [concat_lab_column[i:i+2048] for i in range(0, concat_lab_column.shape[0], 2048)]
+            backbone_label_column, nick_label_column = stitch_column(backbone_frames, lab_frames)
+            self.current_lab_column = ndimage.zoom(nick_label_column, 0.3333)
+            self.current_mol_column = ndimage.zoom(backbone_label_column, 0.3333)
+            
+            # self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(12))
+            # self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(12))
 
     def annotate_column(self, intensity=1000) -> np.ndarray:
         """
