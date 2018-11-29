@@ -168,14 +168,14 @@ def get_1d_top(image, saphyr=False):
 
 def get_2d_bottom(image, saphyr=False):
     if saphyr:
-        return image[-300:, :]
+        return image[-600:, :]
     return image[-120:, :]
 
 
 def get_2d_top(image, saphyr=False):
     print("sap:",saphyr)
     if saphyr:
-        return image[:300, :]
+        return image[:600, :]
     return image[:120, :]
 
 
@@ -437,7 +437,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     else:
         pass
     if saphyr:
-        return np.argmax(corr_sum[:150])
+        return np.argmax(corr_sum[:300])
     else:
         return np.argmax(corr_sum[:60])
 
