@@ -346,7 +346,7 @@ def y_shift_for_list_of_frames(list_of_frames):
 
 
 def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set=None, y_shift=True, tophat=True,
-                                                  magnification_optimisation=True):
+                                                  magnification_optimisation=True, saphyr=False):
     """
     This is the pipeline function and is used for bionano column alignment..
     :param list_of_frames:
