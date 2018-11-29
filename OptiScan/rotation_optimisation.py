@@ -117,7 +117,7 @@ def get_peak_averages_in_rotation_range(image, _from=-0.1, _to=0.1, space=0.05):
             for x in rotation_angles]
 
 
-def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.01):
+def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.01, saphyr=False):
     """
 
     :param image:
@@ -127,7 +127,11 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_s
     :param final_space:
     :return:
     """
+    if saphyr:
+        _from *= 5
+        _to *= 5
     values_with_angles = get_peak_averages_in_rotation_range(image, _from=_from, _to=_to, space=initial_space)
+    print(values_with_angles)
     try:
         max_pair = max(values_with_angles)
     except TypeError:
@@ -137,9 +141,9 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_s
                                                space=final_space)
 
 
-def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.005):
+def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.005, saphyr=False):
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
-                                     initial_space=initial_space, final_space=final_space))[1]
+                                     initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
     print(angle)
     return ndimage.rotate(image, angle, reshape=False), angle
 
@@ -380,7 +384,7 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
         list_of_frames = [ndimage.white_tophat(x, structure=disk(7)) for x in list_of_frames] # 6 for irys
         if additional_set:
             additional_set = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
-    list_of_frames_with_angles = [rotate_with_optimal_rotation(x) for x in list_of_frames]
+    list_of_frames_with_angles = [rotate_with_optimal_rotation(x, saphyr=saphyr) for x in list_of_frames]
     list_of_frames = [x[0] for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
     if additional_set:
@@ -422,9 +426,10 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     ymed = np.median([sum(y) for x, y in pairs])
     if saphyr:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 4) or (sum(y) >= ymed * 4)]
+        corrs = np.array([ncorr(y, x, limit=25) for x, y in filtered_pairs], dtype=float)
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
-    corrs = np.array([ncorr(y, x, limit=25) for x, y in filtered_pairs], dtype=float)
+        corrs = np.array([ncorr(y, x, limit=12) for x, y in filtered_pairs], dtype=float)
     corr_sum = np.sum(corrs, axis=0)
     if debug:
         plt.imshow(top_image_bottom)
