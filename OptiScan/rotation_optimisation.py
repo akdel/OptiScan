@@ -231,10 +231,11 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
             try:
                 _y = get_yshift(top_bottom, bottom_top)
             except ZeroDivisionError:
+                print("zero div error")
                 _y = 0
             # _y = 0
             if _y != 0:
-                top_image = top_image[: -1 *_y]
+                top_image = top_image[: -_y]
 
     if return_y_shift:
         return np.concatenate((top_image, bottom_image)), _y
