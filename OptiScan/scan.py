@@ -269,7 +269,7 @@ class AnalyzeScan(Scan):
             concat_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
             backbone_frames = [ndimage.white_tophat(concat_mol_column[i:i+2048], structure=disk(12)) for i in range(0, concat_mol_column.shape[0], 2048)]
             lab_frames = [ndimage.white_tophat(concat_lab_column[i:i+2048], structure=disk(12)) for i in range(0, concat_lab_column.shape[0], 2048)]
-            self.current_mol_column, self.current_lab_column = stitch_column(backbone_frames, lab_frames)
+            self.current_mol_column, self.current_lab_column = stitch_column(backbone_frames, lab_frames, saphyr=self.saphyr)
             
             # self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(12))
             # self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(12))
@@ -592,7 +592,7 @@ def return_column(image_frames: [np.ndarray], column_no: int, dimensions: (int, 
     return backbone_frames, nick_frames
 
 
-def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray]) -> (np.ndarray, np.ndarray):
+def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray], saphyr=False) -> (np.ndarray, np.ndarray):
     """
     Wrapper function which
     Parameters
@@ -607,4 +607,4 @@ def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray]) -> (
                                                          additional_set=nick_frames,
                                                          y_shift=True,
                                                          tophat=True,
-                                                         magnification_optimisation=True)
+                                                         magnification_optimisation=True, saphyr=saphyr)

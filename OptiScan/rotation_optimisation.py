@@ -179,7 +179,7 @@ def get_2d_top(image, saphyr=False):
     return image[:120, :]
 
 
-def x_shift_for_bottom_image(top_image, bottom_image, debug=True, saphyr=True):
+def x_shift_for_bottom_image(top_image, bottom_image, debug=True, saphyr=False):
     """
     :param top_image:
     :param bottom_image:
