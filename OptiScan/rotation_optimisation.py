@@ -128,8 +128,9 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_s
     :return:
     """
     if saphyr:
-        _from *= 10
-        _to *= 10
+        _from *= 5
+        _to *= 5
+        initial_space *= 2
     values_with_angles = get_peak_averages_in_rotation_range(image, _from=_from, _to=_to, space=initial_space)
     print(values_with_angles)
     try:
