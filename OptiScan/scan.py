@@ -172,7 +172,7 @@ class AnalyzeScan(Scan):
               (len(slices), minimum_molecule_length, (minimum_molecule_length * 500)/1000))
         for _slice in slices:
             if self.saphyr:
-                new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+6] #+3]
+                new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start-1:_slice[1].stop+1] #+3]
             else:
                 new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+2] #+3]
             self.mol_slices.append(self.current_mol_column[new_slice])
