@@ -131,7 +131,6 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
         _to *= 10
         initial_space *= 2
     values_with_angles = get_peak_averages_in_rotation_range(image, _from=_from, _to=_to, space=initial_space)
-    print(values_with_angles)
     try:
         max_pair = max(values_with_angles)
     except TypeError:
@@ -144,7 +143,6 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
 def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.005, saphyr=False):
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
-    print(angle)
     return ndimage.rotate(image, angle, reshape=False), angle
 
 
@@ -179,7 +177,7 @@ def get_2d_bottom(image, saphyr=False):
 
 
 def get_2d_top(image, saphyr=False):
-    print("sap:",saphyr)
+    print("Saphyr:",saphyr)
     if saphyr:
         return image[:600, :]
     return image[:120, :]
@@ -253,10 +251,8 @@ def x_shift_list_of_frames(list_of_frames_in_order, additional_set=None, y_shift
         current_additional_frame = additional_set[0]
     for i in range(1, len(list_of_frames_in_order), 1):
         shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i], saphyr=saphyr)
-        print(shift_value)
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
                                               return_y_shift=True, saphyr=saphyr)
-        print(_y)
         if additional_set:
             current_additional_frame = x_shift_and_merge(current_additional_frame, additional_set[i], shift_value,
                                                          y_shift=True, prey_shift=_y)
@@ -405,7 +401,6 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
         return 0
     xmed = np.median([sum(x) for x, y in pairs])
     ymed = np.median([sum(y) for x, y in pairs])
-    print(xmed, ymed)
     filtered_pairs = [(x,y) for x, y in pairs if (sum(x)/1.5 >= xmed) or (sum(y)/1.5 >= ymed)]
     corrs = [np.correlate(y, x, mode="full") for x, y in filtered_pairs]
     if not corrs:
