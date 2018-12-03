@@ -185,7 +185,7 @@ def get_2d_top(image, saphyr=False):
     return image[:120, :]
 
 
-def x_shift_for_bottom_image(top_image, bottom_image, debug=True, saphyr=False):
+def x_shift_for_bottom_image(top_image, bottom_image, debug=False, saphyr=False):
     """
     :param top_image:
     :param bottom_image:
@@ -419,7 +419,7 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
     return np.argmax(corr_sum[:60])
 
 
-def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
+def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     import matplotlib.pyplot as plt
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     xmed = np.median([sum(x) for x, y in pairs])
