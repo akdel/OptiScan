@@ -3,7 +3,7 @@ from scipy import signal
 import numpy as np
 from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
-# from OptiMap.align import normalized_correlation as ncorr
+from OptiScan.align import normalized_correlation as ncorr
 
 
 
