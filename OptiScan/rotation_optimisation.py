@@ -235,7 +235,6 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
             try:
                 _y = get_yshift(top_bottom, bottom_top, saphyr=saphyr)
             except ZeroDivisionError:
-                raise Warning("zero div error")
                 _y = 0
             # _y = 0
             if _y != 0:
