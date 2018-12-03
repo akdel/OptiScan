@@ -43,7 +43,6 @@ def get_peaks_from_xsum(xsum, number=15):
 
 def get_average_peak_values(xsum):
     """
-
     :param xsum:
     :return:
     """
@@ -117,7 +116,7 @@ def get_peak_averages_in_rotation_range(image, _from=-0.1, _to=0.1, space=0.05):
             for x in rotation_angles]
 
 
-def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.01, saphyr=False):
+def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_space=0.01, saphyr=False):
     """
 
     :param image:
@@ -128,8 +127,8 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_s
     :return:
     """
     if saphyr:
-        _from *= 5
-        _to *= 5
+        _from *= 10
+        _to *= 10
         initial_space *= 2
     values_with_angles = get_peak_averages_in_rotation_range(image, _from=_from, _to=_to, space=initial_space)
     print(values_with_angles)
