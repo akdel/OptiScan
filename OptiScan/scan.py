@@ -143,7 +143,7 @@ class AnalyzeScan(Scan):
             nick_label, backbone_label = outcome
             self.molecules[self.current_column_id].append((molecule_id, nick_label, backbone_label))
 
-    def define_molecules(self, minimum_molecule_length=50*5, abstraction_threshold=100):
+    def define_molecules(self, minimum_molecule_length=50*5, abstraction_threshold=100, k1=-1, k2=0, m=3):
         """
         Defines molecule boundaries in the current column and updates the corresponding metadata.
         Parameters
@@ -164,9 +164,9 @@ class AnalyzeScan(Scan):
             molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
         elif self.saphyr:
             molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, self.current_mol_column, 0)
-            mask = np.array([[1., -10.], [1., -10.], [1., -10.], [1., -10.]])
+            mask = np.array([[k2, k1], [k2, k1], [k2, k1], [k2, k1]])
             molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
-            molecule_abstract = np.where(molecule_abstract > (abstraction_threshold*3), 1, 0)
+            molecule_abstract = np.where(molecule_abstract > (abstraction_threshold*m), 1, 0)
             self.something = molecule_abstract
         labels = ndimage.label(molecule_abstract)
         slices = ndimage.find_objects(labels[0], max_label=labels[1])
