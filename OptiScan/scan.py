@@ -163,7 +163,10 @@ class AnalyzeScan(Scan):
             molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
             molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
         elif self.saphyr:
-            molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, 1, 0)
+            molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, self.current_mol_column, 0)
+            mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
+            molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
+            molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
         labels = ndimage.label(molecule_abstract)
         slices = ndimage.find_objects(labels[0], max_label=labels[1])
         print("%s potential molecule fragments are found..." % len(slices))
