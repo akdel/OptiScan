@@ -164,7 +164,7 @@ class AnalyzeScan(Scan):
             molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
         elif self.saphyr:
             molecule_abstract = np.zeros(self.current_mol_column.shape)
-            mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
+            mask = np.array([[1., -10.], [1., -10.], [1., -10.], [1., -10.]])
             molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
             molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
             self.something = molecule_abstract
