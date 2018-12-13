@@ -219,6 +219,7 @@ def x_shift_image_while_keeping_default_xshape(shape, image, shift):
 
 
 def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, return_y_shift=False, prey_shift=None, saphyr=False):
+    print(top_image, bottom_image)
     if top_image.shape[1] != bottom_image.shape[1]:
         return None
     if shift_value[1] == "bottom":
@@ -388,7 +389,6 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
         if magnification_optimisation:
             additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
                                     in range(len(additional_input))]
-            print(list_of_frames, additional_mag_input)
             return x_shift_list_of_frames(list_of_frames, additional_set=additional_mag_input, y_shift=y_shift, saphyr=saphyr)
         return x_shift_list_of_frames(list_of_frames, additional_set=additional_input, y_shift=y_shift, saphyr=saphyr)
     else:
