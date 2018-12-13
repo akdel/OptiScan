@@ -219,7 +219,7 @@ def x_shift_image_while_keeping_default_xshape(shape, image, shift):
 
 
 def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, return_y_shift=False, prey_shift=None, saphyr=False):
-    print(top_image, bottom_image)
+    print(top_image.shape, bottom_image.shape)
     if top_image.shape[1] != bottom_image.shape[1]:
         return None
     if shift_value[1] == "bottom":
