@@ -4,6 +4,7 @@ import numpy as np
 from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
 from OptiScan.align import normalized_correlation as ncorr
+import matplotlib.pyplot as plt
 
 
 
@@ -466,8 +467,10 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio):
 def get_corr_score_for_zoom(image_xsum, ref_image_xsum, zoom_out_ratio):
     image_xsum = ndimage.zoom(image_xsum, zoom_out_ratio)
     corr = signal.correlate(ref_image_xsum, image_xsum)
+    plt.plot(corr)
     shift_idx = np.argmax(corr)
     max_corr = corr[shift_idx]
+    print(max_corr, shift_idx)
     return max_corr, shift_idx
 
 
@@ -483,6 +486,7 @@ def get_optimal_magnification_for_overlay(image, ref_image, _start=0.990, _to=0.
 def get_optimal_zoom_and_obtain_new_image(image, ref_image, _start=0.990, _to=0.999, _space=0.001):
     optimal_mag, shift = get_optimal_magnification_for_overlay(image, ref_image, _start=_start, _to=_to, _space=_space)
     return zoom_out_and_center_on_original(image, optimal_mag)
+
 
 def overlay_saphyr_columns(mol_col, label_col, _start=0.990, _to=1.01, _space=0.001):
     optimized_mol_col, angle =rotate_with_optimal_rotation(mol_col)
