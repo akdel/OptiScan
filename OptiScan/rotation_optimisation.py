@@ -446,11 +446,17 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
 
 
 
-def zoom_out_and_center_on_original(image, zoom_out_ratio):
+def zoom_out_and_center_on_original(image, zoom_out_ratio, shift):
     if zoom_out_ratio == 1:
         return image
     original_size = image.shape[0]
     shrank = ndimage.zoom(image, zoom_out_ratio)
+    new_shrank = np.zeros(shrank.shape, dtype=shrank.dtype)
+    if shift < 0:
+        new_shrank[:shift] = shrank[-1*shift:]
+    else:
+        new_shrank[shift:] = shrank[:-shift]
+    shrank = new_shrank
     shrank_size = shrank.shape[0]
     size_diff = original_size - shrank_size
     pad_width = size_diff / 2
@@ -466,7 +472,7 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio):
 
 def get_corr_score_for_zoom(image_xsum, ref_image_xsum, zoom_out_ratio):
     image_xsum = ndimage.zoom(image_xsum, zoom_out_ratio)
-    corr = ncorr(ref_image_xsum, image_xsum, 700)
+    corr = signal.correlate(ref_image_xsum, image_xsum)
     print(image_xsum.shape, ref_image_xsum.shape)
     plt.plot(corr)
     plt.show()
@@ -487,7 +493,7 @@ def get_optimal_magnification_for_overlay(image, ref_image, _start=0.990, _to=0.
 
 def get_optimal_zoom_and_obtain_new_image(image, ref_image, _start=0.990, _to=0.999, _space=0.001):
     optimal_mag, shift = get_optimal_magnification_for_overlay(image, ref_image, _start=_start, _to=_to, _space=_space)
-    return zoom_out_and_center_on_original(image, optimal_mag)
+    return zoom_out_and_center_on_original(image, optimal_mag, shift)
 
 
 def overlay_saphyr_columns(mol_col, label_col, _start=0.990, _to=1.01, _space=0.001):
