@@ -477,7 +477,7 @@ def get_optimal_magnification_for_overlay(image, ref_image, _start=0.990, _to=0.
     ref_image_xsum = get_xsum(ref_image)
     mags = [(get_corr_score_for_zoom(image_xsum, ref_image_xsum, x), x) for x in zoom_values]
     max_mag =  max(mags)
-    return mags[1], mags[0][1]
+    return max_mag[1], max_mag[0][1]
 
 
 def get_optimal_zoom_and_obtain_new_image(image, ref_image, _start=0.990, _to=0.999, _space=0.001):
