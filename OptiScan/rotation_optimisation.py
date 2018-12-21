@@ -479,7 +479,7 @@ def get_corr_score_for_zoom(image_xsum, ref_image_xsum, zoom_out_ratio):
     shift_idx = np.argmax(corr)
     max_corr = corr[shift_idx]
     print(max_corr, shift_idx)
-    return max_corr, shift_idx
+    return max_corr, shift_idx - image_xsum.shape[0]
 
 
 def get_optimal_magnification_for_overlay(image, ref_image, _start=0.990, _to=0.999, _space=0.001):
