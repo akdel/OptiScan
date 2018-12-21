@@ -466,7 +466,7 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio):
 
 def get_corr_score_for_zoom(image_xsum, ref_image_xsum, zoom_out_ratio):
     image_xsum = ndimage.zoom(image_xsum, zoom_out_ratio)
-    corr = ncorr(image_xsum, ref_image_xsum)
+    corr = ncorr(ref_image_xsum, image_xsum)
     print(image_xsum.shape, ref_image_xsum.shape)
     plt.plot(corr)
     plt.show()
