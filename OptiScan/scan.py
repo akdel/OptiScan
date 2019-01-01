@@ -48,7 +48,7 @@ class Scan:
                 for f in saphyr_folder_searcher:
                     if "CH1" in f:
                         self.frames[0].append(f)
-                    elif "CH2" in f:
+                    elif "CH3" in f:
                         self.frames[1].append(f)
                     else:
                         print("Unknown file: ", f)
