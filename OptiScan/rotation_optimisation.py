@@ -178,7 +178,7 @@ def get_2d_bottom(image, saphyr=False):
 
 
 def get_2d_top(image, saphyr=False):
-    print("Saphyr:",saphyr)
+    # print("Saphyr:",saphyr)
     if saphyr:
         return image[:600, :]
     return image[:120, :]
