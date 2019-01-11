@@ -193,7 +193,6 @@ def x_shift_for_bottom_image(top_image, bottom_image, debug=False, saphyr=False)
     bottom_image_top = get_1d_top(bottom_image, saphyr=saphyr)
     top_image_bottom = get_1d_bottom(top_image, saphyr=saphyr)
     if debug:
-        import matplotlib.pyplot as plt
         plt.plot(top_image_bottom)
         plt.plot(bottom_image_top)
         plt.show()
@@ -220,7 +219,7 @@ def x_shift_image_while_keeping_default_xshape(shape, image, shift):
 
 
 def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, return_y_shift=False, prey_shift=None, saphyr=False):
-    print(top_image.shape, bottom_image.shape)
+    # print(top_image.shape, bottom_image.shape)
     if top_image.shape[1] != bottom_image.shape[1]:
         return None
     if shift_value[1] == "bottom":
@@ -416,7 +415,6 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
 
 
 def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
-    import matplotlib.pyplot as plt
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     xmed = np.median([sum(x) for x, y in pairs])
     ymed = np.median([sum(y) for x, y in pairs])
@@ -473,12 +471,12 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio, shift):
 def get_corr_score_for_zoom(image_xsum, ref_image_xsum, zoom_out_ratio):
     image_xsum = ndimage.zoom(image_xsum, zoom_out_ratio)
     corr = signal.correlate(ref_image_xsum, image_xsum)
-    print(image_xsum.shape, ref_image_xsum.shape)
-    plt.plot(corr)
-    plt.show()
+    # print(image_xsum.shape, ref_image_xsum.shape)
+    # plt.plot(corr)
+    # plt.show()
     shift_idx = np.argmax(corr)
     max_corr = corr[shift_idx]
-    print(max_corr, shift_idx)
+    # print(max_corr, shift_idx)
     return max_corr, shift_idx - image_xsum.shape[0]
     
 
