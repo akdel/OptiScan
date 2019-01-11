@@ -22,7 +22,7 @@ Required Python libraries:
 ```bash
 pip install numpy numba scipy sqlalchemy pylab scikit-image intervaltree
 git clone https://gitlab.com/akdel/OptiScan.git
-cd photomap
+cd OptiScan
 python setup.py install
 cd pipelines
 chmod +x ./extract_molecules
