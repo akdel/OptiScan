@@ -1,5 +1,4 @@
 from OptiScan import *
-from OptiScan import database as db
 from OptiScan import numba_funcs
 from scipy import signal
 from scipy import ndimage
