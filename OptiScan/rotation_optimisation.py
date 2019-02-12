@@ -119,7 +119,6 @@ def get_peak_averages_in_rotation_range(image, _from=-0.1, _to=0.1, space=0.05):
 
 def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_space=0.01, saphyr=False):
     """
-
     :param image:
     :param _from:
     :param _to:
@@ -141,7 +140,7 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
                                                space=final_space)
 
 
-def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.005, saphyr=False):
+def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.05, saphyr=False):
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
     return ndimage.rotate(image, angle, reshape=False), angle
@@ -453,7 +452,7 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio, shift):
     if shift < 0:
         new_shrank[:,:shift] = shrank[:,-1*shift:]
     else:
-        new_shrank[:,shift:] = shrank[:,:-shift]
+        new_shrank[:,shift:] = shrank[:,:-shift] # fix
     shrank = new_shrank
     shrank_size = shrank.shape[0]
     size_diff = original_size - shrank_size
