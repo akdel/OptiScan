@@ -223,8 +223,19 @@ def rotate(image, angle):
             create_translation_matrix(-x_len//2, -y_len//2, 0)
     rotated = t_mat @ tuples
     transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
-    return fix_holes(vectors_to_pixels(transformed))
+    return vectors_to_pixels(transformed)
 
+@nb.jit(nopython=True, parallel=True)
+def rotate_v2(image, angle):
+    x_len = image.shape[1]
+    y_len = image.shape[0]
+    tuples = pixels_to_vectors(image).T
+    t_mat = create_translation_matrix(x_len//2, y_len//2, 0) @ \
+            create_z_rotation_matrix(-angle) @ \
+            create_translation_matrix(-x_len//2, -y_len//2, 0)
+    rotated = t_mat @ tuples
+    transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
+    return fix_holes(vectors_to_pixels(transformed))
 
 @nb.njit(parallel=True)
 def fix_holes(image):
