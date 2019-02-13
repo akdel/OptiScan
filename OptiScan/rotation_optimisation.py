@@ -145,10 +145,8 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
 
 
 def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.01, saphyr=False):
-    print(True, _from, _to, initial_space, final_space)
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
-    print(angle)
     return rotate(image, angle), angle
 
 
@@ -457,7 +455,6 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio, shift):
     original_size = image.shape[0]
     shrank = ndimage.zoom(image, zoom_out_ratio)
     new_shrank = np.zeros(shrank.shape, dtype=shrank.dtype)
-    print(shift)
     if shift == 0:
         new_shrank = shrank
     elif shift < 0:
