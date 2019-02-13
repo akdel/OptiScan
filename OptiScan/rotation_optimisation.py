@@ -423,6 +423,8 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 2) or (sum(y) >= ymed * 2)]
         corrs = np.array([ncorr(y, x, limit=12) for x, y in filtered_pairs], dtype=float)
+    print(filtered_pairs)
+    print(corrs)
     corr_sum = np.sum(corrs, axis=0)
     if debug:
         plt.imshow(top_image_bottom)
