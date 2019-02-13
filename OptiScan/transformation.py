@@ -216,7 +216,7 @@ def rotate(image, angle):
     y_len = image.shape[0]
     tuples = pixels_to_vectors(image).T
     t_mat = create_translation_matrix(x_len//2, y_len//2, 0) @ \
-            create_z_rotation_matrix(angle) @ \
+            create_z_rotation_matrix(-angle) @ \
             create_translation_matrix(-x_len//2, -y_len//2, 0)
     rotated = t_mat @ tuples
     transformed = points_within_envelope(rotated.T, x_len-1, y_len-1).astype(np.int64)
