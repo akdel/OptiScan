@@ -425,7 +425,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 4) or (sum(y) >= ymed * 4)]
         corrs = np.array([ncorr(y, x, limit=25) for x, y in filtered_pairs], dtype=float)
     else:
-        filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 2) or (sum(y) >= ymed * 2)]
+        filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 4) or (sum(y) >= ymed * 4)]
         corrs = np.array([ncorr(y, x, limit=12) for x, y in filtered_pairs], dtype=float)
     if len(filtered_pairs) == 0:
         return 0
