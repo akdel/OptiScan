@@ -426,7 +426,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
         corrs = np.array([ncorr(y, x, limit=25) for x, y in filtered_pairs], dtype=float)
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 4) or (sum(y) >= ymed * 4)]
-        corrs = np.array([ncorr(y, x, limit=12) for x, y in filtered_pairs], dtype=float)
+        corrs = np.array([ncorr(y, x, limit=8) for x, y in filtered_pairs], dtype=float) #limit=12
     if len(filtered_pairs) == 0:
         return 0
     corr_sum = np.sum(corrs, axis=0)
@@ -445,7 +445,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     if saphyr:
         return np.argmax(corr_sum[:300])
     else:
-        return np.argmax(corr_sum[:60])
+        return np.argmax(corr_sum[:40]) #limit=60
 
 
 
