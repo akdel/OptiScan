@@ -5,7 +5,7 @@ from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
 from OptiScan.align import normalized_correlation as ncorr
 import matplotlib.pyplot as plt
-
+from transformation import rotate
 
 
 def white_tophat_to_image(image_array, disk_radius=6):
@@ -72,7 +72,7 @@ def rotate_image_and_return_optimisation_value(image, rotation_angle, mid_xsum=F
         if abs(rotation_angle) <= 0.000000001:
             rotated_image_xsum = ndimage.grey_dilation(get_xsum(image), structure=np.ones((8)))
         else:
-            rotated_image_xsum = ndimage.grey_dilation(get_xsum(ndimage.rotate(image, rotation_angle, reshape=False)),
+            rotated_image_xsum = ndimage.grey_dilation(get_xsum(rotate(image, rotation_angle)),
                                                        structure=np.ones((8)))
     else:
         im_shape = image.shape
@@ -85,8 +85,7 @@ def rotate_image_and_return_optimisation_value(image, rotation_angle, mid_xsum=F
                 structure=np.ones((8)))
         else:
             rotated_image_xsum = ndimage.grey_dilation(get_xsum(
-                ndimage.rotate(image[:, (im_shape[1] / 2) - mid_xsum:(im_shape[1] / 2) + mid_xsum], rotation_angle,
-                               reshape=False)), structure=np.ones((8)))
+                rotate(image[:, (im_shape[1] / 2) - mid_xsum:(im_shape[1] / 2) + mid_xsum], rotation_angle)), structure=np.ones((8)))
     if not single_peak:
         corr = Matcher(image_xsum, rotated_image_xsum)
         corr.convolve_signals_and_get_match_info()
@@ -144,7 +143,7 @@ def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05,
     print(True, _from, _to, initial_space, final_space)
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
-    return ndimage.rotate(image, angle, reshape=False), angle
+    return rotate(image, angle), angle
 
 
 def get_1d_bottom(image, saphyr=False):
@@ -384,7 +383,7 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
     list_of_frames = [x[0] for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
     if additional_set:
-        additional_input = [ndimage.rotate(additional_set[i], angles[i], reshape=False)
+        additional_input = [rotate(additional_set[i], angles[i])
                             for i in range(len(additional_set))]
         if magnification_optimisation:
             additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
@@ -497,7 +496,7 @@ def get_optimal_zoom_and_obtain_new_image(image, ref_image, _start=0.990, _to=0.
 
 def overlay_saphyr_columns(mol_col, label_col, _start=0.990, _to=1.01, _space=0.001):
     optimized_mol_col, angle =rotate_with_optimal_rotation(mol_col)
-    rotated_label_col = ndimage.rotate(label_col, angle, reshape=False)
+    rotated_label_col = rotate(label_col, angle)
     optimized_label_col = get_optimal_zoom_and_obtain_new_image(rotated_label_col, optimized_mol_col, _start=_start, _to=_to, _space=0.001)
     return optimized_mol_col, optimized_label_col
 
