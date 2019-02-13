@@ -413,7 +413,7 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
     return np.argmax(corr_sum[:60])
 
 
-def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
+def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     xmed = np.median([sum(x) for x, y in pairs])
     ymed = np.median([sum(y) for x, y in pairs])
@@ -423,8 +423,8 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 2) or (sum(y) >= ymed * 2)]
         corrs = np.array([ncorr(y, x, limit=12) for x, y in filtered_pairs], dtype=float)
-    print(filtered_pairs)
-    print(corrs)
+    if len(filtered_pairs) == 0:
+        return 0.0
     corr_sum = np.sum(corrs, axis=0)
     if debug:
         plt.imshow(top_image_bottom)
