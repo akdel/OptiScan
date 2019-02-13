@@ -439,6 +439,8 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     if saphyr:
         return np.argmax(corr_sum[:300])
     else:
+        print(corr_sum)
+        print(corr_sum.shape)
         return np.argmax(corr_sum[:60])
 
 
