@@ -228,10 +228,10 @@ def rotate(image, angle):
 
 @nb.njit(parallel=True)
 def fix_holes(image):
-    for i in nb.prange(3, image.shape[0] - 3):
-        for j in range(3, image.shape[1] - 3):
+    for i in nb.prange(2, image.shape[0] - 2):
+        for j in range(2, image.shape[1] - 2):
             if image[i,j] == 0:
-                image[i,j] = int(round(np.median(image[i-3:i+3, j-3:j+3]), 0))
+                image[i,j] = int(round(np.median(image[i-2:i+2, j-2:j+2]), 0))
             else:
                 continue
     return image
