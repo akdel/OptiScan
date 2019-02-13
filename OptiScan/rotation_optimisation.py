@@ -141,7 +141,7 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
                                                space=final_space)
 
 
-def rotate_with_optimal_rotation(image, _from=-2, _to=2, initial_space=0.5, final_space=0.1, saphyr=False):
+def rotate_with_optimal_rotation(image, _from=-5, _to=5, initial_space=1, final_space=0.5, saphyr=False):
     print(True, _from, _to, initial_space, final_space)
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
