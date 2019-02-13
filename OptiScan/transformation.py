@@ -223,9 +223,18 @@ def rotate(image, angle):
             create_translation_matrix(-x_len//2, -y_len//2, 0)
     rotated = t_mat @ tuples
     transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
-    return vectors_to_pixels(transformed)
+    return fix_holes(vectors_to_pixels(transformed))
 
 
+@nb.njit
+def fix_holes(image):
+    for i in range(3, image.shape[0] - 3):
+        for j in range(3, image.shape[1] - 3):
+            if image[i,j] == 0:
+                image[i,j] = int(round(np.mean(image[i-3:i+3, j-3:j+3]), 0))
+            else:
+                continue
+    return image
 
 if __name__ == "__main__":
     canvas = np.zeros((500,500), dtype=canvas_dtype)
