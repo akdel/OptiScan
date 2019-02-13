@@ -5,8 +5,11 @@ from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
 from OptiScan.align import normalized_correlation as ncorr
 import matplotlib.pyplot as plt
-from OptiScan.transformation import rotate
+# from OptiScan.transformation import rotate
 
+
+def rotate(image, angle):
+    return ndimage.rotate(image, angle, reshape=False)
 
 def white_tophat_to_image(image_array, disk_radius=6):
     """
