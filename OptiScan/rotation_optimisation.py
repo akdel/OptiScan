@@ -459,7 +459,9 @@ def zoom_out_and_center_on_original(image, zoom_out_ratio, shift):
     new_shrank = np.zeros(shrank.shape, dtype=shrank.dtype)
     if shift < 0:
         new_shrank[:,:shift] = shrank[:,-1*shift:]
+        print(True)
     else:
+        print(False)
         new_shrank[:,shift:] = shrank[:,:-shift] # fix
     shrank = new_shrank
     shrank_size = shrank.shape[0]
