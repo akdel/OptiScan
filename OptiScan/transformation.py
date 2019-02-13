@@ -225,6 +225,9 @@ def rotate(image, angle):
     transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
     return vectors_to_pixels(transformed)
 
+@nb.njit
+
+
 if __name__ == "__main__":
     canvas = np.zeros((500,500), dtype=canvas_dtype)
     canvas[:,:] = -1
