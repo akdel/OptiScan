@@ -111,7 +111,6 @@ def get_peak_averages_in_rotation_range(image, _from=-0.1, _to=0.1, space=0.05):
     :return:
     """
     rotation_angles = [x for x in get_angle_range(_from, _to, space)]
-    image = white_tophat_to_image(image)
     return [(rotate_image_and_return_optimisation_value(image, x, single_peak=True), x)
             for x in rotation_angles]
 
@@ -376,9 +375,9 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
     :return:
     """
     if tophat:
-        list_of_frames = [x - np.median(x) for x in list_of_frames]#[ndimage.white_tophat(x, structure=disk(7)) for x in list_of_frames] # 6 for irys
+        list_of_frames = [ndimage.white_tophat(x, structure=disk(7)) for x in list_of_frames] # 6 for irys
         if additional_set:
-            additional_set = [x - np.median(x) for x in additional_set] #[ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
+            additional_set = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
     list_of_frames_with_angles = [rotate_with_optimal_rotation(x, saphyr=saphyr) for x in list_of_frames]
     list_of_frames = [x[0].astype(float) for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
