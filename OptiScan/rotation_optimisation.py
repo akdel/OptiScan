@@ -417,7 +417,7 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
     return np.argmax(corr_sum[:60])
 
 
-def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
+def get_yshift(top_image_bottom, bottom_image_top, debug=True, saphyr=False):
     pairs = [(top_image_bottom[:,i], bottom_image_top[:,i]) for i in range(0, top_image_bottom.shape[1], 1)]
     xmed = np.median([sum(x) for x, y in pairs])
     ymed = np.median([sum(y) for x, y in pairs])
@@ -445,7 +445,13 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     if saphyr:
         return np.argmax(corr_sum[:300])
     else:
-        return np.argmax(corr_sum[:40]) #limit=60
+        if not saphyr:
+            if np.argmax(corr_sum[:40]) < 8:
+                return 4
+            else:
+                return np.argmax(corr_sum[:40])
+        else:
+            return np.argmax(corr_sum[:40]) #limit=60
 
 
 def zoom_out_and_center_on_original(image, zoom_out_ratio, shift):
