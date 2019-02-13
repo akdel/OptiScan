@@ -270,8 +270,8 @@ class AnalyzeScan(Scan):
             backbone_label_column, nick_label_column = return_column(self.frames, self.current_column_id,
                                                                     self.chip_dimension)
             backbone_label_column, nick_label_column = stitch_column(backbone_label_column, nick_label_column)
-            self.current_lab_column = ndimage.zoom(nick_label_column, 0.3333)
-            self.current_mol_column = ndimage.zoom(backbone_label_column, 0.3333)
+            self.current_lab_column = ndimage.zoom(nick_label_column, 0.5)
+            self.current_mol_column = ndimage.zoom(backbone_label_column, 0.5)
         else:
             concat_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             concat_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
@@ -594,11 +594,11 @@ def return_column(image_frames: [np.ndarray], column_no: int, dimensions: (int, 
     nstart = bstart + 1
     nend = bend + 1
     if column_no % 2 != 0:
-        nick_frames = [ndimage.zoom(image_frames[i].astype(float), 3).astype(int) for i in range(nstart, nend, 2)]
-        backbone_frames = [ndimage.zoom(image_frames[i].astype(float), 3).astype(int) for i in range(bstart, bend, 2)]
+        nick_frames = [ndimage.zoom(image_frames[i].astype(float), 2).astype(int) for i in range(nstart, nend, 2)]
+        backbone_frames = [ndimage.zoom(image_frames[i].astype(float), 2).astype(int) for i in range(bstart, bend, 2)]
     else:
-        nick_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 3).astype(int) for i in range(nstart, nend, 2)]
-        backbone_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 3).astype(int) for i in range(bstart, bend, 2)]
+        nick_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 2).astype(int) for i in range(nstart, nend, 2)]
+        backbone_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 2).astype(int) for i in range(bstart, bend, 2)]
     return backbone_frames, nick_frames
 
 
