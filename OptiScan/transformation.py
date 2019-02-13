@@ -219,7 +219,7 @@ def rotate(image, angle):
             create_z_rotation_matrix(-angle) @ \
             create_translation_matrix(-x_len//2, -y_len//2, 0)
     rotated = t_mat @ tuples
-    transformed = points_within_envelope(rotated.T, x_len-1, y_len-1).round(0).astype(np.int64)
+    transformed = np.round(points_within_envelope(rotated.T, x_len-1, y_len-1), 0).astype(np.int64)
     return vectors_to_pixels(transformed)
 
 if __name__ == "__main__":
