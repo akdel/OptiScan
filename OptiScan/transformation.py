@@ -213,20 +213,9 @@ def vectors_to_pixels(vectors):
 def nb_round(arr):
     return round(arr, 0)
 
-@nb.jit(nopython=True, parallel=True)
-def rotate(image, angle):
-    x_len = image.shape[1]
-    y_len = image.shape[0]
-    tuples = pixels_to_vectors(image).T
-    t_mat = create_translation_matrix(x_len//2, y_len//2, 0) @ \
-            create_z_rotation_matrix(-angle) @ \
-            create_translation_matrix(-x_len//2, -y_len//2, 0)
-    rotated = t_mat @ tuples
-    transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
-    return vectors_to_pixels(transformed)
 
 @nb.jit(nopython=True, parallel=True)
-def rotate_v2(image, angle):
+def rotate(image, angle):
     x_len = image.shape[1]
     y_len = image.shape[0]
     tuples = pixels_to_vectors(image).T
