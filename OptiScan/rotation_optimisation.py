@@ -380,10 +380,10 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
         if additional_set:
             additional_set = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
     list_of_frames_with_angles = [rotate_with_optimal_rotation(x, saphyr=saphyr) for x in list_of_frames]
-    list_of_frames = [x[0] for x in list_of_frames_with_angles]
+    list_of_frames = [x[0].astype(float) for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
     if additional_set:
-        additional_input = [rotate(additional_set[i], angles[i])
+        additional_input = [rotate(additional_set[i], angles[i]).astype(float)
                             for i in range(len(additional_set))]
         if magnification_optimisation:
             additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
