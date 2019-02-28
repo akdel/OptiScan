@@ -552,6 +552,4 @@ def extend_bottom_top_until_high_difference(y_shift, top_image_bottom, bottom_im
     inverted_top_image_bottom = top_image_bottom[::-1]
     bottom_window = inverted_top_image_bottom[:y_shift]
     return get_optimal_start_points_for_y_shift_estimation(bottom_image_top[::-1], bottom_window), y_shift
-
 """
-

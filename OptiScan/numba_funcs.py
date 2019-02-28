@@ -254,7 +254,7 @@ def digest_with_complementary(fasta_array, digestor):
     return return_all(res, res_rev)
 
 
-@jit(["int64(boolean)"])
+@njit
 def sum_bool(x):
     res = 0
     for i in range(x.shape[0]):
