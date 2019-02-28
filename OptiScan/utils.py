@@ -156,6 +156,7 @@ class BnxParser:
         self.bnx_labels = list()
         self.bnx_label_snr = list()
         self.bnx_headers = list()
+        self.bnx_head_text = str()
 
     def read_bnx_file(self):
         """
@@ -168,6 +169,7 @@ class BnxParser:
         header_line = ""
         for line in self.bnx_lines:
             if line.startswith("#0h"): header_line = line; break
+            if line.startswith("#"): self.bnx_head_text += line
         self.bnx_lines = [x for x in self.bnx_lines if not x.startswith('#')]
         self.bnx_headers = [x.strip() for x in header_line.split()][1:]
         for r in range(0, len(self.bnx_lines), 4):
@@ -176,6 +178,7 @@ class BnxParser:
             self.bnx_arrays.append({"info": [x.strip() for x in self.bnx_lines[r].split("\t")],
                                     "labels": [float(x) for x in self.bnx_lines[r+1].split()[1:]],
                                     "label_snr": [float(x) for x in self.bnx_lines[r+2].split()[1:]],
+                                    "raw_intensities": [float(x) for x in self.bnx_lines[r+3].split()[1:]],
                                     "signal": None})
         sort_guide = list()
         for i in range(len(self.bnx_arrays)):
@@ -187,6 +190,18 @@ class BnxParser:
             index = entry[1]
             sorted_bnx.append(self.bnx_arrays[index])
         self.bnx_arrays = sorted_bnx
+
+    def write_arrays_as_bnx(self, outname):
+        f = open(outname, "w")
+        lines = [str(self.bnx_head_text)]
+        for arr in self.bnx_arrays:
+            lines.append("\t".join(arr["info"]))
+            lines.append("1\t" +  "\t".join([str(x) for x in arr["labels"]]))
+            lines.append("QX11\t" +  "\t".join([str(x) for x in arr["label_snr"]]))
+            lines.append("QX12\t" +  "\t".join([str(x) for x in arr["raw_intensities"]]))
+        f.write("\n".join(lines))
+        f.close()
+
 
     def get_molecule(self, mol_id, start_from=0):
         """
