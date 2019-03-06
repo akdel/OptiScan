@@ -804,10 +804,3 @@ class MQR:
         xmap_file = self.output_dir + 'bnx_quality.xmap'
         self.xmap = XmapParser(xmap_file)
 
-
-
-"""%s -i %s -o %s -usecolor 1 -FP 1.5 -FN 0.15 -sd 0.0 -sf 0.2 -sr 0.03 -res 3.3 -T %s -maxmem 7.5 \
-    -minlen 150 -minsites 8 -MaxIntensity 20000 -usecolor 1 -maxsites 200 -mres 0.9 -usecolor 1 -A 5 \
-    -S 1 -MaxSE 0.5 -outlier 0.0001 -outlierMax 40. -endoutlier 0 -RepeatMask 2 0.01 -RepeatRec 0.7 0.6 1.4 -PVres 2\
-     -alignscore -maptype 0 -HSDrange 1.0 -hashoffset 1 -f -hashgen 5 3 2.2 1.2 0.05 3.0 1 1 1 -hash \
-    -nosplit 2 -align_format 0 -stdout -stderr -maxthreads 24"""
