@@ -796,11 +796,22 @@ class MQR:
         from subprocess import check_call as ck
         ck(self.command % (self.ref_align, reference_cmap_path, bnx_file, self.output_dir + "bnx_quality", self.score, number_of_molecules), shell=True)
     
-    def run_ref_align_pairwise(self, bnx_file, number_of_molecules):
+    def run_ref_align_pairwise(self, bnx_file):
         from subprocess import check_call as ck
-        ck(self.command % (self.ref_align, bnx_file, self.output_dir + "bnx_quality", self.score, number_of_molecules), shell=True)
+        ck(self.pairwise_command % (self.ref_align, bnx_file, self.output_dir + "bnx_quality", self.score), shell=True)
 
     def load_results(self):
         xmap_file = self.output_dir + 'bnx_quality.xmap'
         self.xmap = XmapParser(xmap_file)
+
+
+class AlignParser:
+    def __init__(self, alignment_file):
+        self.align_lines = list()
+        f = open(alignment_file, "r")
+        for l in f.readlines():
+            if not l.startswith("#"):
+                self.align_lines.append(l.split("\t"))
+        pass
+
 
