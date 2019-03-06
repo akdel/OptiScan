@@ -191,7 +191,12 @@ class BnxParser:
             sorted_bnx.append(self.bnx_arrays[index])
         self.bnx_arrays = sorted_bnx
 
+
     def write_arrays_as_bnx(self, outname):
+        """
+        writes the bnx_arrays into file
+        ie// this is useful if bnx_arrays are modified.
+        """
         f = open(outname, "w")
         lines = [str(self.bnx_head_text)]
         for arr in self.bnx_arrays:
@@ -780,14 +785,23 @@ class MQR:
              -hashgen 5 3 2.4 1.5 0.05 5.0 1 1 3 -hash -hashdelta 10 -hashoffset 1 -hashmaxmem 64 -insertThreads 4 \
              -maptype 0 -PVres 2 -PVendoutlier -AlignRes 2.0 -rres 0.9 -resEstimate -ScanScaling 2 -RepeatMask 5 0.01 \
              -RepeatRec 0.7 0.6 1.4 -maxEnd 50 -usecolor 1 -stdout -stderr -subset 1 %s"""
+        self.pairwise_command = """%s -f -i %s -o %s -nosplit 2 -BestRef 1 -biaswt 0 -Mfast 0 -FP 1.5 -FN 0.05 -align_format 0\
+            -sf 0.2 -sd 0.0 -A 5 -outlier 1e-3 -outlierMax 40 -endoutlier 1e-4 -S -1000 -sr 0.03 -se 0.2 -MaxSF\
+             0.3 -MaxSE 0.5 -MaxSD 0.12 -resbias 4 64 -maxmem 64 -M 3 3 -minlen 50  -T %s -maxthreads 12 \
+             -hashgen 5 3 2.4 1.5 0.05 5.0 1 1 3 -hash -hashdelta 10 -hashoffset 1 -hashmaxmem 64 -insertThreads 4 \
+             -maptype 0 -PVres 2 -PVendoutlier -AlignRes 2.0 -rres 0.9 -resEstimate -ScanScaling 2 -RepeatMask 5 0.01 \
+             -RepeatRec 0.7 0.6 1.4 -maxEnd 50 -usecolor 1 -stdout -stderr -subset 1 %s"""
         self.xmap = None
 
     def run_ref_align(self, reference_cmap_path, bnx_file, number_of_molecules):
         from subprocess import check_call as ck
         ck(self.command % (self.ref_align, reference_cmap_path, bnx_file, self.output_dir + "bnx_quality", self.score, number_of_molecules), shell=True)
+    
+    def run_ref_align_pairwise(self, bnx_file, number_of_molecules):
+        from subprocess import check_call as ck
+        ck(self.command % (self.ref_align, bnx_file, self.output_dir + "bnx_quality", self.score, number_of_molecules), shell=True)
 
     def load_results(self):
         xmap_file = self.output_dir + 'bnx_quality.xmap'
         self.xmap = XmapParser(xmap_file)
 
-        
