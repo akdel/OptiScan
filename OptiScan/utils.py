@@ -811,12 +811,12 @@ class AlignParser:
         self.align_headers = list()
         f = open(alignment_file, "r")
         for l in f.readlines():
-            if not l.startswith("#"):
+            if not l.startswith("#") and len(l) != 0:
                 self.align_lines.append(l.split("\t"))
             elif l.startswith("#>0"):
                 self.align_headers.append(l.split("\t"))
                 print(self.align_headers)
-                print(self.align_lines[0])
+        print(self.align_lines[0])
         f.close()
         self.align_info = list()
         for i in range(0, len(self.align_lines), 5):
