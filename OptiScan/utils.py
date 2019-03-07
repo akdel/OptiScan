@@ -828,6 +828,3 @@ class AlignParser:
             current_info["scores_B"] = self.align_lines[i+4][j]
             self.align_info.append(current_info)
 
-            
-
-
