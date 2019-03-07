@@ -829,4 +829,5 @@ class AlignParser:
             current_info["matches_B"] = self.align_lines[i+2][j]
             current_info["scores_A"] = self.align_lines[i+3][j]
             current_info["scores_B"] = self.align_lines[i+4][j]
+            print(current_info)
             self.align_info.append(current_info)
