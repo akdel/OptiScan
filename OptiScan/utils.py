@@ -814,7 +814,7 @@ class AlignParser:
             if not l.startswith("#") and len(l) != 0:
                 self.align_lines.append(l.split("\t"))
             elif l.startswith("#>0"):
-                self.align_headers.append(l.split("\t"))
+                self.align_headers += l.split("\t")
                 print(self.align_headers)
         print(self.align_lines[0])
         f.close()
