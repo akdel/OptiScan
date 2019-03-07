@@ -815,8 +815,6 @@ class AlignParser:
                 self.align_lines.append(l.split("\t"))
             elif l.startswith("#>0"):
                 self.align_headers += l.split("\t")
-                print(self.align_headers)
-        print(self.align_lines[0])
         f.close()
         self.align_info = list()
         for i in range(0, len(self.align_lines), 5):
@@ -830,3 +828,10 @@ class AlignParser:
             current_info["scores_A"] = [float(x.strip()) for x in self.align_lines[i+3] if x.strip()]
             current_info["scores_B"] = [float(x.strip()) for x in self.align_lines[i+4] if x.strip()]
             self.align_info.append(current_info)
+    
+    def get_matched_pairs(self):
+        res = set()
+        for entry in self.align_info:
+            res.add(tuple(sorted([int(entry["match_info"]["Mol0ID"]),
+                                  int(entry["match_info"]["Mol1ID"])])))
+        return res
