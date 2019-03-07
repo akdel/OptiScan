@@ -808,10 +808,26 @@ class MQR:
 class AlignParser:
     def __init__(self, alignment_file):
         self.align_lines = list()
+        self.align_headers = list()
         f = open(alignment_file, "r")
         for l in f.readlines():
             if not l.startswith("#"):
                 self.align_lines.append(l.split("\t"))
-        pass
+            elif l.startswith("#>0"):
+                self.align_headers.append(l.split("\t"))
+        self.align_info = list()
+        for i in range(0, len(self.align_lines), 5):
+            current_info = dict()
+            match_info = dict()
+            for j in range(len(self.align_headers)):
+                match_info[self.align_headers[j]] = self.align_lines[i][j]
+            current_info["match_info"] = match_info
+            current_info["matches_A"] = self.align_lines[i+1][j]
+            current_info["matches_B"] = self.align_lines[i+2][j]
+            current_info["scores_A"] = self.align_lines[i+3][j]
+            current_info["scores_B"] = self.align_lines[i+4][j]
+            self.align_info.append(current_info)
+
+            
 
 
