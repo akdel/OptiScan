@@ -825,9 +825,9 @@ class AlignParser:
             for j in range(len(self.align_headers)):
                 match_info[self.align_headers[j]] = self.align_lines[i][j]
             current_info["match_info"] = match_info
-            current_info["matches_A"] = self.align_lines[i+1][j]
-            current_info["matches_B"] = self.align_lines[i+2][j]
-            current_info["scores_A"] = self.align_lines[i+3][j]
-            current_info["scores_B"] = self.align_lines[i+4][j]
+            current_info["matches_A"] = self.align_lines[i+1]
+            current_info["matches_B"] = self.align_lines[i+2]
+            current_info["scores_A"] = self.align_lines[i+3]
+            current_info["scores_B"] = self.align_lines[i+4]
             print(current_info)
             self.align_info.append(current_info)
