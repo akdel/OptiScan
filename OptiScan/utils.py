@@ -815,6 +815,9 @@ class AlignParser:
                 self.align_lines.append(l.split("\t"))
             elif l.startswith("#>0"):
                 self.align_headers.append(l.split("\t"))
+                print(self.align_headers)
+                print(self.align_lines[0])
+        f.close()
         self.align_info = list()
         for i in range(0, len(self.align_lines), 5):
             current_info = dict()
@@ -827,4 +830,3 @@ class AlignParser:
             current_info["scores_A"] = self.align_lines[i+3][j]
             current_info["scores_B"] = self.align_lines[i+4][j]
             self.align_info.append(current_info)
-
