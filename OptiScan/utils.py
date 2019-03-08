@@ -861,7 +861,7 @@ class AlignParser:
                 reverse = False
             else:
                 reverse = True
-            shift = float(strip(shift))
+            shift = float(shift.strip())
             overhang = shift * 2
             if overhang > 0 and not reverse:
                 l = template % (id1, id2, overhang)
