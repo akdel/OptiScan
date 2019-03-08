@@ -858,7 +858,7 @@ class AlignParser:
             id1,id2,reverse,shift = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"]
             id1 = int(id1)-1; id2 = int(id2)-1
             if int(reverse) == 1:
-                reverse = False:
+                reverse = False
             else:
                 reverse = True
             shift = float(strip(shift))
