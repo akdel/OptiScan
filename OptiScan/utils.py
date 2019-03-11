@@ -849,33 +849,36 @@ class AlignParser:
             res.add(int(entry["match_info"]["Mol1ID"])-1)
         return res
 
-    def refaligner_to_graph_edges(self):
+    def refaligner_to_graph_edges(self, thr):
         mshift = max(list(self.get_all_ids()))
         template = "%s\t%s\t%s\n"
         edge_list = list()
         for i in range(len(self.align_info)):
             current_info = self.align_info[i]["match_info"]
-            id1,id2,reverse,shift = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"]
-            id1 = int(id1)-1; id2 = int(id2)-1
-            if int(reverse) == 1:
-                reverse = False
+            id1,id2,reverse,shift,score = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"],float(current_info["PvalueLog10"])
+            if score < thr:
+                continue
             else:
-                reverse = True
-            shift = float(shift.strip())
-            overhang = shift * 2
-            if overhang > 0 and not reverse:
-                l = template % (id1, id2, overhang)
-            elif overhang > 0 and reverse:
-                l = template % (id1+mshift, id2, overhang)
-            elif overhang < 0 and not reverse:
-                l = template % (id2, id1, abs(overhang))
-            else:
-                l = template % (id2, id1+mshift, abs(overhang))
-            edge_list.append(l)
+                id1 = int(id1)-1; id2 = int(id2)-1
+                if int(reverse) == 1:
+                    reverse = False
+                else:
+                    reverse = True
+                shift = float(shift.strip())
+                overhang = shift * 2
+                if overhang > 0 and not reverse:
+                    l = template % (id1, id2, overhang)
+                elif overhang > 0 and reverse:
+                    l = template % (id1+mshift, id2, overhang)
+                elif overhang < 0 and not reverse:
+                    l = template % (id2, id1, abs(overhang))
+                else:
+                    l = template % (id2, id1+mshift, abs(overhang))
+                edge_list.append(l)
         return edge_list
 
-    def combine_edgelist_with_current_file(self, fname):
-        edge_list = self.refaligner_to_graph_edges()
+    def combine_edgelist_with_current_file(self, fname, thr=15):
+        edge_list = self.refaligner_to_graph_edges(thr)
         f = open(fname, "a")
         f.write("".join(edge_list))
         f.close()
