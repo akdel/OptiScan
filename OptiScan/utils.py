@@ -863,7 +863,6 @@ class AlignParser:
             if score < thr:
                 continue
             else:
-                id1 = int(id1)-1; id2 = int(id2)-1
                 if int(reverse) == 1:
                     reverse = False
                 else:
