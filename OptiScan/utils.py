@@ -857,12 +857,12 @@ class AlignParser:
         for i in range(len(self.align_info)):
             current_info = self.align_info[i]["match_info"]
             id1,id2,reverse,shift,score = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"],float(current_info["PvalueLog10"])
+            int(id1)-1; id2 = int(id2)-1
             if (id1 > 536798) or (id2 > 536798):
                 continue
             if score < thr:
                 continue
             else:
-                id1 = int(id1)-1; id2 = int(id2)-1
                 if int(reverse) == 1:
                     reverse = False
                 else:
