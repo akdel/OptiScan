@@ -871,12 +871,16 @@ class AlignParser:
                 overhang = shift * 2
                 if overhang > 0 and not reverse:
                     l = template % (id1, id2, overhang)
+                    l2 = template % (id2+mshift, id1+mshift, overhang)
                 elif overhang > 0 and reverse:
                     l = template % (id1+mshift, id2, overhang)
+                    l2 = template % (id2+mshift, id1, overhang)
                 elif overhang < 0 and not reverse:
                     l = template % (id2, id1, abs(overhang))
+                    l2 = template % (id1+mshift, id2+mshift, abs(overhang))
                 else:
                     l = template % (id2, id1+mshift, abs(overhang))
+                    l2 = template % (id1+mshift, id2, abs(overhang))
                 edge_list.append(l)
         return edge_list
 
