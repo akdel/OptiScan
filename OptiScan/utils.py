@@ -851,7 +851,6 @@ class AlignParser:
 
     def refaligner_to_graph_edges(self):
         mshift = max(list(self.get_all_ids()))
-        print(mshift)
         template = "%s\t%s\t%s\n"
         edge_list = list()
         for i in range(len(self.align_info)):
@@ -867,14 +866,11 @@ class AlignParser:
             if overhang > 0 and not reverse:
                 l = template % (id1, id2, overhang)
             elif overhang > 0 and reverse:
-                print(True)
                 l = template % (id1+mshift, id2, overhang)
-                print(id1,id1+mshift)
             elif overhang < 0 and not reverse:
                 l = template % (id2, id1, abs(overhang))
             else:
                 l = template % (id2, id1+mshift, abs(overhang))
-                print(id1,id1+mshift)
             edge_list.append(l)
         return edge_list
 
