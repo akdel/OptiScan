@@ -850,12 +850,15 @@ class AlignParser:
         return res
 
     def refaligner_to_graph_edges(self, thr):
-        mshift = max(list(self.get_all_ids()))
+        # mshift = max(list(self.get_all_ids()))
+        mshift = 536798
         template = "%s\t%s\t%s\n"
         edge_list = list()
         for i in range(len(self.align_info)):
             current_info = self.align_info[i]["match_info"]
             id1,id2,reverse,shift,score = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"],float(current_info["PvalueLog10"])
+            if (id1 > 536798) or (id2 > 536798):
+                continue
             if score < thr:
                 continue
             else:
