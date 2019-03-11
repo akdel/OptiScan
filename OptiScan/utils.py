@@ -851,7 +851,7 @@ class AlignParser:
 
     def refaligner_to_graph_edges(self, thr):
         # mshift = max(list(self.get_all_ids()))
-        mshift = 536799
+        mshift = 536798
         template = "%s\t%s\t%s\n"
         edge_list = list()
         for i in range(len(self.align_info)):
