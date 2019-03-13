@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from OptiScan.database import MoleculeDB
 import multiprocessing as mp
 from sys import argv
@@ -22,7 +23,7 @@ def create_tables():
 if __name__ == "__main__":
     if argv[1] == "-h" or argv[1] == "--help" or argv[1] == "help":
         print("arguments: <list of runs: use commas to separate> <chip dimension: x,y> <database name: str> "
-              "<number of threads: int> <organism name: str>\n\n"
+              "<number of threads: int> <organism name: str> <data type: 'irys' or 'saphyr'>\n\n"
               "Example command: extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple")
     else:
         try:
@@ -30,12 +31,12 @@ if __name__ == "__main__":
         except AssertionError:
             print("All parameters should be provided. use -h or --help for help.")
             exit()
-        if argv[7] == "S":
+        if argv[7] == "saphyr":
             saphyr_ = True
-        elif argv[7] == "I":
+        elif argv[7] == "irys":
             saphyr_ = False
         else:
-            raise TypeError("input saphyr as S and Irys as I")
+            raise TypeError("data type should be set to irys or saphyr")
         list_of_run_folders = argv[1].split(",")
         for folder in list_of_run_folders:
             assert path.isdir(folder)
