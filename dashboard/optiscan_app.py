@@ -89,7 +89,7 @@ def get_db_stats(run_info):
                 number_of_mols += current_col["molecule_count"]
                 if max_len < current_col["longest_shape"]:
                     max_len = current_col["longest_shape"]
-    return number_of_mols, avg_mol_size/number_of_mols, max_len
+    return number_of_mols, (avg_mol_size/number_of_mols) / 2, max_len / 2
 
 
 def empty_scan_page():
@@ -529,4 +529,5 @@ def downlad_file(path):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8081)
+    from sys import argv
+    app.run_server(debug=True, host=argv[1], port=argv[2])

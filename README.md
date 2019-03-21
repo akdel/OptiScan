@@ -15,7 +15,7 @@ Required Python libraries:
 * [Sqlalchemy](https://www.sqlalchemy.org)
 * [intervaltree](https://pypi.org/project/intervaltree)
 * [scikit-image](https://scikit-image.org)
-
+* [dash](https://github.com/plotly/dash) (optional for user interface)
 
 ## Installation
 
@@ -32,7 +32,7 @@ chmod +x pipelines/write_bnx
 1. Run the http server with:
     ```bash
     cd dashboard
-    python optiscan_app.py > log.txt &
+    python optiscan_app.py acquire_self_awareness=True > log.txt &
     ```
 2. Access from browser with http://localhost:8081/optiscan.
 
