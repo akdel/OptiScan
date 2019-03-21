@@ -388,6 +388,10 @@ def update_db_summary(clicked, db_name):
         mc = database.MoleculeConnector(db_name)
         mc.load_db_to_class()
         run_info = mc.db_runs
+        try:
+            _ = mc.get_single_molecule_from_database(1)
+        except AttributeError:
+            mc.write_molecule_metadata_to_disk()
         mc.db.close()
         all_info = get_db_stats(run_info)
         return [html.Br(), html.Div([html.H6("Number of molecules: %s" % all_info[0], className="four columns", style={"text-align": "center"}),
