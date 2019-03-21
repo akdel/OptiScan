@@ -49,7 +49,6 @@ if __name__ == "__main__":
         create_tables()
         print("Database initiated!")
 
-        
         moldb = MoleculeDB(database_name, list_of_run_folders, organism, chip_dimension=chip_dimension, saphyr=saphyr_)
         scan_jobs = moldb.split_scans_to_threads(number_of_threads)
         number_of_jobs = len(scan_jobs)
