@@ -55,5 +55,9 @@ if __name__ == "__main__":
 
         with mp.Pool(number_of_jobs) as job:
             job.map(run_for_extraction, scan_jobs)
+        moldb.db.close()
+        mc = MoleculeConnector(database_name)
+        mc.write_molecule_metadata_to_disk()
+        mc.db.close()
     exit()
 
