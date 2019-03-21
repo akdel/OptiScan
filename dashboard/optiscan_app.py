@@ -54,48 +54,6 @@ def get_nicking_sites(label_data, snr):
     return xs, label_data[xs]
 
 
-
-def scanner(db_name, dim, platform, runs_path, threads, organism_name):
-    print(dim)
-    dim = f"{dim[0]},{dim[1]}"
-    print(dim)
-    db_name = f"database/{db_name}"
-    cmd = f"python ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
-    if platform == "saphyr":
-        saphyr_ = True
-    elif platform == "irys":
-        saphyr_ = False
-    else:
-        raise TypeError("data type should be set to irys or saphyr")
-    list_of_run_folders = runs_path.split(",")
-    for folder in list_of_run_folders:
-        assert path.isdir(folder)
-    chip_dimension = tuple([int(x.strip()) for x in dim.split(',')])
-    assert len(chip_dimension) == 2
-    database_name = db_name
-    number_of_threads = 2 # make a box
-    organism = "test" # make a box
-    moldb_ = MoleculeDB(database_name, list(set(list_of_run_folders)), organism, chip_dimension=chip_dimension)
-    moldb_.create_tables_first_time()
-    print("Database initiated!")
-    moldb = MoleculeDB(database_name, list_of_run_folders, organism, chip_dimension=chip_dimension, saphyr=saphyr_)
-    scan_jobs = moldb.split_scans_to_threads(number_of_threads)
-    number_of_jobs = len(scan_jobs)
-    def run_for_extraction(run_scan_pairs: [tuple]):
-        runs = list(set([run_id for run_id, _ in run_scan_pairs]))
-        moldb_ = MoleculeDB(database_name, runs, organism, chip_dimension=chip_dimension)
-        for run_id, scan_id in run_scan_pairs:
-            moldb_.connect_db()
-            moldb_.extract_molecules_from_scan_in_run(run_id, scan_id)
-            moldb_.insert_columns_for_scan(run_id, scan_id)
-    for job in scan_jobs:
-        run_for_extraction(job)
-    moldb.db.close()
-    mc = database.MoleculeConnector(db_name)
-    mc.write_molecule_metadata_to_disk()
-    mc.db.close()
-
-
 runs = "/Users/akdel/PycharmProjects/test_optiscan/OptiScan/test_data/"
 
 box_style={"box-shadow":"1px 3px 20px -4px rgba(0,0,0,0.75)",
