@@ -31,6 +31,18 @@ chmod +x ./write_bnx
 
 ## Usage
 
+### Running from OptiScan dashboard
+OptiScan dashboard can be run as a web application built with [`Dash`](https://github.com/dashpay/dash) python library. In this interface you can execute molecule detection/extraction and inspect the raw molecules and molecule length distributions. These inspections aid the choice of SNR, maximum DNA backbone intensity and minimum molecule length thresholds prior to exporting the data into `bnx` format.
+
+#### Dashboard screenshots:
+
+![](screenshot1.png)
+Molecule detection interface
+
+![]()
+Molecule inspection and export interface
+
+### Pipeline scripts
 `optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
 
 
