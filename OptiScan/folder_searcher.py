@@ -87,7 +87,7 @@ class FolderSearcher:
         else:
             tiff_scan_files = self._search_file("Scan")
             for i in range(len(tiff_scan_files))[::-1]:
-                scan_name_end_index = tiff_scan_files[i].find("Scan")
+                scan_name_end_index = tiff_scan_files[i].rfind("Scan")
                 scan_id = tiff_scan_files[i][scan_name_end_index+4:]
                 scan_id = scan_id[:scan_id.find(".tiff")]
                 try:
