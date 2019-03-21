@@ -45,10 +45,10 @@ OptiScan dashboard can be run as a web application built with [`Dash`](https://g
 #### Dashboard screenshots
 
 ![](screenshot1.png)
-Molecule detection interface
+Molecule detection
 
-![]()
-Molecule inspection and export interface
+![](screenshot2.png)
+Molecule inspection
 
 ### Pipeline scripts
 `optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
