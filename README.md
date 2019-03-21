@@ -50,7 +50,7 @@ Molecule detection
 ![](screenshot2.png)
 Molecule inspection
 
-### Pipeline scripts
+### Commandline scripts
 `optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
 
 
