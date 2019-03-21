@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from OptiScan.database import MoleculeDB
+from OptiScan.database import MoleculeDB, MoleculeConnector
 import multiprocessing as mp
 from sys import argv
 from os import path
