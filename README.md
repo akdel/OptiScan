@@ -19,15 +19,22 @@ Required Python libraries:
 
 ## Installation
 
+### Library
 ```bash
-pip install numpy numba scipy sqlalchemy pylab scikit-image intervaltree
 git clone https://gitlab.com/akdel/OptiScan.git
 cd OptiScan
-python setup.py install
-cd pipelines
-chmod +x ./extract_molecules
-chmod +x ./write_bnx
+pip install .
+chmod +x pipelines/extract_molecules
+chmod +x pipelines/write_bnx
 ```
+
+### Dashboard
+1. Run the http server with:
+    ```bash
+    cd dashboard
+    python optiscan_app.py > log.txt &
+    ```
+2. Access from browser with http://localhost:8081/optiscan.
 
 ## Usage
 
