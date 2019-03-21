@@ -32,9 +32,9 @@ chmod +x pipelines/write_bnx
 1. Run the http server with:
     ```bash
     cd dashboard
-    python optiscan_app.py acquire_self_awareness=True > log.txt &
+    python optiscan_app.py localhost 8080 > log.txt &
     ```
-2. Access from browser with http://localhost:8081/optiscan.
+2. Access from browser with http://localhost:8080/optiscan.
 
 ## Usage
 
