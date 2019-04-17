@@ -43,6 +43,8 @@ if __name__ == "__main__":
         chip_dimension = tuple([int(x.strip()) for x in argv[2].split(',')])
         assert len(chip_dimension) == 2
         database_name = argv[3]
+        if not database_name.endswith(".db"):
+            database_name += ".db"
         number_of_threads = int(argv[4])
         organism = argv[5]
 
