@@ -119,7 +119,7 @@ def empty_scan_page():
                                                       value='test_data/test_run', id="folders-name"),
                                    className="three columns")])
     p5 = html.Div(children=[html.Div(html.H6("Num. of Threads: ", style=styles), className="two columns"),
-                            html.Div(dcc.Input(placeholder="1", value="1",type="text", id="threads"),
+                            html.Div(dcc.Input(placeholder="2", value="2",type="text", id="threads"),
                                      className="three columns")], )
     p6 = html.Div(children=[html.Div(html.H6("Organism: ", style=styles), className="three columns"),
                             html.Div(dcc.Input(placeholder='test_organism', type='text',
