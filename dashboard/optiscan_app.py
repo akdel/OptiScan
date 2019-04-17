@@ -521,8 +521,6 @@ def update_db_dropdown(clicked):
     database_names = os.listdir("database")
     return [{"label": x, "value": "database/%s" % x} for x in database_names if x.endswith(".db")]
 
-
-
 @app.server.route('/static/<path:path>')
 def downlad_file(path):
     root_dir = os.getcwd()

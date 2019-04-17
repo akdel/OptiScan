@@ -776,7 +776,7 @@ class MQR:
 
         NOTE usage example of this class:
         >>> mqr = MQR("/path/to/folder/", "/path/to/RefAlign", score="1e-11")
-        ... mqr.run_ref_align()
+        ... mqr.run_ref_align("reference.cmap", "molecules.bnx", 10000)
         ... mqr.load_results()
         ... xmap = mqr.xmap                     # This is an XmapParser instance which can 
         ... xmap.read_and_load_xmap_file()      # be used to work on the resulting xmap file.
