@@ -105,14 +105,14 @@ def empty_scan_page():
                          html.Div(dcc.Dropdown(options=[{'label': '12 x 95', 'value': "12, 95"},
                                                         {'label': '12 x 120', 'value': "12, 120"},
                                                         {"label": "test dimensions", "value": "12, 5"}],
-                                                        label="test dimensions",
+                                                        placeholder="test dimensions",
                                                         value="12, 5", id="chip-dimension"),
                                   className="three columns")],)
     p3 = html.Div(children=[html.Div(html.H6("Platform: ", style=styles), className="two columns"),
                          html.Div(dcc.Dropdown(options=[{'label': 'Irys', 'value': "irys"},
                                                {'label': 'Saphyr', 'value': "saphyr"}],
                                                value="saphyr",
-                                               label="Saphyr", id="platform"),
+                                               placeholder="Saphyr", id="platform"),
                                   className="three columns")],)
     p4 = html.Div(children=[html.Div(html.H6("Run Folders: ", style=styles), className="three columns"),
                           html.Div(dcc.Input(placeholder='test_data/test_run', type='text',
