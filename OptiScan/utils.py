@@ -764,7 +764,7 @@ class FastaObject:
 
 class MQR:
     """
-    Generates molequle quality report.
+    A simple wrapper for aligning molecules by RefAligner.
     """
     def __init__(self, output_folder, ref_align_path, score="1e-10"):
         """
