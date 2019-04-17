@@ -98,8 +98,8 @@ def empty_scan_page():
                        style={"margin": 10})
     styles = {"text-align": "right"}
     p1 = html.Div(children=[html.Div(html.H6("Database Name: ", style=styles), className="two columns"),
-                          html.Div(dcc.Input(placeholder='test.db', type='text',
-                                                      value='test.db', id="db-name"),
+                          html.Div(dcc.Input(placeholder='database', type='text',
+                                                      value='', id="db-name"),
                                    className="three columns")])
     p2 = html.Div(children=[html.Div(html.H6("Chip Dimensions: ", style=styles), className="three columns"),
                          html.Div(dcc.Dropdown(options=[{'label': '12 x 95', 'value': "12, 95"},
@@ -111,8 +111,8 @@ def empty_scan_page():
     p3 = html.Div(children=[html.Div(html.H6("Platform: ", style=styles), className="two columns"),
                          html.Div(dcc.Dropdown(options=[{'label': 'Irys', 'value': "irys"},
                                                {'label': 'Saphyr', 'value': "saphyr"}],
-                                               value="saphyr",
-                                               placeholder="Saphyr", id="platform"),
+                                               value="irys",
+                                               placeholder="Irys", id="platform"),
                                   className="three columns")],)
     p4 = html.Div(children=[html.Div(html.H6("Run Folders: ", style=styles), className="three columns"),
                           html.Div(dcc.Input(placeholder='test_data/test_run', type='text',
