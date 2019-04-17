@@ -849,9 +849,8 @@ class AlignParser:
             res.add(int(entry["match_info"]["Mol1ID"])-1)
         return res
 
-    def refaligner_to_graph_edges(self, thr):
+    def refaligner_to_graph_edges(self, thr, mshift=536798):
         # mshift = max(list(self.get_all_ids()))
-        mshift = 536798
         template = "%s\t%s\t%s\n"
         edge_list = list()
         for i in range(len(self.align_info)):
