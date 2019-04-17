@@ -503,9 +503,9 @@ def convert_bnx(clicked, db_name, filename, snr, min_len, intensity):
     else:
         return html.A("")
 
-@app.callback(dash.dependencies.Output("db-location-bnx", "value"),
+@app.callback(dash.dependencies.Output("db-location-bnx", "options"),
               [dash.dependencies.Input("connect-db", "n_clicks")],
-              [dash.dependencies.State("db-location-access", "value")])
+              [dash.dependencies.State("db-location-access", "options")])
 def update_bnx_db_selection(clicked, location_val):
     if clicked and location_val:
         return location_val
