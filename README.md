@@ -46,18 +46,7 @@ OptiScan dashboard can be run as a web application built with [`Dash`](https://g
 
 You can find two identical scans in `dashboard/test_data/test_run/` directory in `test_scans.tar.gz`. After extracting the scans with `tar -xvf test_scans.tar.gz`, the path to `test_run` directory can be given in dashboard as the **Run Folders**.
 
-Providing all the test parameters in **Molecule detection** section and running OptiScan is required to extract molecules and create the test database. Below are a list of parameters needed to detect molecules from the test data:
-
-| Parameter | Input |
-|:---------:|:-----|
-|  Platform |  Irys   |
-| Database Name | test.db |
-| Num. of threads | 1 or 2 (should not be more than number of scans)|
-| Run folders | test_data/test_run |
-| Chip dimensions | test dimensions |
-| Organism | test |
-
-
+Providing all the test parameters in **Molecule detection** section and running OptiScan is required to extract molecules and create the test database. Test parameters are already filled (except database name) when the dashboard is launched. Molecules in the test data can be simply detected by filling in a database name and clicking **RUN OPTISCAN**.
 
 #### Dashboard screenshots
 
