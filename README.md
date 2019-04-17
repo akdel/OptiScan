@@ -53,7 +53,7 @@ Providing all the test parameters in **Molecule detection** section and running 
 |  Platform |  Irys   |
 | Database Name | test.db |
 | Num. of threads | 1 or 2 (should not be more than number of scans)|
-| Run folders | dashboard/test_data/test_run |
+| Run folders | test_data/test_run |
 | Chip dimensions | test dimensions |
 | Organism | test |
 
