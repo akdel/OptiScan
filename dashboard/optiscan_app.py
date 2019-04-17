@@ -98,28 +98,32 @@ def empty_scan_page():
                        style={"margin": 10})
     styles = {"text-align": "right"}
     p1 = html.Div(children=[html.Div(html.H6("Database Name: ", style=styles), className="two columns"),
-                          html.Div(dcc.Input(placeholder='', type='text',
-                                                      value='', id="db-name"),
+                          html.Div(dcc.Input(placeholder='test.db', type='text',
+                                                      value='test.db', id="db-name"),
                                    className="three columns")])
     p2 = html.Div(children=[html.Div(html.H6("Chip Dimensions: ", style=styles), className="three columns"),
                          html.Div(dcc.Dropdown(options=[{'label': '12 x 95', 'value': "12, 95"},
                                                         {'label': '12 x 120', 'value': "12, 120"},
-                                                        {"label": "test dimensions", "value": "12, 5"}], id="chip-dimension"),
+                                                        {"label": "test dimensions", "value": "12, 5"}],
+                                                        label="test dimensions",
+                                                        value="12, 5", id="chip-dimension"),
                                   className="three columns")],)
     p3 = html.Div(children=[html.Div(html.H6("Platform: ", style=styles), className="two columns"),
                          html.Div(dcc.Dropdown(options=[{'label': 'Irys', 'value': "irys"},
-                                               {'label': 'Saphyr', 'value': "saphyr"}], id="platform"),
+                                               {'label': 'Saphyr', 'value': "saphyr"}],
+                                               value="saphyr",
+                                               label="Saphyr", id="platform"),
                                   className="three columns")],)
     p4 = html.Div(children=[html.Div(html.H6("Run Folders: ", style=styles), className="three columns"),
-                          html.Div(dcc.Input(placeholder='path/to/runs', type='text',
-                                                      value='', id="folders-name"),
+                          html.Div(dcc.Input(placeholder='test_data/test_run', type='text',
+                                                      value='test_data/test_run', id="folders-name"),
                                    className="three columns")])
     p5 = html.Div(children=[html.Div(html.H6("Num. of Threads: ", style=styles), className="two columns"),
                             html.Div(dcc.Input(placeholder="1", value="1",type="text", id="threads"),
                                      className="three columns")], )
     p6 = html.Div(children=[html.Div(html.H6("Organism: ", style=styles), className="three columns"),
-                            html.Div(dcc.Input(placeholder='', type='text',
-                                               value='', id="organism"),
+                            html.Div(dcc.Input(placeholder='test_organism', type='text',
+                                               value='test_organism', id="organism"),
                                      className="three columns")])
 
     container1 = html.Div(children=[p3, p4], className="container")
