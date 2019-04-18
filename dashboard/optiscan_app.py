@@ -148,7 +148,13 @@ def empty_database_page():
                                       value='', id="db-location-access"), className="three columns"),
                    html.Button("Connect", style={"background":"lightblue"}, className="three columns", id="connect-db"),
                    html.Button(html.Img(src="https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/refresh-512.png", width=35, height=35),
-                               style={"background": "lightblue"}, className="three columns", id="refresh")],
+                               style={"background": "lightblue"}, className="three columns", id="refresh"),
+
+                   
+                   html.H6("Molecule detection running..", id="optiscan-running", style={'display': 'none'}),    ###################
+                   html.H6("Molecule detection is completed.", id="optiscan-done", style={'display': 'none'})],  ###################
+
+
                   className="container")
     p1_res = html.Div(None, className="container", id="db-summary-field", style=box_style_lg)
     sub_h2 = html.H4("2. Check database content", style={"margin": 15, "text-align": "center", "padding-top": 25})
@@ -240,6 +246,21 @@ app.layout = html.Div([html.Div([
     gitlab_link_optiscan()])
 
 
+
+
+@app.callback(dash.dependencies.Output("optiscan-running", "style"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("db-name", "value"),
+              dash.dependencies.State("chip-dimension", "value"),
+              dash.dependencies.State("platform", "value"),
+              dash.dependencies.State("folders-name", "value"),
+              dash.dependencies.State("threads", "value"),
+              dash.dependencies.State("organism", "value")])
+def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
+    return {}
+
+
+
 @app.callback(dash.dependencies.Output("scan-page-result", "children"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
@@ -259,7 +280,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         cmd = f"python3 ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
         # scanner(db_name, dim, platform, runs_path)
         sp.check_call(cmd, shell=True)
-        return html.H6("%s, %s, %s, %s" % (db_name, dim, platform, runs_path))
+        return html.H6("Molecule detection is completed.")
 
 @app.callback(dash.dependencies.Output("run-field", "children"),
               [dash.dependencies.Input("connect-db", "n_clicks")],
