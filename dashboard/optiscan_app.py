@@ -258,7 +258,7 @@ app.layout = html.Div([html.Div([
               dash.dependencies.State("organism", "value")])
 def optiscan_running_response(click, completed, db_name, dim, platform, runs_path, threads, organism_name):
     if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none"}
+        return {"display": "none"}2
     elif completed["display"] == "block":
         return {"display": "none"}
     else:
