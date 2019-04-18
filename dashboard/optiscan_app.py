@@ -129,8 +129,10 @@ def empty_scan_page():
     container1 = html.Div(children=[p3, p4], className="container")
     container2 = html.Div(children=[p1, p2], className="container")
     container3 = html.Div(children=[p5, p6], className="container")
-    container4 = html.Div(html.Button("Run OptiScan", className="three columns", id="run-optiscan",
-                                      style={"background":"lightgreen"}), className="container")
+    container4 = html.Div([html.Button("Run OptiScan", className="three columns", id="run-optiscan",
+                                      style={"background":"lightgreen"}),
+                                      html.H6("Molecule detection running..", id="optiscan-running", style={'display': 'none'}, className="three columns")],
+                         className="container")
 
     return html.Div([html.Br(), header, html.Br(), container1, container2, container3, container4, html.Br()],
                     style=box_style, id="scan-page")
@@ -148,11 +150,7 @@ def empty_database_page():
                                       value='', id="db-location-access"), className="three columns"),
                    html.Button("Connect", style={"background":"lightblue"}, className="three columns", id="connect-db"),
                    html.Button(html.Img(src="https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/refresh-512.png", width=35, height=35),
-                               style={"background": "lightblue"}, className="three columns", id="refresh"),
-
-                   
-                   html.H6("Molecule detection running..", id="optiscan-running", style={'display': 'none'}),    ###################
-                   html.H6("Molecule detection is completed.", id="optiscan-done", style={'display': 'none'})],  ###################
+                               style={"background": "lightblue"}, className="three columns", id="refresh")],  ###################
 
 
                   className="container")
