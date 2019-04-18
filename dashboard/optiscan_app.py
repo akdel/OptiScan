@@ -248,9 +248,9 @@ app.layout = html.Div([html.Div([
 
 
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
-             [dash.dependencies.Input("run-optiscan", "n_clicks"),
-              dash.dependencies.Input("optiscan-completed", "style")],
-             [dash.dependencies.State("db-name", "value"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("optiscan-completed", "style"),
+              dash.dependencies.State("db-name", "value"),
               dash.dependencies.State("chip-dimension", "value"),
               dash.dependencies.State("platform", "value"),
               dash.dependencies.State("folders-name", "value"),
