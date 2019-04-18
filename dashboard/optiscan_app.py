@@ -131,7 +131,8 @@ def empty_scan_page():
     container3 = html.Div(children=[p5, p6], className="container")
     container4 = html.Div([html.Button("Run OptiScan", className="three columns", id="run-optiscan",
                                       style={"background":"lightgreen"}),
-                                      html.H6("Molecule detection running..", id="optiscan-running", style={'display': 'none'}, className="three columns")],
+                                      html.H6("Molecule detection running..", id="optiscan-running", style={'display': 'none'}, className="three columns"),
+                                      html.H6("Molecule detection completed.", id="optiscan-completed", style={'display': 'none'}, className="three columns")],
                          className="container")
 
     return html.Div([html.Br(), header, html.Br(), container1, container2, container3, container4, html.Br()],
@@ -247,22 +248,25 @@ app.layout = html.Div([html.Div([
 
 
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
-             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.Input("run-optiscan", "n_clicks"),
+              dash.dependencies.Input("optiscan-completed", "style")],
              [dash.dependencies.State("db-name", "value"),
               dash.dependencies.State("chip-dimension", "value"),
               dash.dependencies.State("platform", "value"),
               dash.dependencies.State("folders-name", "value"),
               dash.dependencies.State("threads", "value"),
               dash.dependencies.State("organism", "value")])
-def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
-    if not db_name or not dim or not platform or not runs_path:
+def optiscan_running_response(click, completed, db_name, dim, platform, runs_path, threads, organism_name):
+    if not click or not db_name or not dim or not platform or not runs_path:
+        return {"display": "none"}
+    elif completed["display"] == "block":
         return {"display": "none"}
     else:
         return {"display": "block"}
 
 
 
-@app.callback(dash.dependencies.Output("scan-page-result", "children"),
+@app.callback(dash.dependencies.Output("optiscan-completed", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
               dash.dependencies.State("chip-dimension", "value"),
@@ -281,7 +285,9 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         cmd = f"python3 ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
         # scanner(db_name, dim, platform, runs_path)
         sp.check_call(cmd, shell=True)
-        return html.H6("Molecule detection is completed.")
+        return {"display": "block"}
+
+
 
 @app.callback(dash.dependencies.Output("run-field", "children"),
               [dash.dependencies.Input("connect-db", "n_clicks")],
