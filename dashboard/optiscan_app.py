@@ -224,7 +224,7 @@ def optiscan_porgress():
     return html.Div(html.Div([
            html.H6("OptiScan progress:", id="optiscan-progress", style={'display': 'none'}, className="row"),
            html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none'}, className="row"),
-           html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg())
+           html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg)
 
 def gitlab_link_optiscan():
     return html.A([html.Img(width=30, height=30,
