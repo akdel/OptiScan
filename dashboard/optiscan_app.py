@@ -575,4 +575,4 @@ def downlad_file(path):
 
 if __name__ == '__main__':
     from sys import argv
-    app.run_server(debug=True, host=argv[1], port=argv[2])
+    app.run_server(debug=True, host=argv[1], port=int(argv[2]))
