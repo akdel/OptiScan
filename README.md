@@ -104,9 +104,9 @@ The `optiscan/pipelines/` folder contains two pipeline scripts for running OptiS
     <bnx file template>
     ```
 
-    The BNX file template can be found in the OptiScan directory as 'bnx_header.txt'.
+    The BNX file template can be found in the OptiScan directory as 'bnx_head.txt'.
     
     example usage:
     ```bash
-    ./write_bnx /path/to/apple.db 3 ../bnx_header.txt
+    ./write_bnx /path/to/apple.db 3 ../bnx_head.txt
     ```
