@@ -221,10 +221,10 @@ def empty_database_page():
                      container3, container4, html.Br(), download_link, html.Br()], style=box_style, id="db-page")
 
 def optiscan_porgress():
-    return html.Div([
+    return html.Div(html.Div([
            html.H6("OptiScan progress:", id="optiscan-progress", style={'display': 'none'}, className="row"),
            html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none'}, className="row"),
-           html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="container")
+           html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg())
 
 def gitlab_link_optiscan():
     return html.A([html.Img(width=30, height=30,
