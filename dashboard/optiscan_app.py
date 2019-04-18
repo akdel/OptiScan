@@ -241,6 +241,8 @@ app.layout = html.Div([html.Div([
     html.Br(),
     empty_scan_page(),
     html.Br(),
+    optiscan_porgress(),
+    html.Br(),
     html.Div(id="scan-page-result"),
     html.Br(),
     empty_database_page(),
