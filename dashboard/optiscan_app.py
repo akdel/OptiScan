@@ -222,8 +222,8 @@ def empty_database_page():
 
 def optiscan_porgress():
     return html.Div(html.Div([
-           html.H6("OptiScan progress:", id="optiscan-progress", style={'display': 'none'}, className="row"),
-           html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none'}, className="row"),
+           html.H5("OptiScan progress:", id="optiscan-progress", style={'display': 'none', "margin": 15}, className="row"),
+           html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none', "margin": 15}, className="row"),
            html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg)
 
 def gitlab_link_optiscan():
@@ -262,9 +262,9 @@ app.layout = html.Div([html.Div([
               dash.dependencies.State("organism", "value")])
 def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
     if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none"}
+        return {"display": "none", "margin": 15}
     else:
-        return {"display": "block"}
+        return {"display": "block", "margin": 15}
 
 @app.callback(dash.dependencies.Output("optiscan-progress", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
@@ -276,9 +276,9 @@ def optiscan_running_response(click, db_name, dim, platform, runs_path, threads,
               dash.dependencies.State("organism", "value")])
 def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
     if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none"}
+        return {"display": "none", "margin": 15}
     else:
-        return {"display": "block"}
+        return {"display": "block", "margin": 15}
 
 
 @app.callback(dash.dependencies.Output("optiscan-completed", "style"),
@@ -291,7 +291,7 @@ def optiscan_running_response(click, db_name, dim, platform, runs_path, threads,
               dash.dependencies.State("organism", "value")])
 def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
     if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none"}
+        return {"display": "none", "margin": 15}
     else:
         dim = dim.split(",")
         dim = f"{int(dim[0])},{int(dim[1])}"
@@ -300,7 +300,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         cmd = f"python3 ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
         # scanner(db_name, dim, platform, runs_path)
         sp.check_call(cmd, shell=True)
-        return {"display": "block"}
+        return {"display": "block", "margin": 15}
 
 
 
