@@ -264,8 +264,6 @@ def optiscan_running_response(click, completed, db_name, dim, platform, runs_pat
     else:
         return {"display": "block"}
 
-
-
 @app.callback(dash.dependencies.Output("optiscan-completed", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
@@ -276,7 +274,7 @@ def optiscan_running_response(click, completed, db_name, dim, platform, runs_pat
               dash.dependencies.State("organism", "value")])
 def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
     if not db_name or not dim or not platform or not runs_path:
-        return html.H1("")
+        return {"display": "none"}
     else:
         dim = dim.split(",")
         dim = f"{int(dim[0])},{int(dim[1])}"
