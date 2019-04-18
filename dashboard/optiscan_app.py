@@ -130,9 +130,7 @@ def empty_scan_page():
     container2 = html.Div(children=[p1, p2], className="container")
     container3 = html.Div(children=[p5, p6], className="container")
     container4 = html.Div([html.Button("Run OptiScan", className="three columns", id="run-optiscan",
-                                      style={"background":"lightgreen"}),
-                                      html.H6("Molecule detection running..", id="optiscan-running", style={'display': 'none'}, className="three columns"),
-                                      html.H6("Molecule detection completed.", id="optiscan-completed", style={'display': 'none'}, className="three columns")],
+                                      style={"background":"lightgreen"})],
                          className="container")
 
     return html.Div([html.Br(), header, html.Br(), container1, container2, container3, container4, html.Br()],
@@ -222,6 +220,11 @@ def empty_database_page():
                      html.Br(), header2, html.Br(),
                      container3, container4, html.Br(), download_link, html.Br()], style=box_style, id="db-page")
 
+def optiscan_porgress():
+    return html.Div([
+           html.H6("OptiScan progress:", id="optiscan-progress", style={'display': 'none'}, className="row"),
+           html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none'}, className="row"),
+           html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="container")
 
 def gitlab_link_optiscan():
     return html.A([html.Img(width=30, height=30,
@@ -249,20 +252,32 @@ app.layout = html.Div([html.Div([
 
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
-             [dash.dependencies.State("optiscan-completed", "style"),
-              dash.dependencies.State("db-name", "value"),
+             [dash.dependencies.State("db-name", "value"),
               dash.dependencies.State("chip-dimension", "value"),
               dash.dependencies.State("platform", "value"),
               dash.dependencies.State("folders-name", "value"),
               dash.dependencies.State("threads", "value"),
               dash.dependencies.State("organism", "value")])
-def optiscan_running_response(click, completed, db_name, dim, platform, runs_path, threads, organism_name):
+def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
     if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none"}
-    elif completed["display"] == "block":
         return {"display": "none"}
     else:
         return {"display": "block"}
+
+@app.callback(dash.dependencies.Output("optiscan-progress", "style"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("db-name", "value"),
+              dash.dependencies.State("chip-dimension", "value"),
+              dash.dependencies.State("platform", "value"),
+              dash.dependencies.State("folders-name", "value"),
+              dash.dependencies.State("threads", "value"),
+              dash.dependencies.State("organism", "value")])
+def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
+    if not db_name or not dim or not platform or not runs_path:
+        return {"display": "none"}
+    else:
+        return {"display": "block"}
+
 
 @app.callback(dash.dependencies.Output("optiscan-completed", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
