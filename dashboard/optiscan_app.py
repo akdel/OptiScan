@@ -571,7 +571,7 @@ def downlad_file(path):
         os.path.join(root_dir, 'static'), path)
 
 
-
+# TODO add error messages: possible error messages -> database name is not filled, database exists, no files found
 
 if __name__ == '__main__':
     from sys import argv
