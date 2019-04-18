@@ -1,6 +1,9 @@
 # OptiScan Tool
 
-Photomap is an open source tool for extraction of nick and backbone signals from provided Bionano optical map tiff images. Photomap is able to transform nick signals into nicking site coordinates and write in BNX format.
+OptiScan is an open source tool for extraction of nick and backbone signals
+from provided Bionano Genomics optical map TIFF images. OptiScan is able to
+transform nick signals into nicking site coordinates and output these in
+the BNX format for further processing.
 
 
 ## Requirements
@@ -23,7 +26,7 @@ Required Python libraries:
 ```bash
 git clone https://gitlab.com/akdel/OptiScan.git
 cd OptiScan
-pip install .
+pip3 install .
 chmod +x pipelines/extract_molecules
 chmod +x pipelines/write_bnx
 ```
@@ -32,21 +35,36 @@ chmod +x pipelines/write_bnx
 1. Run the http server with:
     ```bash
     cd dashboard
-    python optiscan_app.py localhost 8080 > log.txt &
+    python3 optiscan_app.py localhost 8080 > log.txt &
     ```
-2. Access from browser with http://localhost:8080/optiscan.
+2. Access it from a browser at http://localhost:8080/optiscan.
 
 ## Usage
 
 ### Running from OptiScan dashboard
 
-OptiScan dashboard can be run as a web application built with [`Dash`](https://github.com/plotly/dash) python library. In this interface you can execute molecule detection/extraction and inspect the raw molecules and molecule length distributions. These inspections aid the choice of SNR, maximum DNA backbone intensity and minimum molecule length thresholds prior to exporting the data into `bnx` format.
+While ordinarily OptiScan is best used from the command line, a demo
+dashboard is available.  It is built as a Dash web application
+[`Dash`](https://github.com/plotly/dash).  In this interface, you can
+execute molecule detection/extraction and inspect the raw molecules and
+molecule length distributions.  Inspecting these values supports the choice
+of SNR, maximum DNA backbone intensity and minimum molecule length
+thresholds prior to exporting the data in the BNX format.
 
 #### Using dashboard with test data
 
-You can find two identical scans in `dashboard/test_data/test_run/` directory in `test_scans.tar.gz`. After extracting the scans with `tar -xvf test_scans.tar.gz`, the path to `test_run` directory can be given in dashboard as the **Run Folders**.
+You can find two scans in the directory `dashboard/test_data/test_run/`
+in `test_scans.tar.gz`.  After extracting the scans with `tar -xvf
+test_scans.tar.gz`, the path to the `test_run` directory can be specified in
+the dashboard under **Run Folders**.
 
-Providing all the test parameters in **Molecule detection** section and running OptiScan is required to extract molecules and create the test database. Test parameters are already filled (except database name) when the dashboard is launched. Molecules in the test data can be simply detected by filling in a database name and clicking **RUN OPTISCAN**. This process can take up to 5 minutes to complete.
+Providing all the test parameters in **Molecule detection** section and
+running OptiScan is required to extract molecules and create the test
+database.  Test parameters are already filled (except the database name) when
+the dashboard is launched.  Molecules in the test data can be simply
+detected by entering a database name and clicking **RUN OPTISCAN**.  This
+process can take up to 5-10 minutes to complete, depending on your 
+workstation speed.
 
 #### Dashboard screenshots
 
@@ -56,11 +74,10 @@ Molecule detection
 ![](screenshot2.png)
 Molecule inspection
 
-### Commandline scripts
-`optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
+### Command line scripts
+The `optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
 
-
-1. `extract_molecules` is for extracting and recording OM signals into disk.
+1. `extract_molecules` is for extracting and recording optical map signals.
 
     arguments: 
     ```bash
@@ -78,7 +95,7 @@ Molecule inspection
     ./extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple irys
     ```
 
-2. `write_bnx` is for writing extracted molecules in `.bnx` format.
+2. `write_bnx` is for writing extracted molecules in the BNX format.
     
     arguments:
     ```bash 
@@ -87,7 +104,7 @@ Molecule inspection
     <bnx file template>
     ```
 
-    BNX file template can be found in photomap folder as 'bnx_header.txt'.
+    The BNX file template can be found in the OptiScan directory as 'bnx_header.txt'.
     
     example usage:
     ```bash
