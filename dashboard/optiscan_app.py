@@ -257,7 +257,7 @@ app.layout = html.Div([html.Div([
               dash.dependencies.State("threads", "value"),
               dash.dependencies.State("organism", "value")])
 def optiscan_running_response(click, db_name, dim, platform, runs_path, threads, organism_name):
-    return {}
+    return {"display": "block"}
 
 
 
