@@ -71,8 +71,7 @@ box_style_lr={"top-margin": 25,
               "border-color": "rgb(187, 187, 187)",
               "border-width": "1px",
               "border-radius": "5px",
-              "background-color": "#ffbaba",
-              "display": "block"}
+              "background-color": "#ffbaba"}
 
 print("imported libraries")
 
