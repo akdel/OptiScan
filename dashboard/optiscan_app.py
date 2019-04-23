@@ -300,7 +300,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
     from os import listdir as ls
     if not db_name or not dim or not platform or not runs_path:
         return {"display": "none", "margin": 15}
-    elif (db_name in ls("databases")) or (db_name + ".db" in ls("databases")):
+    elif (db_name in ls("database")) or (db_name + ".db" in ls("database")):
         return {"display": "block", "margin": 15}
 
 
