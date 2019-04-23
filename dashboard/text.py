@@ -1,2 +1,6 @@
-Intro = """An optical map molecule extraction tool
-OptiScan is an opensource tool obtaining raw optical map molecules, store in a database and write in BNX format."""
+sub_heading = "An optical map molecule extraction tool"
+Intro = """This server allows you to extract molecules from raw optical mapping image data and then inspect and filter the results."""
+
+connect = """Load information from a preprocessed database of molecules"""
+
+

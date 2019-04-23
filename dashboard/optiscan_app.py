@@ -14,6 +14,8 @@ import os
 import flask
 import itertools
 
+def make_p(t):
+    return html.Div(t, style={"margin": 25})
 
 def plot_graph(figures, gid, layout=None):
     if not layout:
@@ -149,7 +151,7 @@ def empty_database_page():
     text_body = html.P('Access to molecule database to view scan and molecules statistics and visualize molecules',
                        style={"margin": 15})
     styles = {"text-align": "right", "margin-right": 5}
-    sub_h1 = html.H4("1. Connect", style={"margin": 15, "text-align": "center", "padding-top": 25})
+    sub_h1 = html.Div([html.H4("1. Connect", style={"margin": 15, "text-align": "center", "padding-top": 25}), make_p(text.connect)])
     database_names = os.listdir("database")
     p1 = html.Div([html.Div(html.H6("Database Name: ", style=styles), className="two columns"),
                    html.Div(dcc.Dropdown(options=[{"label": x, "value": "database/%s" %  x} for x in database_names if x.endswith(".db")],
@@ -249,6 +251,9 @@ app.layout = html.Div([html.Div([
     html.H1('OptiScan', style={"text-align": "center", "font-weight": "bold", "font-family": "Georgia, serif",
                                "font-size": "75px"}),
     html.Br(),
+    html.H2(text.sub_heading, style={"text-align": "center", "font-family": "Georgia, serif",
+                               "font-size": "35px"}),
+    html.Br(),                              
     html.P(text.Intro, style={"margin": 10}),
     html.Br(),
     html.Br(),
