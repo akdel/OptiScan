@@ -352,6 +352,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         cmd = f"python3 ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
         # scanner(db_name, dim, platform, runs_path)
         error_code = sp.check_call(cmd, shell=True)
+        print(error_code)
         if error_code:
             return {"display": "none", "margin": 15}
         else:
