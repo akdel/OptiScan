@@ -231,7 +231,7 @@ def optiscan_porgress():
     return html.Div(html.Div([
            html.H5("OptiScan progress:", id="optiscan-progress", style={'display': 'none', "margin": 15}, className="row"),
            html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none', "margin": 15}, className="row"),
-           html.H6("", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg)
+           html.H6(" ", id="optiscan-completed", style={'display': 'block'}, className="row")], className="six columns"), className="container", style=box_style_lg)
 
 def optiscan_errors():
     return html.Div(html.Div([
