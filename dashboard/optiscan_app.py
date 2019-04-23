@@ -259,6 +259,22 @@ app.layout = html.Div([html.Div([
     gitlab_link_optiscan()])
 
 
+@app.callback(dash.dependencies.Output("db-exists-error", "style"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("db-name", "value"),
+              dash.dependencies.State("chip-dimension", "value"),
+              dash.dependencies.State("platform", "value"),
+              dash.dependencies.State("folders-name", "value"),
+              dash.dependencies.State("threads", "value"),
+              dash.dependencies.State("organism", "value")])
+def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
+    from os import listdir as ls
+    if not db_name or not dim or not platform or not runs_path:
+        return {"display": "none", "margin": 15}
+    elif (db_name in ls("database")) or (db_name + ".db" in ls("database")):
+        return {"display": "block", "margin": 15}
+
+
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
@@ -290,20 +306,6 @@ def optiscan_running_response(click, db_name, dim, platform, runs_path, threads,
 
 
 
-@app.callback(dash.dependencies.Output("db-exists-error", "style"),
-             [dash.dependencies.Input("run-optiscan", "n_clicks")],
-             [dash.dependencies.State("db-name", "value"),
-              dash.dependencies.State("chip-dimension", "value"),
-              dash.dependencies.State("platform", "value"),
-              dash.dependencies.State("folders-name", "value"),
-              dash.dependencies.State("threads", "value"),
-              dash.dependencies.State("organism", "value")])
-def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
-    from os import listdir as ls
-    if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none", "margin": 15}
-    elif (db_name in ls("database")) or (db_name + ".db" in ls("database")):
-        return {"display": "block", "margin": 15}
 
 
 @app.callback(dash.dependencies.Output("db-name-error", "style"),
