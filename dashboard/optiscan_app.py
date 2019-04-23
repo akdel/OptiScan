@@ -602,7 +602,7 @@ def convert_bnx(clicked, db_name, filename, snr, min_len, intensity):
         database.molecules_to_bnxv2(filter(filter_func, mc.yield_molecule_signals_in_all_runs()), 10, 510, "static/%s" % filename,
                                     bnx_template_path="bnx_template.txt", signal_to_noise_ratio=float(snr))
         mc.db.close()
-        return html.A("Download %s here" % filename, href="/static/%s" % filename, style={"margin": "10%"})
+        return html.A("Download %s here" % filename, href="optiscan/static/%s" % filename, style={"margin": "10%"})
     else:
         return html.A("")
 
@@ -624,7 +624,7 @@ def update_db_dropdown(clicked):
     database_names = os.listdir("database")
     return [{"label": x, "value": "database/%s" % x} for x in database_names if x.endswith(".db")]
 
-@app.server.route('/static/<path:path>')
+@app.server.route('optiscan/static/<path:path>')
 def downlad_file(path):
     root_dir = os.getcwd()
     return flask.send_from_directory(
