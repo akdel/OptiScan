@@ -226,6 +226,13 @@ def optiscan_porgress():
            html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none', "margin": 15}, className="row"),
            html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg)
 
+def optiscan_errors():
+    return html.Div(html.Div([
+           html.H6("Image files not found. Check if the Run path is correct. (In case of running the test data, check if the images are uncompressed)", id="tiff-error", style={'display': 'none', "margin": 15}, className="row"),
+           html.H6("Please provide a database name", id="db-name-error", style={'display': 'none'}, className="row"),
+           html.H6("Database name provided already exists.", id="db-exists-error", style={'display': 'none'}, className="row")], 
+           className="six columns"), className="container", style=box_style_lg)
+
 def gitlab_link_optiscan():
     return html.A([html.Img(width=30, height=30,
                              src="https://res-1.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco/v1436005432/xnceesad5dbk42jdwlcp.png",
@@ -250,8 +257,6 @@ app.layout = html.Div([html.Div([
     gitlab_link_optiscan()])
 
 
-
-
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
@@ -265,6 +270,7 @@ def optiscan_running_response(click, db_name, dim, platform, runs_path, threads,
         return {"display": "none", "margin": 15}
     else:
         return {"display": "block", "margin": 15}
+
 
 @app.callback(dash.dependencies.Output("optiscan-progress", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
@@ -280,6 +286,60 @@ def optiscan_running_response(click, db_name, dim, platform, runs_path, threads,
     else:
         return {"display": "block", "margin": 15}
 
+
+
+@app.callback(dash.dependencies.Output("db-exists-error", "style"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("db-name", "value"),
+              dash.dependencies.State("chip-dimension", "value"),
+              dash.dependencies.State("platform", "value"),
+              dash.dependencies.State("folders-name", "value"),
+              dash.dependencies.State("threads", "value"),
+              dash.dependencies.State("organism", "value")])
+def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
+    from os import listdir as ls
+    if not db_name or not dim or not platform or not runs_path:
+        return {"display": "none", "margin": 15}
+    elif (db_name in ls("databases")) or (db_name + ".db" in ls("databases")):
+        return {"display": "block", "margin": 15}
+
+
+@app.callback(dash.dependencies.Output("db-name-error", "style"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("db-name", "value"),
+              dash.dependencies.State("chip-dimension", "value"),
+              dash.dependencies.State("platform", "value"),
+              dash.dependencies.State("folders-name", "value"),
+              dash.dependencies.State("threads", "value"),
+              dash.dependencies.State("organism", "value")])
+def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
+    if not db_name and dim and platform and runs_path:
+        return {"display": "block", "margin": 15}
+    elif not db_name or not dim or not platform or not runs_path:
+        return {"display": "none", "margin": 15}
+    else:
+        return {"display": "none", "margin": 15}
+
+
+
+@app.callback(dash.dependencies.Output("tiff-error", "style"),
+             [dash.dependencies.Input("run-optiscan", "n_clicks")],
+             [dash.dependencies.State("db-name", "value"),
+              dash.dependencies.State("chip-dimension", "value"),
+              dash.dependencies.State("platform", "value"),
+              dash.dependencies.State("folders-name", "value"),
+              dash.dependencies.State("threads", "value"),
+              dash.dependencies.State("organism", "value")])
+def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
+    from os import walk
+    if not db_name or not dim or not platform or not runs_path:
+        return {"display": "none", "margin": 15}
+    else:
+        w = walk(runs_path)
+        if not len([x for x in w if x.endswith(".tiff")]) > 0:
+            return {"display": "block", "margin": 15}
+        else:
+            return {"display": "none", "margin": 15}
 
 @app.callback(dash.dependencies.Output("optiscan-completed", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
