@@ -229,8 +229,7 @@ def optiscan_porgress():
 def optiscan_errors():
     return html.Div(html.Div([
            html.H6("Image files not found. Check if the Run path is correct. (In case of running the test data, check if the images are uncompressed)", id="tiff-error", style={'display': 'none', "margin": 15}, className="row"),
-           html.H6("Please provide a database name", id="db-name-error", style={'display': 'none'}, className="row"),
-           html.H6("Database name provided already exists.", id="db-exists-error", style={'display': 'none'}, className="row")], 
+           html.H6("Please provide a database name", id="db-name-error", style={'display': 'none'}, className="row")], 
            className="six columns"), className="container", style=box_style_lg)
 
 def gitlab_link_optiscan():
@@ -257,23 +256,7 @@ app.layout = html.Div([html.Div([
     empty_database_page(),
     html.Br()], className="container"),
     gitlab_link_optiscan()])
-
-
-@app.callback(dash.dependencies.Output("db-exists-error", "style"),
-             [dash.dependencies.Input("run-optiscan", "n_clicks")],
-             [dash.dependencies.State("db-name", "value"),
-              dash.dependencies.State("chip-dimension", "value"),
-              dash.dependencies.State("platform", "value"),
-              dash.dependencies.State("folders-name", "value"),
-              dash.dependencies.State("threads", "value"),
-              dash.dependencies.State("organism", "value")])
-def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_name):
-    from os import listdir as ls
-    if not db_name or not dim or not platform or not runs_path:
-        return {"display": "none", "margin": 15}
-    elif (db_name in ls("database")) or (db_name + ".db" in ls("database")):
-        return {"display": "block", "margin": 15}
-
+    
 
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],

@@ -26,6 +26,7 @@ if __name__ == "__main__":
               "<number of threads: int> <organism name: str> <data type: 'irys' or 'saphyr'>\n\n"
               "Example command: extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple")
     else:
+        from os import path, remove
         try:
             assert len(argv) == 7
         except AssertionError:
@@ -45,9 +46,11 @@ if __name__ == "__main__":
         database_name = argv[3]
         if not database_name.endswith(".db"):
             database_name += ".db"
+        if path.isfile(database_name):
+            remove(database_name)
         number_of_threads = int(argv[4])
         organism = argv[5]
-
+        
         create_tables()
         print("Database initiated!")
 
