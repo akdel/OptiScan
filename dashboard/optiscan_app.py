@@ -256,7 +256,7 @@ app.layout = html.Div([html.Div([
     empty_database_page(),
     html.Br()], className="container"),
     gitlab_link_optiscan()])
-    
+
 
 @app.callback(dash.dependencies.Output("optiscan-running", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
@@ -286,9 +286,6 @@ def optiscan_running_response(click, db_name, dim, platform, runs_path, threads,
         return {"display": "none", "margin": 15}
     else:
         return {"display": "block", "margin": 15}
-
-
-
 
 
 @app.callback(dash.dependencies.Output("db-name-error", "style"),
@@ -322,7 +319,8 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
     if not db_name or not dim or not platform or not runs_path:
         return {"display": "none", "margin": 15}
     else:
-        w = walk(runs_path)
+        w = list(walk(runs_path))
+        print(w)
         if not len([x for x in w if x.endswith(".tiff")]) > 0:
             return {"display": "block", "margin": 15}
         else:
