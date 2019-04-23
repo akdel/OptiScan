@@ -354,7 +354,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         try:
             sp.check_call(cmd, shell=True)
         except sp.CalledProcessError:
-            box_style_lr
+            return box_style_lr
         return {"display": "none", "margin": 15}
 
 
