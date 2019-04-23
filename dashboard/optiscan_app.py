@@ -231,7 +231,7 @@ def optiscan_porgress():
     return html.Div(html.Div([
            html.H5("OptiScan progress:", id="optiscan-progress", style={'display': 'none', "margin": 15}, className="row"),
            html.H6("1. Molecule detection running", id="optiscan-running", style={'display': 'none', "margin": 15}, className="row"),
-           html.H6("2. Molecule detection completed", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg)
+           html.H6("", id="optiscan-completed", style={'display': 'none'}, className="row")], className="six columns"), className="container", style=box_style_lg)
 
 def optiscan_errors():
     return html.Div(html.Div([
@@ -333,7 +333,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         else:
             return {"display": "none", "margin": 15}
 
-@app.callback(dash.dependencies.Output("optiscan-completed", "style"),
+@app.callback(dash.dependencies.Output("optiscan-completed", "children"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
               dash.dependencies.State("chip-dimension", "value"),
@@ -351,8 +351,11 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         db_name = f"database/{db_name}"
         cmd = f"python3 ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
         # scanner(db_name, dim, platform, runs_path)
-        sp.check_call(cmd, shell=True)
-        return {"display": "block", "margin": 15}
+        error_code = sp.check_call(cmd, shell=True)
+        if not error_code:
+            return "2. Molecule detection completed"
+        else:
+            return "2. Process could not be finished due to an error. Please refer to the log file."
 
 
 
