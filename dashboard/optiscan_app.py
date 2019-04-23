@@ -12,7 +12,7 @@ import subprocess as sp
 from os import path
 import os
 import flask
-
+import itertools
 
 
 def plot_graph(figures, gid, layout=None):
@@ -319,7 +319,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
     if not db_name or not dim or not platform or not runs_path:
         return {"display": "none", "margin": 15}
     else:
-        w = list(walk(runs_path))
+        w = itertools.chain.from_iterable([x[-1] for x in walk(runs_path)])
         print(w)
         if not len([x for x in w if x.endswith(".tiff")]) > 0:
             return {"display": "block", "margin": 15}
