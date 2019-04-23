@@ -66,6 +66,13 @@ box_style_lg={"top-margin": 25,
               "border-radius": "5px",
               "background-color": "#edfdff"}
 
+box_style_lr={"top-margin": 25,
+              "border-style": "solid",
+              "border-color": "rgb(187, 187, 187)",
+              "border-width": "1px",
+              "border-radius": "5px",
+              "background-color": "#ffbaba"}
+
 print("imported libraries")
 
 external_stylesheets = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"]
@@ -230,7 +237,7 @@ def optiscan_errors():
     return html.Div(html.Div([
            html.H6("Image files not found. Check if the Run path is correct. (In case of running the test data, check if the images are uncompressed)", id="tiff-error", style={'display': 'none', "margin": 15}, className="row"),
            html.H6("Please provide a database name", id="db-name-error", style={'display': 'none'}, className="row")], 
-           className="six columns"), className="container", style=box_style_lg)
+           className="twelve columns"), className="container", style=box_style_lr)
 
 def gitlab_link_optiscan():
     return html.A([html.Img(width=30, height=30,
