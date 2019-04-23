@@ -26,43 +26,46 @@ if __name__ == "__main__":
               "<number of threads: int> <organism name: str> <data type: 'irys' or 'saphyr'>\n\n"
               "Example command: extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple")
     else:
-        from os import path, remove
         try:
-            assert len(argv) == 7
-        except AssertionError:
-            print("All parameters should be provided. use -h or --help for help.")
-            exit()
-        if argv[6] == "saphyr":
-            saphyr_ = True
-        elif argv[6] == "irys":
-            saphyr_ = False
-        else:
-            raise TypeError("data type should be set to irys or saphyr")
-        list_of_run_folders = argv[1].split(",")
-        for folder in list_of_run_folders:
-            assert path.isdir(folder)
-        chip_dimension = tuple([int(x.strip()) for x in argv[2].split(',')])
-        assert len(chip_dimension) == 2
-        database_name = argv[3]
-        if not database_name.endswith(".db"):
-            database_name += ".db"
-        if path.isfile(database_name):
-            remove(database_name)
-        number_of_threads = int(argv[4])
-        organism = argv[5]
-        
-        create_tables()
-        print("Database initiated!")
+            from os import path, remove
+            try:
+                assert len(argv) == 7
+            except AssertionError:
+                print("All parameters should be provided. use -h or --help for help.")
+                exit()
+            if argv[6] == "saphyr":
+                saphyr_ = True
+            elif argv[6] == "irys":
+                saphyr_ = False
+            else:
+                raise TypeError("data type should be set to irys or saphyr")
+            list_of_run_folders = argv[1].split(",")
+            for folder in list_of_run_folders:
+                assert path.isdir(folder)
+            chip_dimension = tuple([int(x.strip()) for x in argv[2].split(',')])
+            assert len(chip_dimension) == 2
+            database_name = argv[3]
+            if not database_name.endswith(".db"):
+                database_name += ".db"
+            if path.isfile(database_name):
+                remove(database_name)
+            number_of_threads = int(argv[4])
+            organism = argv[5]
+            
+            create_tables()
+            print("Database initiated!")
 
-        moldb = MoleculeDB(database_name, list_of_run_folders, organism, chip_dimension=chip_dimension, saphyr=saphyr_)
-        scan_jobs = moldb.split_scans_to_threads(number_of_threads)
-        number_of_jobs = len(scan_jobs)
+            moldb = MoleculeDB(database_name, list_of_run_folders, organism, chip_dimension=chip_dimension, saphyr=saphyr_)
+            scan_jobs = moldb.split_scans_to_threads(number_of_threads)
+            number_of_jobs = len(scan_jobs)
 
-        with mp.Pool(number_of_jobs) as job:
-            job.map(run_for_extraction, scan_jobs)
-        # moldb.db.close()
-        mc = MoleculeConnector(database_name)
-        mc.write_molecule_metadata_to_disk()
-        mc.db.close()
-    exit()
+            with mp.Pool(number_of_jobs) as job:
+                job.map(run_for_extraction, scan_jobs)
+            # moldb.db.close()
+            mc = MoleculeConnector(database_name)
+            mc.write_molecule_metadata_to_disk()
+            mc.db.close()
+        except:
+            exit(1)
+    exit(0)
 

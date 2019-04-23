@@ -356,7 +356,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         if error_code:
             return {"display": "none", "margin": 15}
         else:
-            return {"display": "block", "margin": 15}
+            return box_style_lr
 
 
 
