@@ -235,7 +235,7 @@ def optiscan_porgress():
 
 def optiscan_errors():
     return html.Div(html.Div([
-           html.H6("Image files not found. Check if the Run path is correct. (In case of running the test data, check if the images are uncompressed)", id="tiff-error", style={'display': 'none', "margin": 15}, className="row"),
+           html.H6("Image files not found. Refresh and make sure if the Run path is correct. (In case of running the test data, check if the images are uncompressed)", id="tiff-error", style={'display': 'none', "margin": 15}, className="row"),
            html.H6("Please provide a database name", id="db-name-error", style={'display': 'none'}, className="row")], 
            className="twelve columns"), className="container", style=box_style_lr)
 
