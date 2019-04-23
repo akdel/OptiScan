@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 assert len(argv) == 7
             except AssertionError:
                 print("All parameters should be provided. use -h or --help for help.")
-                exit()
+                exit(1)
             if argv[6] == "saphyr":
                 saphyr_ = True
             elif argv[6] == "irys":
