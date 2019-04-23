@@ -254,9 +254,9 @@ app.layout = html.Div([html.Div([
     html.Br(),
     empty_scan_page(),
     html.Br(),
-    optiscan_errors(),
-    html.Br(),
     optiscan_porgress(),
+    html.Br(),
+    optiscan_errors(),
     html.Br(),
     html.Div(id="scan-page-result"),
     html.Br(),
@@ -333,7 +333,7 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         else:
             return {"display": "none", "margin": 15}
 
-@app.callback(dash.dependencies.Output("optiscan-completed", "children"),
+@app.callback(dash.dependencies.Output("optiscan-completed", "style"),
              [dash.dependencies.Input("run-optiscan", "n_clicks")],
              [dash.dependencies.State("db-name", "value"),
               dash.dependencies.State("chip-dimension", "value"),
