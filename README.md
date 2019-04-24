@@ -66,6 +66,8 @@ detected by entering a database name and clicking **RUN OPTISCAN**.  This
 process can take up to 5-10 minutes to complete, depending on your 
 workstation speed.
 
+You can find the live demonstration of OptiScan dashboard at [http://bioinformatics.nl/optiscan/](http://bioinformatics.nl/optiscan/). (note: the demo interface lacks the molecule detection function.)
+
 #### Dashboard screenshots
 
 ![](screenshot1.png)
