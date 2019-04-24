@@ -43,8 +43,8 @@ chmod +x pipelines/write_bnx
 
 ### Running from OptiScan dashboard
 
-While ordinarily OptiScan is best used from the command line, a demo
-dashboard is available.  It is built as a web application with 
+While ordinarily OptiScan is best used from the command line, a dashboard is available. 
+ It is built as a web application with 
 [`Dash`](https://github.com/plotly/dash).  In this interface, you can
 execute molecule detection/extraction and inspect the raw molecules and
 molecule length distributions.  Inspecting these values supports the choice
