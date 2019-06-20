@@ -3,4 +3,4 @@
 \*vscode
 \build
 \.vscode
-\OptiScan\\*cache*
+\OptiScan\*cache*
