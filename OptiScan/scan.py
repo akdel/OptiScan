@@ -174,7 +174,7 @@ class AnalyzeScan(Scan):
         slices = [x for x in slices if (x[0].stop - x[0].start) >= minimum_molecule_length]
         self.slice_coordinates = slices
         self.mol_slices = list()
-        self.mol_slices = list()
+        self.mol_slices = list() # TO DO look at this!
         print("%s of these are longer than %s pixels (about %s kbp) and taken as molecule set." % \
               (len(slices), minimum_molecule_length, (minimum_molecule_length * 500)/1000))
         for _slice in slices:
@@ -317,6 +317,7 @@ class AnalyzeScan(Scan):
         self.stitch_and_load_column()
         self.define_molecules(minimum_molecule_length=minimum_molecule_length,
                               abstraction_threshold=abstraction_threshold)
+        # frame func call
         self.get_all_signals()
 
     def stitch_extract_molecules_in_scan(self, minimum_molecule_length=50*5, abstraction_threshold=100):

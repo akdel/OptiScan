@@ -127,6 +127,9 @@ class MoleculeDB(Runs):
 class MoleculeConnector:
     """
     This is for loading molecules from a OptiScan database.
+    mols = MoleculeConnector("db")
+    mols.write_molecule_metadata_to_disk()
+    all_mols = list(mols.yield_molecule_signals_in_all_runs())
     """
     def __init__(self, database_location: str):
         """

@@ -25,7 +25,7 @@ Functions for signal pairs. These should include bnx maker.
 DTYPE = np.dtype({'names': ["overlap_score", "long_id", "short_id", "long_start", "long_end",
                             "short_start", "short_end", "long_len", "short_len", "contained", "reversed"],
                   'formats': [np.float64, np.int64, np.int64, np.float64, np.float64, np.float64,
-                                np.float64, np.float64, np.float64, np.bool, np.bool]})
+                              np.float64, np.float64, np.float64, np.bool, np.bool]})
 
 
 def get_bnx_info(nick_signal: np.ndarray, snr: float) -> dict:
@@ -855,7 +855,7 @@ class AlignParser:
         edge_list = list()
         for i in range(len(self.align_info)):
             current_info = self.align_info[i]["match_info"]
-            id1,id2,reverse,shift,score = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"],float(current_info["PvalueLog10"])
+            id1, id2, reverse, shift, score = current_info["Mol0ID"],current_info["Mol1ID"],current_info["Orientation"],current_info["Offset\n"],float(current_info["PvalueLog10"])
             id1 = int(id1)-1; id2 = int(id2)-1
             if (id1 > 536798) or (id2 > 536798):
                 continue
