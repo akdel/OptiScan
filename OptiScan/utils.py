@@ -821,7 +821,7 @@ class MoleculeToMolecule(MQR):
     
     def run_some_vs_all(self, bnx1, bnx2):
         from subprocess import check_call as ck
-        ck(self.pairwise_command % (self.ref_align, bnx1, bnx2, self.output_dir + "bnx_quality", self.score), shell=True)
+        ck(self.some_to_all % (self.ref_align, bnx1, bnx2, self.output_dir + "bnx_quality", self.score), shell=True)
     
 
 class AlignParser:
