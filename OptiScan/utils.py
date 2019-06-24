@@ -810,6 +810,19 @@ class MQR:
         xmap_file = self.output_dir + 'bnx_quality.xmap'
         self.xmap = XmapParser(xmap_file)
 
+class MoleculeToMolecule(MQR):
+    def __init__(self, output_folder, ref_align_path, score="1e-10"):
+        MQR.__init__(self, output_folder=output_folder, ref_align_path=ref_align_path, score=score)
+        self.some_to_all = """%s -i %s -i %s -o %s -usecolor 1 -FP 1.5 -FN 0.15 -sd 0.0 -sf 0.2 -sr 0.03 -res 3.3 -T %s -maxmem 7.5 \
+            -minlen 150 -minsites 8 -MaxIntensity 20000 -usecolor 1 -maxsites 200 -mres 0.9 -usecolor 1 -A 5 \
+            -S 1 -MaxSE 0.5 -outlier 0.0001 -outlierMax 40. -endoutlier 0 -RepeatMask 2 0.01 -RepeatRec 0.7 0.6 1.4 -PVres 2 \
+            -alignscore -maptype 0 -HSDrange 1.0 -hashoffset 1 -f -hashgen 5 3 2.2 1.2 0.05 3.0 1 1 1 -hash \
+            -nosplit 2 -align_format 0 -stdout -stderr -maxthreads 24"""
+    
+    def run_some_vs_all(self, bnx1, bnx2):
+        from subprocess import check_call as ck
+        ck(self.pairwise_command % (self.ref_align, bnx1, bnx2, self.output_dir + "bnx_quality", self.score), shell=True)
+    
 
 class AlignParser:
     def __init__(self, alignment_file):
