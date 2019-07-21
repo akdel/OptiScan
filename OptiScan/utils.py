@@ -5,6 +5,7 @@ from scipy import ndimage
 import numpy as np
 from numba import njit, jit, vectorize, prange
 
+
 CMAP_HEADER = """# CMAP File Version:    0.1
 # Label Channels:       1
 # Nickase Recognition Site 1:   %s
@@ -796,6 +797,7 @@ class MQR:
             -S 1 -MaxSE 0.5 -outlier 0.0001 -outlierMax 40. -endoutlier 0 -RepeatMask 2 0.01 -RepeatRec 0.7 0.6 1.4 -PVres 2 \
             -alignscore -maptype 0 -HSDrange 1.0 -hashoffset 1 -f -hashgen 5 3 2.2 1.2 0.05 3.0 1 1 1 -hash \
             -nosplit 2 -align_format 0 -stdout -stderr -maxthreads 24"""
+        self.denovo_command = """python2 %s -l %s -t %s -b %s -R -y 1 -i 1 -a %s"""
         self.xmap = None
 
     def run_ref_align(self, reference_cmap_path, bnx_file, number_of_molecules):
@@ -805,6 +807,10 @@ class MQR:
     def run_ref_align_pairwise(self, bnx_file):
         from subprocess import check_call as ck
         ck(self.pairwise_command % (self.ref_align, bnx_file, self.output_dir + "bnx_quality", self.score), shell=True)
+
+    def rough_denovo_assembly(self, pipeline_location, output_folder, refaligner_directory, bnx_file, xml_file):
+        from subprocess import check_call as ck
+        ck(self.denovo_command % (pipeline_location, output_folder, refaligner_directory, bnx_file, xml_file))
 
     def load_results(self):
         xmap_file = self.output_dir + 'bnx_quality.xmap'
@@ -901,6 +907,3 @@ class AlignParser:
         f = open(fname, "a")
         f.write("".join(edge_list))
         f.close()
-
-
-
