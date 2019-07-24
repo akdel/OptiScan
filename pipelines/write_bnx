@@ -6,7 +6,7 @@ from sys import argv
 def create_bnx_file():
     for run_id in connection.db_runs:
         mols = connection.yield_molecule_signals_in_run(run_id)
-        molecules_to_bnx(mols, 10., 485., str(run_id) + "OptiScan.bnx", bnx_template_path=bnx_file_template,
+        molecules_to_bnxv2(mols, 10., 485., str(run_id) + "OptiScan.bnx", bnx_template_path=bnx_file_template,
                          signal_to_noise_ratio=snr)
 
 
@@ -25,14 +25,14 @@ if __name__ == "__main__":
         print("parameters: <database name> <signal to noise ratio> <bnx file template>\n\n"
               "bnx file template can be found in OptiScan folder as 'bnx_header.txt'.\n"
               "\nExample Usage:\n"
-              "write_bnx /path/to/apple.db 3 ../bnx_header.txt\n\n")
+              "write_bnx /path/to/apple.db 3 ../bnx_head.txt\n\n")
     else:
         try:
             assert len(argv) == 4
         except AssertionError:
             print("All parameters should be provided. use -h or --help for help.")
             exit(3)
-        from OptiScan import MoleculeConnector, molecules_to_bnx
+        from OptiScan.database import MoleculeConnector, molecules_to_bnxv2
         from sys import argv
         database_name = argv[1]
         snr = float(argv[2])
