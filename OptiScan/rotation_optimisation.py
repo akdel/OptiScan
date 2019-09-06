@@ -145,10 +145,8 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
 
 
 def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.01, saphyr=False):
-    print(1)
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
-    print(2)
     return rotate(image, angle), angle
 
 
@@ -385,18 +383,12 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
         list_of_frames = [ndimage.white_tophat(x, structure=disk(7)) for x in list_of_frames] # 6 for irys
         if additional_set:
             additional_set = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
-    print(1)
     list_of_frames_with_angles = [rotate_with_optimal_rotation(x, saphyr=saphyr) for x in list_of_frames]
-    print(2)
     list_of_frames = [x[0].astype(float) for x in list_of_frames_with_angles]
-    print(3)
     angles = [x[1] for x in list_of_frames_with_angles]
-    print(4)
     if additional_set:
-        print(5)
         additional_input = [rotate(additional_set[i], angles[i]).astype(float)
                             for i in range(len(additional_set))]
-        print(6)
         if magnification_optimisation:
             additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
                                     in range(len(additional_input))]
