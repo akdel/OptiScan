@@ -193,7 +193,7 @@ class Transformation:
 
 @nb.njit
 def pixels_to_vectors(pixels):
-    res = np.zeros((pixels.shape[0] * pixels.shape[1], 4), dtype=np.int64)
+    res = np.zeros((pixels.shape[0] * pixels.shape[1], 4), dtype=np.float64)
     for i in range(pixels.shape[0]):
         for j in range(pixels.shape[1]):
             res[(i * pixels.shape[1]) + j] = (j, i, pixels[i, j], 1)
@@ -222,7 +222,7 @@ def rotate(image, angle):
     t_mat = create_translation_matrix(x_len//2, y_len//2, 0) @ \
             create_z_rotation_matrix(-angle) @ \
             create_translation_matrix(-x_len//2, -y_len//2, 0)
-    rotated = t_mat @ tuples.astype(np.float64)
+    rotated = t_mat @ tuples
     transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
     return fix_holes(vectors_to_pixels(transformed))
 
