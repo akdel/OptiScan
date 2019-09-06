@@ -9,7 +9,7 @@ from OptiScan.transformation import rotate as rotateit
 
 
 def rotate(image, angle):
-    return rotateit(image.astype(np.int64), np.deg2rad(angle))
+    return rotateit(image.astype(np.uint16), np.deg2rad(angle))
 
 # def rotate(image, angle):
 #     return ndimage.rotate(image, angle, reshape=False)
@@ -145,8 +145,10 @@ def get_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.1, final_sp
 
 
 def rotate_with_optimal_rotation(image, _from=-0.1, _to=0.1, initial_space=0.05, final_space=0.01, saphyr=False):
+    print(1)
     angle = max(get_optimal_rotation(image, _from=_from, _to=_to,
                                      initial_space=initial_space, final_space=final_space, saphyr=saphyr))[1]
+    print(2)
     return rotate(image, angle), angle
 
 
