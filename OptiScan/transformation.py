@@ -222,7 +222,7 @@ def rotate(image, angle):
     t_mat = create_translation_matrix(x_len//2, y_len//2, 0) @ \
             create_z_rotation_matrix(-angle) @ \
             create_translation_matrix(-x_len//2, -y_len//2, 0)
-    rotated = t_mat @ tuples
+    rotated = t_mat @ tuples.astype(np.float64)
     transformed = nb_round(points_within_envelope(rotated.T, x_len-1, y_len-1)).astype(np.int64)
     return fix_holes(vectors_to_pixels(transformed))
 
