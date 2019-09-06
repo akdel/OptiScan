@@ -9,7 +9,7 @@ from OptiScan.transformation import rotate as rotateit
 
 
 def rotate(image, angle):
-    return rotateit(image.astype(float), np.deg2rad(angle))
+    return rotateit(image.astype(int), np.deg2rad(angle))
 
 # def rotate(image, angle):
 #     return ndimage.rotate(image, angle, reshape=False)
