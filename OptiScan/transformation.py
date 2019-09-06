@@ -193,7 +193,7 @@ class Transformation:
 
 @nb.njit
 def pixels_to_vectors(pixels):
-    res = np.zeros((pixels.shape[0] * pixels.shape[1], 4), dtype=np.float64)
+    res = np.zeros((pixels.shape[0] * pixels.shape[1], 4), dtype=np.int64)
     for i in range(pixels.shape[0]):
         for j in range(pixels.shape[1]):
             res[(i * pixels.shape[1]) + j] = (j, i, pixels[i, j], 1)
