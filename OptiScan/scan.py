@@ -601,11 +601,10 @@ def return_column(image_frames: [np.ndarray], column_no: int, dimensions: (int, 
     if column_no % 2 != 0:
         nick_frames = [ndimage.zoom(image_frames[i].astype(float), 2).astype(int) for i in range(nstart, nend, 2)]
         backbone_frames = [ndimage.zoom(image_frames[i].astype(float), 2).astype(int) for i in range(bstart, bend, 2)]
-        image_frames[nstart: bend] = None
     else:
         nick_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 2).astype(int) for i in range(nstart, nend, 2)]
         backbone_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 2).astype(int) for i in range(bstart, bend, 2)]
-        image_frames[nstart: bend] = None
+    image_frames[nstart: bend] = [None] * (bend-nstart)
     gc.collect()
     return backbone_frames, nick_frames, image_frames
 
