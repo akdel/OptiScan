@@ -4,6 +4,7 @@ from scipy import ndimage
 from OptiScan.folder_searcher import FolderSearcher
 from os import listdir
 import imageio
+import gc
 
 """
 TODO 1. split each col frame into frames and then stich them.
@@ -247,17 +248,20 @@ class AnalyzeScan(Scan):
             pass
         else:
             self.current_column_id += 1
+        del self.current_lab_column, self.current_mol_column
         self.current_lab_column = None
         self.current_mol_column = None
         self._clean_slices()
+        gc.collect()
 
     def _clean_slices(self):
         """
         Cleans molecule slices.
         """
-        self.mol_slices = []
-        self.lab_slices = []
-        self.slice_coordinates = []
+        del self.mol_slices, self.lab_slices, self.slice_coordinates
+        self.mol_slices = list()
+        self.lab_slices = list()
+        self.slice_coordinates = list()
 
     def stitch_and_load_column(self):
         """
@@ -267,8 +271,8 @@ class AnalyzeScan(Scan):
         Stitched nick and backbone columns for the current column id.
         """
         if not self.saphyr:
-            backbone_label_column, nick_label_column = return_column(self.frames, self.current_column_id,
-                                                                    self.chip_dimension)
+            backbone_label_column, nick_label_column, self.frames = return_column(self.frames, self.current_column_id,
+                                                                                  self.chip_dimension)
             backbone_label_column, nick_label_column = stitch_column(backbone_label_column, nick_label_column)
             self.current_lab_column = ndimage.zoom(nick_label_column, 0.5)
             self.current_mol_column = ndimage.zoom(backbone_label_column, 0.5)
@@ -320,7 +324,7 @@ class AnalyzeScan(Scan):
         # frame func call
         self.get_all_signals()
 
-    def stitch_extract_molecules_in_scan(self, minimum_molecule_length=50*5, abstraction_threshold=100):
+    def stitch_extract_molecules_in_scan(self, minimum_molecule_length=250, abstraction_threshold=100):
         """
         This is the pipeline function to extract all molecules from the scan.
         Parameters
@@ -597,10 +601,12 @@ def return_column(image_frames: [np.ndarray], column_no: int, dimensions: (int, 
     if column_no % 2 != 0:
         nick_frames = [ndimage.zoom(image_frames[i].astype(float), 2).astype(int) for i in range(nstart, nend, 2)]
         backbone_frames = [ndimage.zoom(image_frames[i].astype(float), 2).astype(int) for i in range(bstart, bend, 2)]
+        image_frames[nstart: bend] = None
     else:
         nick_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 2).astype(int) for i in range(nstart, nend, 2)]
         backbone_frames = [ndimage.zoom(image_frames[i][::-1].astype(float), 2).astype(int) for i in range(bstart, bend, 2)]
-    return backbone_frames, nick_frames
+        image_frames[nstart: bend] = None
+    return backbone_frames, nick_frames, image_frames
 
 
 def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray], saphyr=False) -> (np.ndarray, np.ndarray):

@@ -498,8 +498,8 @@ def update_db_summary(clicked, db_name):
         mc.db.close()
         all_info = get_db_stats(run_info)
         return [html.Br(), html.Div([html.H6("Number of molecules: %s" % all_info[0], className="four columns", style={"text-align": "center"}),
-                html.H6(f"Average length: {all_info[1] // 2}kb", className="four columns", style={"text-align": "center"}),
-                html.H6(f"Longest molecule: {all_info[2] // 2}kb", className="four columns", style={"text-align": "center"})],
+                html.H6(f"Average length: {all_info[1]} kb", className="four columns", style={"text-align": "center"}),
+                html.H6(f"Longest molecule: {all_info[2]} kb", className="four columns", style={"text-align": "center"})],
                         className="container")]
     return ""
 
