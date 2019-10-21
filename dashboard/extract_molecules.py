@@ -64,7 +64,7 @@ if __name__ == "__main__":
             # moldb.db.close()
             mc = MoleculeConnector(database_name)
             mc.write_molecule_metadata_to_disk()
-            mc.db.close()
+            # mc.db.close(
         except:
             exit(1)
     exit(0)
