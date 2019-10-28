@@ -61,6 +61,7 @@ def get_bnx_info_with_upsampling(nick_signal: np.ndarray, snr: float, zoom_ratio
     nick_signal = ndimage.zoom(nick_signal, zoom_ratio)
     bnx_info = get_bnx_info(nick_signal, snr)
     bnx_info["nick_distances"] = [x*final_ratio for x in bnx_info["nick_distances"]]
+    bnx_info["length"] = bnx_info["length"] * final_ratio
     return bnx_info
 
 
