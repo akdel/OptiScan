@@ -34,6 +34,7 @@ def get_bnx_info(nick_signal: np.ndarray, snr: float) -> dict:
     median = np.median(nick_signal)
     if median < 1:
         median = 1
+    bnx_dict["length"] = nick_signal.shape[0]
     bnx_dict["nick_distances"] = get_peaks(nick_signal, snr, median)
     bnx_dict["nick_snrs"] = [nick_signal[x] / median for x in bnx_dict["nick_distances"]]
     bnx_dict["nick_intensities"] = [nick_signal[x] for x in bnx_dict["nick_distances"]]
@@ -43,6 +44,7 @@ def get_bnx_info(nick_signal: np.ndarray, snr: float) -> dict:
 
 def get_bnx_info_force_median(nick_signal: np.ndarray, snr: float, median: float) -> dict:
     bnx_dict = dict()
+    bnx_dict["length"] = nick_signal.shape[0]
     bnx_dict["nick_distances"] = get_peaks(nick_signal, snr, median)
     bnx_dict["nick_snrs"] = [nick_signal[x] / median for x in bnx_dict["nick_distances"]]
     bnx_dict["nick_intensities"] = [nick_signal[x] for x in bnx_dict["nick_distances"]]
