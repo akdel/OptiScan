@@ -18,7 +18,9 @@ Required Python libraries:
 * [Sqlalchemy](https://www.sqlalchemy.org)
 * [intervaltree](https://pypi.org/project/intervaltree)
 * [scikit-image](https://scikit-image.org)
+* [Pillow](https://pillow.readthedocs.io/en/stable/)
 * [dash](https://github.com/plotly/dash) (optional for user interface)
+
 
 ## Installation
 
