@@ -461,7 +461,7 @@ def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, b
         bnx_info = get_bnx_info_with_upsampling(nick_signal, signal_to_noise_ratio, zoom_ratio, final_ratio)
         if len(bnx_info["nick_snrs"]) > 1:
             backbone_signal_avg = np.mean(backbone_signal)
-            first_line = "0\t" + "\t".join([str(mol_id), str(int(bnx_info["length"])),
+            first_line = "0\t" + "\t".join([str(mol_id), str(int(bnx_info["nick_distances"][-1])),
                                             str(round(backbone_signal_avg, 1)), str(round(backbone_signal_avg, 1)),
                                             str(len(bnx_info["nick_distances"]) - 1), str(mol_id), "1", "-1",
                                             "20249,12205,10/27/2015,850020394", "1", "1", "1"]) + "\n"
