@@ -6,7 +6,7 @@ from sys import argv
 from os import path
 
 
-def run_for_extraction(run_scan_pairs: [tuple], contrast: float):
+def run_for_extraction(run_scan_pairs: [tuple]):
     runs = list(set([run_id for run_id, _ in run_scan_pairs]))
     moldb_ = MoleculeDB(database_name, runs, organism, chip_dimension=chip_dimension)
     for run_id, scan_id in run_scan_pairs:
