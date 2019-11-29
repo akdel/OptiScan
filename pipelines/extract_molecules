@@ -6,12 +6,12 @@ from sys import argv
 from os import path
 
 
-def run_for_extraction(run_scan_pairs: [tuple]):
+def run_for_extraction(run_scan_pairs: [tuple], contrast: float):
     runs = list(set([run_id for run_id, _ in run_scan_pairs]))
     moldb_ = MoleculeDB(database_name, runs, organism, chip_dimension=chip_dimension)
     for run_id, scan_id in run_scan_pairs:
         moldb_.connect_db()
-        moldb_.extract_molecules_from_scan_in_run(run_id, scan_id)
+        moldb_.extract_molecules_from_scan_in_run(run_id, scan_id, abstraction_threshold=contrast)
         moldb_.insert_columns_for_scan(run_id, scan_id)
 
 
@@ -23,11 +23,11 @@ def create_tables():
 if __name__ == "__main__":
     if argv[1] == "-h" or argv[1] == "--help" or argv[1] == "help":
         print("arguments: <list of runs: use commas to separate> <chip dimension: x,y> <database name: str> "
-              "<number of threads: int> <organism name: str> <data type: 'irys' or 'saphyr'>\n\n"
-              "Example command: extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple")
+              "<number of threads: int> <organism name: str> <data type: 'irys' or 'saphyr'> <contrast threshold: float>\n\n"
+              "Example command: extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple irys 100")
     else:
         try:
-            assert len(argv) == 7
+            assert len(argv) == 8
         except AssertionError:
             print("All parameters should be provided. use -h or --help for help.")
             exit()
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         database_name = argv[3]
         number_of_threads = int(argv[4])
         organism = argv[5]
-
+        contrast = float(argv[7])
         create_tables()
         print("Database initiated!")
 

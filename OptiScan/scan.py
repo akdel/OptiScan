@@ -492,7 +492,7 @@ class Run(FolderSearcher):
         for scan_id in self.analyzed_scans.keys():
             self.read_frames_in_scan(scan_id)
 
-    def extract_molecules_for_db(self, scan_id: int):
+    def extract_molecules_for_db(self, scan_id: int, abstraction_threshold=100):
         """
         Molecules are extracted in a way that OptiScan database will accept.
         Parameters
@@ -504,7 +504,7 @@ class Run(FolderSearcher):
 
         """
         scan = self.analyzed_scans[scan_id]
-        scan.stitch_extract_molecules_in_scan()
+        scan.stitch_extract_molecules_in_scan(abstraction_threshold=abstraction_threshold)
         scan.initiate_memmap()
         for col_id in sorted(list(scan.column_info.keys())):
             scan.current_column_id = col_id
@@ -526,7 +526,7 @@ class Runs:
         self.saphyr = saphyr
         self.analyzed_runs = {x: Run(x, chip_dimension=chip_dimension, saphyr=saphyr) for x in run_directories}
 
-    def extract_molecules_from_scan_in_run(self, run_id: str, scan_id: int):
+    def extract_molecules_from_scan_in_run(self, run_id: str, scan_id: int, abstraction_threshold=100):
         """
         See Run.extract_molecules_for_db
         Parameters
@@ -540,7 +540,7 @@ class Runs:
         """
         run = self.analyzed_runs[run_id]
         run.read_frames_in_scan(scan_id)
-        run.extract_molecules_for_db(scan_id)
+        run.extract_molecules_for_db(scan_id, abstraction_threshold=abstraction_threshold)
 
     def extract_molecules_in_run(self, run_id: str):
         """
