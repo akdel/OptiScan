@@ -156,18 +156,23 @@ class AnalyzeScan(Scan):
         """
         self.column_info[self.current_column_id]["minimum_allowed_length"] = int(minimum_molecule_length)
         self.column_info[self.current_column_id]["abstract_threshold"] = int(abstraction_threshold)
-        
+        print(abstraction_threshold, "absthr")
         if not self.saphyr:
             molecule_abstract = np.zeros(self.current_mol_column.shape)
             mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
             molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
             molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
-        elif self.saphyr:
+        else:
+            print([False]*10)
             molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, self.current_mol_column, 0)
-            mask = np.array([[-3,-2,3,8,3,-2,-3]])
-            molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
-            molecule_abstract = np.where(molecule_abstract > (abstraction_threshold*m), 1, 0)
-            self.something = molecule_abstract
+            mask = np.array(list(signal.ricker(16, 1)) * 5).reshape((5, -1))
+            print("convolving!")
+            molecule_abstract = ndimage.convolve(molecule_abstract.astype(float), mask.astype(float))
+            print("white tophat!")
+            # molecule_abstract = ndimage.white_tophat(molecule_abstract, structure=np.ones((1, 3)))
+            print("binary abstraction!")
+            molecule_abstract = np.where(molecule_abstract > (abstraction_threshold*m*mask.shape[0]), 1, 0)
+            # self.something = molecule_abstract
         labels = ndimage.label(molecule_abstract)
         slices = ndimage.find_objects(labels[0], max_label=labels[1])
         print("%s potential molecule fragments are found..." % len(slices))
@@ -217,6 +222,7 @@ class AnalyzeScan(Scan):
         backbone_slice = self.mol_slices[molecule_id]
         signal_set = label_slice[:,:]
         try:
+            print(signal_set.shape)
             signal_averages = np.average(signal_set, axis=0)
         except ZeroDivisionError:
             print("zero division error")
@@ -276,8 +282,9 @@ class AnalyzeScan(Scan):
             concat_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             concat_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
             print(concat_mol_column.shape, concat_lab_column.shape)
-            backbone_frames = [ndimage.white_tophat(concat_mol_column[i:i+2048], structure=disk(12)) for i in range(0, concat_mol_column.shape[0], 2048)]
-            lab_frames = [ndimage.white_tophat(concat_lab_column[i:i+2048], structure=disk(12)) for i in range(0, concat_lab_column.shape[0], 2048)]
+            print("Zooming!")
+            backbone_frames = [ndimage.white_tophat(concat_mol_column[i:i+2048], structure=np.ones((1,3))) for i in range(0, concat_mol_column.shape[0], 2048)]
+            lab_frames = [ndimage.white_tophat(concat_lab_column[i:i+2048], structure=disk(6)) for i in range(0, concat_lab_column.shape[0], 2048)]
             print([f.shape for f in backbone_frames],[ff.shape for ff in lab_frames])
             self.current_mol_column, self.current_lab_column = stitch_column(backbone_frames, lab_frames, saphyr=self.saphyr)
             
@@ -456,6 +463,7 @@ class Run(FolderSearcher):
         self.saphyr = saphyr
         if saphyr:
             FolderSearcher.__init__(self, run_directory, saphyr=True)
+            print(self.scans.keys())
             self.analyzed_scans = {i:AnalyzeScan(run_directory, chip_dimension=chip_dimension,
                                                 scan_no=run_directory + str(i),
                                                 load_frames=False, saphyr=saphyr,
@@ -560,6 +568,7 @@ class Runs:
     def _flatten_scans_for_parallel(self):
         for run_id in self.analyzed_runs.keys():
             for scan_id in self.analyzed_runs[run_id].analyzed_scans.keys():
+                print(run_id, scan_id)
                 yield (run_id, scan_id)
 
     def split_scans_to_threads(self, number_of_threads: int):
@@ -619,3 +628,20 @@ def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray], saph
                                                          y_shift=True,
                                                          tophat=True,
                                                          magnification_optimisation=True, saphyr=saphyr)
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    sc = AnalyzeScan("/Users/akdel/PycharmProjects/projects3/OptiScan/data/", saphyr=True,
+              saphyr_folder_searcher=["/Users/akdel/PycharmProjects/projects3/OptiScan/data/Bank/B1_CH1_C100.tif",
+                                      "/Users/akdel/PycharmProjects/projects3/OptiScan/data/Bank/B1_CH2_C100.tif"])
+    sc.stitch_extract_molecules_in_column(minimum_molecule_length=25, abstraction_threshold=110)
+    plt.figure(figsize=(10, 100))
+    plt.imshow(sc.annotate_column(4000))
+    plt.show()
+    # sc.add_column_into_memmap()
+    # molecules = [x for x in sc.return_signals_in_column(0)]
+    # print(len(molecules))
+    # for back, nick in molecules:
+    #     plt.plot(back)
+    #     plt.plot(nick)
+    #     plt.show()

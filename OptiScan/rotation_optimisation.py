@@ -4,15 +4,17 @@ import numpy as np
 from skimage.morphology import disk
 from OptiScan.signal_match import Matcher
 from OptiScan.align import normalized_correlation as ncorr
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from OptiScan.transformation import rotate as rotateit
 
+MAG = 1
 
 # def rotate(image, angle):
 #     return ndimage.rotate(image.astype(int), np.deg2rad(angle))
 
 def rotate(image, angle):
     return ndimage.rotate(image, angle, reshape=False)
+
 
 def white_tophat_to_image(image_array, disk_radius=6):
     """
@@ -154,7 +156,7 @@ def get_1d_bottom(image, saphyr=False):
     current_max = np.max(np.sum(image[-6:-1, :], axis=0))
     n = -1
     if saphyr:
-        return np.mean(image[-200:], axis=0)
+        return np.mean(image[-200*MAG:], axis=0)
     else:
         while (current_max <= 600*5) and (n != -50):
             n -= 1
@@ -166,7 +168,7 @@ def get_1d_top(image, saphyr=False):
     current_max = np.max(np.sum(image[0:5, :], axis=0))
     n = 0
     if saphyr:
-        return np.mean(image[:200], axis=0)
+        return np.mean(image[:200*MAG], axis=0)
     else:
         while (current_max <= 300*5) and (n != 50):
             n += 1
@@ -176,14 +178,14 @@ def get_1d_top(image, saphyr=False):
 
 def get_2d_bottom(image, saphyr=False):
     if saphyr:
-        return image[-600:, :]
+        return image[-600*MAG:, :]
     return image[-120:, :]
 
 
 def get_2d_top(image, saphyr=False):
     # print("Saphyr:",saphyr)
     if saphyr:
-        return image[:600, :]
+        return image[:600*MAG, :]
     return image[:120, :]
 
 
@@ -222,16 +224,19 @@ def x_shift_image_while_keeping_default_xshape(shape, image, shift):
 
 
 def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, return_y_shift=False, prey_shift=None, saphyr=False):
-    # print(top_image.shape, bottom_image.shape)
-    if top_image.shape[1] != bottom_image.shape[1]:
-        return None
+    if top_image.shape[1] > bottom_image.shape[1]:
+        top_image = top_image[:,:bottom_image.shape[1]]
+    elif bottom_image.shape[1] > top_image.shape[1]:
+        bottom_image = bottom_image[:, :top_image.shape[1]]
+    else:
+        pass
     if shift_value[1] == "bottom":
         bottom_image = x_shift_image_while_keeping_default_xshape(bottom_image.shape, bottom_image, shift_value[0])
     elif shift_value[1] == "top":
         top_image = x_shift_image_while_keeping_default_xshape(top_image.shape, top_image, shift_value[0])
     if y_shift:
         if prey_shift:
-            if prey_shift is not 0:
+            if prey_shift != 0:
                 top_image = top_image[: -1 * prey_shift]
         else:
             top_bottom = get_2d_bottom(top_image, saphyr=saphyr)
@@ -254,11 +259,12 @@ def x_shift_list_of_frames(list_of_frames_in_order, additional_set=None, y_shift
         current_additional_frame = additional_set[0]
     for i in range(1, len(list_of_frames_in_order), 1):
         shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i], saphyr=saphyr)
+
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
                                               return_y_shift=True, saphyr=saphyr)
         if additional_set:
             current_additional_frame = x_shift_and_merge(current_additional_frame, additional_set[i], shift_value,
-                                                         y_shift=True, prey_shift=_y)
+                                                         y_shift=True, prey_shift=_y, saphyr=True)
     if additional_set:
         return current_frame, current_additional_frame
     else:
@@ -411,7 +417,7 @@ def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
             return 0,0
         else:
             return 0
-    corr_sum = sum(corrs)
+    corr_sum = sum(corrs[:600])
     if return_score:
         return corr_sum, corrs
     return np.argmax(corr_sum[:60])
@@ -423,7 +429,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     ymed = np.median([sum(y) for x, y in pairs])
     if saphyr:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 25) or (sum(y) >= ymed * 25)]
-        corrs = np.array([ncorr(y, x, limit=25) for x, y in filtered_pairs], dtype=float)
+        corrs = np.array([ncorr(y, x, limit=150) for x, y in filtered_pairs], dtype=float)
     else:
         filtered_pairs = [(x,y) for x, y in pairs if (sum(x) >= xmed * 25) or (sum(y) >= ymed * 25)]
         corrs = np.array([ncorr(y, x, limit=8) for x, y in filtered_pairs], dtype=float) #limit=12
@@ -431,6 +437,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
         return 4
     corr_sum = np.sum(corrs, axis=0)
     if debug:
+        import matplotlib.pyplot as plt
         plt.imshow(top_image_bottom)
         plt.show()
         plt.imshow(bottom_image_top)
@@ -443,7 +450,7 @@ def get_yshift(top_image_bottom, bottom_image_top, debug=False, saphyr=False):
     else:
         pass
     if saphyr:
-        return np.argmax(corr_sum[:300])
+        return np.argmax(corr_sum)
     else:
         if not saphyr:
             if np.argmax(corr_sum[:40]) < 8:
@@ -490,7 +497,7 @@ def get_corr_score_for_zoom(image_xsum, ref_image_xsum, zoom_out_ratio):
     max_corr = corr[shift_idx]
     # print(max_corr, shift_idx)
     return max_corr, shift_idx - image_xsum.shape[0]
-    
+
 
 
 def get_optimal_magnification_for_overlay(image, ref_image, _start=0.990, _to=0.999, _space=0.001):

@@ -8,7 +8,7 @@ from os import path
 
 def run_for_extraction(run_scan_pairs: [tuple]):
     runs = list(set([run_id for run_id, _ in run_scan_pairs]))
-    moldb_ = MoleculeDB(database_name, runs, organism, chip_dimension=chip_dimension)
+    moldb_ = MoleculeDB(database_name, runs, organism, chip_dimension=chip_dimension, saphyr=saphyr_)
     for run_id, scan_id in run_scan_pairs:
         moldb_.connect_db()
         moldb_.extract_molecules_from_scan_in_run(run_id, scan_id, abstraction_threshold=contrast)
@@ -16,7 +16,7 @@ def run_for_extraction(run_scan_pairs: [tuple]):
 
 
 def create_tables():
-    moldb_ = MoleculeDB(database_name, list(set(list_of_run_folders)), organism, chip_dimension=chip_dimension)
+    moldb_ = MoleculeDB(database_name, list(set(list_of_run_folders)), organism, chip_dimension=chip_dimension, saphyr=saphyr_)
     moldb_.create_tables_first_time()
 
 
@@ -44,6 +44,7 @@ if __name__ == "__main__":
         assert len(chip_dimension) == 2
         database_name = argv[3]
         number_of_threads = int(argv[4])
+        print(number_of_threads)
         organism = argv[5]
         contrast = float(argv[7])
         create_tables()
