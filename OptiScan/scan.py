@@ -158,19 +158,16 @@ class AnalyzeScan(Scan):
         self.column_info[self.current_column_id]["abstract_threshold"] = int(abstraction_threshold)
         print(abstraction_threshold, "absthr")
         if not self.saphyr:
+            print("irys column")
             molecule_abstract = np.zeros(self.current_mol_column.shape)
             mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
             molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
             molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
         else:
-            print([False]*10)
+            print("saphyr column")
             molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, self.current_mol_column, 0)
             mask = np.array(list(signal.ricker(16, 1)) * 5).reshape((5, -1))
-            print("convolving!")
             molecule_abstract = ndimage.convolve(molecule_abstract.astype(float), mask.astype(float))
-            print("white tophat!")
-            # molecule_abstract = ndimage.white_tophat(molecule_abstract, structure=np.ones((1, 3)))
-            print("binary abstraction!")
             molecule_abstract = np.where(molecule_abstract > (abstraction_threshold*m*mask.shape[0]), 1, 0)
             # self.something = molecule_abstract
         labels = ndimage.label(molecule_abstract)
