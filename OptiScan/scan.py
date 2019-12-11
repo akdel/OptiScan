@@ -464,7 +464,7 @@ class Run(FolderSearcher):
             self.analyzed_scans = {i:AnalyzeScan(run_directory, chip_dimension=chip_dimension,
                                                 scan_no=run_directory + str(i),
                                                 load_frames=False, saphyr=saphyr,
-                                                saphyr_folder_searcher=self.scans[0]["tiff_location"]) for i in self.scans.keys()}
+                                                saphyr_folder_searcher=self.scans[i]["tiff_location"]) for i in self.scans.keys()}
         else:
             FolderSearcher.__init__(self, run_directory)
             self.analyzed_scans = {i:AnalyzeScan(self.scans[i]["tiff_location"], chip_dimension=chip_dimension,
