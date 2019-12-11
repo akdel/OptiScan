@@ -319,7 +319,11 @@ class AnalyzeScan(Scan):
         Molecule signals in the current column. Can be accessed from self.molecules.
         """
         self.stitch_and_load_column()
-        self.define_molecules(minimum_molecule_length=minimum_molecule_length,
+        if self.saphyr:
+            minimum_molecule_length *= 0.6
+        else:
+            pass
+        self.define_molecules(minimum_molecule_length=int(minimum_molecule_length),
                               abstraction_threshold=abstraction_threshold)
         # frame func call
         self.get_all_signals()
