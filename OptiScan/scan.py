@@ -159,10 +159,14 @@ class AnalyzeScan(Scan):
         print(abstraction_threshold, "absthr")
         if not self.saphyr:
             print("irys column")
-            molecule_abstract = np.zeros(self.current_mol_column.shape)
-            mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
-            molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
-            molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
+            molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, self.current_mol_column, 0)
+            mask = np.array(list(signal.ricker(16, 1)) * 5).reshape((5, -1))
+            molecule_abstract = ndimage.convolve(molecule_abstract.astype(float), mask.astype(float))
+            molecule_abstract = np.where(molecule_abstract > (abstraction_threshold * m * mask.shape[0]), 1, 0)
+            # molecule_abstract = np.zeros(self.current_mol_column.shape)
+            # mask = np.array([[1., -1.], [1., -1.], [1., -1.], [1., -1.]])
+            # molecule_abstract = np.maximum(ndimage.convolve(self.current_mol_column, mask), molecule_abstract)
+            # molecule_abstract = np.where(molecule_abstract > abstraction_threshold, 1, 0)
         else:
             print("saphyr column")
             molecule_abstract = np.where(self.current_mol_column > abstraction_threshold, self.current_mol_column, 0)
@@ -183,7 +187,7 @@ class AnalyzeScan(Scan):
             if self.saphyr:
                 new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop] #+3]
             else:
-                new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop+2] #+3]
+                new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop] #+3]
             self.mol_slices.append(self.current_mol_column[new_slice])
             self.lab_slices.append(self.current_lab_column[new_slice])
 
@@ -303,7 +307,7 @@ class AnalyzeScan(Scan):
         annotated_mol = np.array(self.current_mol_column)
         for _slice in self.slice_coordinates:
             y, x = _slice
-            annotated_mol[y.start:y.stop, x.stop-1:x.stop+1] = intensity
+            annotated_mol[y.start:y.stop, x.start:x.stop] = intensity
         return annotated_mol
 
     def stitch_extract_molecules_in_column(self, minimum_molecule_length=50*5, abstraction_threshold=100):
@@ -632,12 +636,18 @@ def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray], saph
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    sc = AnalyzeScan("/Users/akdel/PycharmProjects/projects3/OptiScan/data/", saphyr=True,
-              saphyr_folder_searcher=["/Users/akdel/PycharmProjects/projects3/OptiScan/data/Bank/B1_CH1_C100.tif",
-                                      "/Users/akdel/PycharmProjects/projects3/OptiScan/data/Bank/B1_CH2_C100.tif"])
+    # sc = AnalyzeScan("/Users/akdel/PycharmProjects/projects3/OptiScan/data/", saphyr=True,
+    #           saphyr_folder_searcher=["/Users/akdel/PycharmProjects/projects3/OptiScan/data/Bank/B1_CH1_C100.tif",
+    #                                   "/Users/akdel/PycharmProjects/projects3/OptiScan/data/Bank/B1_CH2_C100.tif"])
+    # sc = AnalyzeScan("/Users/akdel/PycharmProjects/projects3/OptiScan/data/ses/Exp2066_BspQ1_BbvCI_2014-07-01_20_00_Scan01.tiff",
+    #                  saphyr=False, chip_dimension=(12, 108))
+    sc = AnalyzeScan(
+        "/Volumes/Seagate Expansion Drive/2014-07/Exp2066_BspQ1_BbvCI_2014-07-01_20_00/Exp2066_BspQ1_BbvCI_2014-07-01_20_00_Scan10.tiff",
+        saphyr=False, chip_dimension=(12, 108))
+    sc.current_column_id = 50
     sc.stitch_extract_molecules_in_column(minimum_molecule_length=25, abstraction_threshold=110)
     plt.figure(figsize=(10, 100))
-    plt.imshow(sc.annotate_column(4000))
+    plt.imshow(sc.annotate_column(1000))
     plt.show()
     # sc.add_column_into_memmap()
     # molecules = [x for x in sc.return_signals_in_column(0)]
