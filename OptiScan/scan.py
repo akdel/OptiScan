@@ -642,10 +642,10 @@ if __name__ == "__main__":
     # sc = AnalyzeScan("/Users/akdel/PycharmProjects/projects3/OptiScan/data/ses/Exp2066_BspQ1_BbvCI_2014-07-01_20_00_Scan01.tiff",
     #                  saphyr=False, chip_dimension=(12, 108))
     sc = AnalyzeScan(
-        "/Volumes/Seagate Expansion Drive/2014-07/Exp2066_BspQ1_BbvCI_2014-07-01_20_00/Exp2066_BspQ1_BbvCI_2014-07-01_20_00_Scan10.tiff",
+        "/Volumes/Seagate Expansion Drive/2014-09/Exp2066_DNA_Bs+Bb_2014-09-01_10_32/Exp2066_DNA_Bs+Bb_2014-09-01_10_32_Scan10.tiff",
         saphyr=False, chip_dimension=(12, 108))
     sc.current_column_id = 50
-    sc.stitch_extract_molecules_in_column(minimum_molecule_length=25, abstraction_threshold=110)
+    sc.stitch_extract_molecules_in_column(minimum_molecule_length=250, abstraction_threshold=110)
     plt.figure(figsize=(10, 100))
     plt.imshow(sc.annotate_column(1000))
     plt.show()

@@ -198,6 +198,7 @@ def x_shift_for_bottom_image(top_image, bottom_image, debug=False, saphyr=False)
     bottom_image_top = get_1d_top(bottom_image, saphyr=saphyr)
     top_image_bottom = get_1d_bottom(top_image, saphyr=saphyr)
     if debug:
+        import matplotlib.pyplot as plt
         plt.plot(top_image_bottom)
         plt.plot(bottom_image_top)
         plt.show()
