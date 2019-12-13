@@ -52,8 +52,12 @@ def get_bnx_info_force_median(nick_signal: np.ndarray, snr: float, median: float
     return bnx_dict
 
 
-def get_peaks(nick_signal: np.ndarray, snr: float, median: float) -> list:
+def get_peaks2(nick_signal: np.ndarray, snr: float, median: float) -> list:
     return [x for x in signal.argrelextrema(nick_signal, np.greater)[0] if nick_signal[x] >= median*snr]
+
+
+def get_peaks(nick_signal: np.ndarray, snr: float, median: float) -> list:
+    return list(signal.find_peaks(nick_signal, width=1, height=snr*median)[0])
 
 
 def get_bnx_info_with_upsampling(nick_signal: np.ndarray, snr: float, zoom_ratio: float, final_ratio: float) -> dict:
