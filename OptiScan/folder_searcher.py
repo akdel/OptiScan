@@ -1,6 +1,71 @@
 from os import walk
+import networkx as nx
+from itertools import chain
 
 __author__ = "MAkdel"
+
+
+class SaphyrPath:
+    def __init__(self, path: str, flow_cell: str, scan_id: str, bank_id: str, image_name: str):
+        self.path = path
+        self.flow_cell = flow_cell
+        self.scan_id = scan_id
+        self.bank_id = bank_id
+        self.image_file_name = image_name
+
+    @classmethod
+    def from_path(cls, path: str):
+        # example path: /asd/run/FC1/Scan01/Bank1/image.tiff
+        i = find_given_index(path, "FC")
+        fc_id = path.split("/")[i]
+        i = find_given_index(path, "Scan")
+        scan_id = path.split("/")[i]
+        i = find_given_index(path, "Bank")
+        bank_id = path.split("/")[i]
+        return cls(path, fc_id, scan_id, bank_id, "".join(path.split("/")[i + 1:]))
+
+
+def find_given_index(path, init_string):
+    path = path.split("/")
+    for i in list(range(len(path)))[::-1]:
+        if path[i].startswith(init_string):
+            return i
+        else:
+            continue
+    raise IndexError(f"{init_string} is missing from the path")
+
+
+class SaphyrFileTree:
+    def __init__(self, run_path: str, list_of_image_paths: list):
+        self.root = run_path
+        self.image_paths = [SaphyrPath.from_path(image_path) for image_path in list_of_image_paths]
+        self.tree = nx.DiGraph()
+        self._tree_from_files()
+
+    def _tree_from_files(self):
+        for image_path in self.image_paths:
+            self.tree.add_edge(str(image_path.flow_cell),
+                               f"{image_path.flow_cell}/{image_path.scan_id}",
+                               level="FC")
+            self.tree.add_edge(f"{image_path.flow_cell}/{image_path.scan_id}",
+                               f"{image_path.flow_cell}/{image_path.scan_id}/{image_path.bank_id}",
+                               level="Scan")
+            self.tree.add_edge(f"{image_path.flow_cell}/{image_path.scan_id}/{image_path.bank_id}",
+                               f"{image_path.flow_cell}/{image_path.scan_id}/{image_path.bank_id}/{image_path.image_file_name}",
+                               level="Bank")
+
+    def get_bank_level_ids(self):
+        return list({x[0] for x in self.tree.edges.data() if x[-1]["level"] == "Bank"})
+
+    def get_image_paths_for_bank_path(self, bank_path: str):
+        return list(sorted([x for x in self.tree[bank_path].keys()]))
+
+    @classmethod
+    def from_run_folder(cls, run_folder):
+        image_files = list(filter(lambda x: ("_CH" in x) and ("Bank" in x), chain.from_iterable(
+            [[x[0] + "/" + y for y in x[-1]] for x in walk(run_folder) if x[2] != []])))
+        print(image_files)
+        return cls(run_folder, image_files)
 
 
 class FolderSearcher:
@@ -164,8 +229,15 @@ class FolderSearcher:
             self.mqr_map_file = ""
 
 if __name__ == "__main__":
-    folder = "/Users/akdel/Bionano/onescan/apple/2016-01/apple_run1_fc1_2016-05-17_16_35/"
-    sr = FolderSearcher(folder)
+    folder =  "/home/biridir/Scan01/Bank4/" # "/Users/akdel/Bionano/onescan/apple/2016-01/apple_run1_fc1_2016-05-17_16_35/"
+    sr = FolderSearcher(folder, saphyr=True)
     print(sr.scans)
     print(sr.scans.keys())
+    saphyr_image_path = "/home/biridir/FC1/Scan02/Bank1/B1_CH1_C082.jxr"
+    p = SaphyrPath.from_path(saphyr_image_path)
+    print(p.flow_cell, p.scan_id, p.bank_id, p.image_file_name)
+    run_folder = "/home/biridir/runx/"
+    p = SaphyrFileTree.from_run_folder(run_folder)
+    print(p.get_bank_level_ids()[0])
+    print(p.get_image_paths_for_bank_path(p.get_bank_level_ids()[0]))
 
