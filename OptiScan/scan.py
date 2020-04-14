@@ -3,7 +3,7 @@ from OptiScan.rotation_optimisation import *
 from scipy import ndimage
 from OptiScan.folder_searcher import FolderSearcher
 from os import listdir
-import imageio
+import imagecodecs as imageio
 
 """
 TODO 1. split each col frame into frames and then stich them.
