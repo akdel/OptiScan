@@ -1,7 +1,7 @@
 from OptiScan import *
 from OptiScan.rotation_optimisation import *
 from scipy import ndimage
-from OptiScan.folder_searcher import FolderSearcher
+from OptiScan.folder_searcher import FolderSearcher, SaphyrFileTree
 from os import listdir
 import imagecodecs as imageio
 
@@ -43,29 +43,8 @@ class Scan:
             if load_frames:
                 self._record_frames()
         else:
-            self.frames = [[], []]
-            if saphyr_folder_searcher:
-                for f in saphyr_folder_searcher:
-                    if "CH1" in f:
-                        self.frames[0].append(f)
-                    elif "CH2" in f:
-                        self.frames[1].append(f)
-                    else:
-                        print("Unknown file: ", f)
-            else:
-                def filt(f):
-                    if f.startswith("B"):
-                        return True
-                    else:
-                        return False
-                files = list(filter(filt, listdir(tiff_file_location)))
-                for f in files:
-                    if "CH1" in f:
-                        self.frames[0].append(tiff_file_location+f)
-                    elif "CH3" in f:
-                        self.frames[1].append(tiff_file_location+f)
-                    else:
-                        print("Unknown file: ", f)
+            self.frames = [saphyr_folder_searcher[: len(saphyr_folder_searcher)//2],
+                           saphyr_folder_searcher[len(saphyr_folder_searcher)//2: ]]
             self.frames[0] = sorted(self.frames[0])
             self.frames[1] = sorted(self.frames[1])
             self.nof_frames = len(self.frames[0])
@@ -89,7 +68,8 @@ class AnalyzeScan(Scan):
     """
     This class is for molecule boundary detection and signal extraction from a single BNG scan data-set.
     """
-    def __init__(self, tiff_file_location, chip_dimension=(12, 95), scan_no=1, load_frames=True, saphyr=False, saphyr_folder_searcher=False):
+    def __init__(self, tiff_file_location, chip_dimension=(12, 95), scan_no=1,
+                 load_frames=True, saphyr=False, saphyr_folder_searcher=False):
         """
         Initiation function. Tiff image frames from BNG is the only compulsory data to be provided.
         Parameters
@@ -450,6 +430,34 @@ class AnalyzeScan(Scan):
         Fresh class.
         """
         self.__init__(self.tiff_file_location, self.chip_dimension, self.scan_id, load_frames=False)
+
+
+class SaphyrExtract:
+    def __init__(self, run_folder: str):
+        self.saphyr_tree = SaphyrFileTree.from_run_folder(run_folder)
+        self.bank_info = dict()
+        for bank_id in self.saphyr_tree.get_bank_level_ids():
+            if bank_id in self.bank_info:
+                self.bank_info[bank_id].append(self.saphyr_tree.get_image_paths_for_bank_path(bank_id))
+            else:
+                self.bank_info[bank_id] = [self.saphyr_tree.get_image_paths_for_bank_path(bank_id)]
+
+    def get_molecules_for_bank_id(self, bank_id: str, abstraction_threshold=100):
+        bank = AnalyzeScan(self.saphyr_tree.root, chip_dimension=(12, 95),
+                           scan_no=self.saphyr_tree.root + bank_id,
+                           load_frames=False, saphyr=True,
+                           saphyr_folder_searcher=self.bank_info[bank_id])
+        bank.stitch_extract_molecules_in_scan(abstraction_threshold=abstraction_threshold)
+        bank.initiate_memmap()
+        for col_id in sorted(list(bank.column_info.keys())):
+            bank.current_column_id = col_id
+            np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_.npy", [x[1] for x in bank.molecules[col_id]])
+            np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_.npy", [x[2] for x in bank.molecules[col_id]])
+        del bank
+
+    def save_molecules_for_all_bank_ids(self, abstraction_threshold=100):
+        for bank_id in self.bank_info:
+            self.get_molecules_for_bank_id(bank_id, abstraction_threshold=abstraction_threshold)
 
 
 class Run(FolderSearcher):
