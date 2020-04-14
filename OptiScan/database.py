@@ -56,8 +56,7 @@ class MoleculeDB(Runs):
             self.db.add(_run)
             self.db.commit()
             for scan_id in self.analyzed_runs[run].scans.keys():
-                print(scan_id)
-                print(self.analyzed_runs[run].scans[scan_id])
+                print("here_too")
                 scan_ana = self.analyzed_runs[run].analyzed_scans[scan_id]
                 current_scan = self.analyzed_runs[run].scans[scan_id]
                 self.ids[run][scan_id] = unique_id
@@ -84,6 +83,7 @@ class MoleculeDB(Runs):
 
     def _load_unique_scan_ids_from_db(self):
         assert self.db
+        print(self.db.query(ScanLinage).all())
         self.ids = {x.run_id: {} for x in self.db.query(ScanLinage).all()}
         for entry in self.db.query(ScanLinage).all():
             self.ids[entry.run_id][entry.scan] = entry.id
@@ -121,6 +121,7 @@ class MoleculeDB(Runs):
         run = self.analyzed_runs[run_id]
         scan = run.analyzed_scans[scan_id]
         for col_id in scan.column_info.keys():
+            print(run_id, scan_id, col_id, "here")
             self.insert_column(run_id, scan_id, col_id)
 
 

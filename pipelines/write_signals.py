@@ -2,14 +2,15 @@
 
 from sys import argv
 import numpy as np
-from scipy import ndimage
-
 
 def create_bnx_file():
     for run_id in connection.db_runs:
-        mols = [(ndimage.white_tophat(x, structure=np.ones(20)), y) for x, y in connection.yield_molecule_signals_in_run(run_id)]
-        molecules_to_bnxv2(mols, 10., 485., str(run_id) + "OptiScan.bnx", bnx_template_path=bnx_file_template,
-                         signal_to_noise_ratio=snr)
+        mols = connection.yield_molecule_signals_in_run(run_id)
+        np.save(str(run_id)+"OptiScan_nick.npy", np.array([x[0] for x in mols], dtype="O"))
+        mols = connection.yield_molecule_signals_in_run(run_id)
+        np.save(str(run_id)+"OptiScan_back.npy", np.array([x[1] for x in mols], dtype="O"))
+        #molecules_to_bnxv2(mols, 10., 485., str(run_id) + "OptiScan.bnx", bnx_template_path=bnx_file_template,
+        #                 signal_to_noise_ratio=snr)
 
 
 def get_number_of_molecules_in_run(run):

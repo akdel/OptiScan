@@ -82,8 +82,9 @@ class FolderSearcher:
             l1 = sorted(l1)
             l2 = sorted(l2)
             assert len(l1) == len(l2)
-            for i in range(0, len(l1), 50):
-                self.scans[i//50] = {"tiff_location": l1[i:i+50] + l2[i:i+50]}
+            for i in range(0, len(l1), 10):
+                print(l1[i:i+10] + l2[i:i+10])
+                self.scans[i//10] = {"tiff_location": l1[i:i+10] + l2[i:i+10]}
         else:
             tiff_scan_files = self._search_file("Scan")
             for i in range(len(tiff_scan_files))[::-1]:

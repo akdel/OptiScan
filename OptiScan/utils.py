@@ -56,6 +56,10 @@ def get_peaks(nick_signal: np.ndarray, snr: float, median: float) -> list:
     return [x for x in signal.argrelextrema(nick_signal, np.greater)[0] if nick_signal[x] >= median*snr]
 
 
+# def get_peaks(nick_signal: np.ndarray, snr: float, median: float) -> list:
+#     return list(signal.find_peaks(nick_signal, width=20, height=snr*median)[0])
+
+
 def get_bnx_info_with_upsampling(nick_signal: np.ndarray, snr: float, zoom_ratio: float, final_ratio: float) -> dict:
     final_ratio /= zoom_ratio
     nick_signal = ndimage.zoom(nick_signal, zoom_ratio)
