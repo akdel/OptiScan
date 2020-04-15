@@ -9,6 +9,7 @@ setup(name='OptiScan',
       author_email='mehmet.akdel@wur.nl',
       url='https://gitlab.com/akdel/',
       packages=['OptiScan'],
-      install_requires=["sqlalchemy", "numba", "numpy", "scipy", "intervaltree", "matplotlib", "scikit-image", "pillow",
+      install_requires=["sqlalchemy", "scipy", "numba",
+                        "intervaltree", "matplotlib", "scikit-image", "pillow",
                         "imageio", "dash", 'imagecodecs'])
 
