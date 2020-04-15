@@ -4,6 +4,7 @@ from scipy import ndimage
 from OptiScan.folder_searcher import FolderSearcher, SaphyrFileTree
 from os import listdir
 import imagecodecs as imageio
+import gc
 
 """
 TODO 1. split each col frame into frames and then stich them.
@@ -237,6 +238,7 @@ class AnalyzeScan(Scan):
         self.current_lab_column = None
         self.current_mol_column = None
         self._clean_slices()
+        gc.collect()
 
     def _clean_slices(self):
         """
