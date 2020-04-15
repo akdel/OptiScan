@@ -4,6 +4,7 @@ from scipy import ndimage
 from OptiScan.folder_searcher import FolderSearcher, SaphyrFileTree
 from os import listdir
 import imagecodecs as imageio
+import gc
 
 """
 TODO 1. split each col frame into frames and then stich them.
@@ -237,6 +238,7 @@ class AnalyzeScan(Scan):
         self.current_lab_column = None
         self.current_mol_column = None
         self._clean_slices()
+        gc.collect()
 
     def _clean_slices(self):
         """
@@ -260,6 +262,7 @@ class AnalyzeScan(Scan):
             self.current_lab_column = ndimage.zoom(nick_label_column, 0.5)
             self.current_mol_column = ndimage.zoom(backbone_label_column, 0.5)
         else:
+            print(self.frames[0][self.current_column_id])
             concat_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
             concat_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
             print(concat_mol_column.shape, concat_lab_column.shape)
@@ -438,25 +441,31 @@ class SaphyrExtract:
         self.bank_info = dict()
         for bank_id in self.saphyr_tree.get_bank_level_ids():
             if bank_id in self.bank_info:
-                self.bank_info[bank_id].append(self.saphyr_tree.get_image_paths_for_bank_path(bank_id))
+                self.bank_info[bank_id] += self.saphyr_tree.get_image_paths_for_bank_path(bank_id)
             else:
-                self.bank_info[bank_id] = [self.saphyr_tree.get_image_paths_for_bank_path(bank_id)]
+                self.bank_info[bank_id] = self.saphyr_tree.get_image_paths_for_bank_path(bank_id)
 
     def get_molecules_for_bank_id(self, bank_id: str, abstraction_threshold=100):
+        print(self.bank_info[bank_id])
         bank = AnalyzeScan(self.saphyr_tree.root, chip_dimension=(12, 95),
                            scan_no=self.saphyr_tree.root + bank_id,
-                           load_frames=False, saphyr=True,
-                           saphyr_folder_searcher=self.bank_info[bank_id])
+                           load_frames=True, saphyr=True,
+                           saphyr_folder_searcher=[self.saphyr_tree.root + x for x in self.bank_info[bank_id]])
         bank.stitch_extract_molecules_in_scan(abstraction_threshold=abstraction_threshold)
-        bank.initiate_memmap()
-        for col_id in sorted(list(bank.column_info.keys())):
+        for col_id in sorted(list(bank.column_info .keys())):
             bank.current_column_id = col_id
-            np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_.npy", [x[1] for x in bank.molecules[col_id]])
-            np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_.npy", [x[2] for x in bank.molecules[col_id]])
+            np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_label.npy", [x[1] for x in bank.molecules[col_id]])
+            np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_backbone.npy", [x[2] for x in bank.molecules[col_id]])
         del bank
 
     def save_molecules_for_all_bank_ids(self, abstraction_threshold=100):
         for bank_id in self.bank_info:
+            self.get_molecules_for_bank_id(bank_id, abstraction_threshold=abstraction_threshold)
+
+    def save_molecules_for_bank_ids(self, bank_ids: list, abstraction_threshold=100):
+        for bank_id in bank_ids:
+            print(bank_id)
+            print()
             self.get_molecules_for_bank_id(bank_id, abstraction_threshold=abstraction_threshold)
 
 
