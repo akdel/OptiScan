@@ -34,6 +34,7 @@ class Scan:
         self.saphyr = saphyr
         self.scan_id = scan_no
         self.tiff_file_location = tiff_file_location
+        self.channel_num = 2
         if not saphyr:
             self.im = Image.open(self.tiff_file_location)
             self.nof_frames = self.im.n_frames
@@ -44,10 +45,12 @@ class Scan:
             if load_frames:
                 self._record_frames()
         else:
-            self.frames = [saphyr_folder_searcher[: len(saphyr_folder_searcher)//2],
-                           saphyr_folder_searcher[len(saphyr_folder_searcher)//2: ]]
-            self.frames[0] = sorted(self.frames[0])
-            self.frames[1] = sorted(self.frames[1])
+            self.frames = saphyr_folder_searcher
+            self.frames["CH1"] = sorted(self.frames["CH1"])
+            self.frames["CH2"] = sorted(self.frames["CH2"])
+            if len(self.frames["CH3"]):
+                self.frames["CH3"] = sorted(self.frames["CH3"])
+                self.channel_num = 3
             self.nof_frames = len(self.frames[0])
             self.chip_dimension = (1, self.nof_frames)
 
@@ -263,8 +266,10 @@ class AnalyzeScan(Scan):
             self.current_mol_column = ndimage.zoom(backbone_label_column, 0.5)
         else:
             print(self.frames[0][self.current_column_id])
-            concat_mol_column = imageio.imread(self.frames[0][self.current_column_id]).astype(float)
-            concat_lab_column = imageio.imread(self.frames[1][self.current_column_id]).astype(float)
+            concat_mol_column = imageio.imread(self.frames["CH2"][self.current_column_id]).astype(float)
+            concat_lab_column = imageio.imread(self.frames["CH1"][self.current_column_id]).astype(float)
+            if self.channel_num == 3:
+                concat_mol_column_2nd_channel = imageio.imread(self.frames["CH3"][self.current_column_id]).astype(float)
             print(concat_mol_column.shape, concat_lab_column.shape)
             print("Zooming!")
             backbone_frames = [ndimage.white_tophat(concat_mol_column[i:i+2048], structure=np.ones((1,3))) for i in range(0, concat_mol_column.shape[0], 2048)]
@@ -445,12 +450,25 @@ class SaphyrExtract:
             else:
                 self.bank_info[bank_id] = self.saphyr_tree.get_image_paths_for_bank_path(bank_id)
 
+    def split_channels_for_bankid(self, bank_id: str):
+        images = self.bank_info[bank_id]
+        channels = {"CH1": list(),
+                    "CH2": list(),
+                    "CH3": list()}
+        for image in images:
+            for channel in channels.keys():
+                if channel in image:
+                    channels[channel].append(self.saphyr_tree.root + image)
+                else:
+                    continue
+        return channels
+
     def get_molecules_for_bank_id(self, bank_id: str, abstraction_threshold=100):
         print(self.bank_info[bank_id])
         bank = AnalyzeScan(self.saphyr_tree.root, chip_dimension=(12, 95),
                            scan_no=self.saphyr_tree.root + bank_id,
                            load_frames=True, saphyr=True,
-                           saphyr_folder_searcher=[self.saphyr_tree.root + x for x in self.bank_info[bank_id]])
+                           saphyr_folder_searcher=self.split_channels_for_bankid(bank_id))
         bank.stitch_extract_molecules_in_scan(abstraction_threshold=abstraction_threshold)
         for col_id in sorted(list(bank.column_info .keys())):
             bank.current_column_id = col_id
