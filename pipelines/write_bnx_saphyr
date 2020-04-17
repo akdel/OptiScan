@@ -18,7 +18,7 @@ def create_bnx_file():
             except FileNotFoundError:
                 continue
 
-    mols = [(ndimage.white_tophat(molecule_labels[x], structure=np.ones(20)),
+    mols = [(ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)),
              molecule_backbones[x]) for x in range(len(molecule_labels))]
     molecules_to_bnxv2(mols, 10., 485., str(run_tree.saphyr_tree.root) + "OptiScan.bnx", bnx_template_path=bnx_file_template,
                      signal_to_noise_ratio=snr)
