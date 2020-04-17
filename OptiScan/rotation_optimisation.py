@@ -254,20 +254,22 @@ def x_shift_and_merge(top_image, bottom_image, shift_value, y_shift=False, retur
     return np.concatenate((top_image, bottom_image))
 
 
-def x_shift_list_of_frames(list_of_frames_in_order, additional_set=None, y_shift=False, saphyr=False):
+def x_shift_list_of_frames(list_of_frames_in_order, additional_sets=None, y_shift=False, saphyr=False):
     current_frame = list_of_frames_in_order[0]
-    if additional_set:
-        current_additional_frame = additional_set[0]
+    if additional_sets:
+        current_additional_frames = [additional_set[0] for additional_set in additional_sets]
     for i in range(1, len(list_of_frames_in_order), 1):
         shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i], saphyr=saphyr)
-
+        print(current_frame.shape)
+        print(list_of_frames_in_order[i].shape)
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
                                               return_y_shift=True, saphyr=saphyr)
-        if additional_set:
-            current_additional_frame = x_shift_and_merge(current_additional_frame, additional_set[i], shift_value,
-                                                         y_shift=True, prey_shift=_y, saphyr=True)
-    if additional_set:
-        return current_frame, current_additional_frame
+        if additional_sets:
+            for j, additional_set in enumerate(additional_sets):
+                current_additional_frames[j] = x_shift_and_merge(current_additional_frames[j], additional_sets[j][i], shift_value,
+                                                             y_shift=True, prey_shift=_y, saphyr=True)
+    if additional_sets:
+        return current_frame, current_additional_frames
     else:
         return current_frame
 
@@ -375,7 +377,7 @@ def y_shift_for_list_of_frames(list_of_frames):
         yield y_shift
 
 
-def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set=None, y_shift=True, tophat=True,
+def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_sets=None, y_shift=True, tophat=True,
                                                   magnification_optimisation=True, saphyr=False):
     """
     This is the pipeline function and is used for bionano column alignment..
@@ -388,21 +390,34 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
     """
     if tophat:
         list_of_frames = [ndimage.white_tophat(x, structure=disk(7)) for x in list_of_frames] # 6 for irys
-        if additional_set:
-            additional_set = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_set]
+        if additional_sets:
+            for j in range(len(additional_sets)):
+                additional_sets[j] = [ndimage.white_tophat(x, structure=disk(9)) for x in additional_sets[j]]
     list_of_frames_with_angles = [rotate_with_optimal_rotation(x, saphyr=saphyr) for x in list_of_frames]
     list_of_frames = [x[0].astype(float) for x in list_of_frames_with_angles]
     angles = [x[1] for x in list_of_frames_with_angles]
-    if additional_set:
-        additional_input = [rotate(additional_set[i], angles[i]).astype(float)
-                            for i in range(len(additional_set))]
+    if additional_sets:
+        additional_mag_inputs = list()
+        additional_inputs = list()
+        for i in range(len(additional_sets)):
+            additional_input = [rotate(additional_sets[i][x], angles[x]).astype(float)
+                                for x in range(len(additional_sets[i]))]
+            additional_inputs.append(additional_input)
+            if magnification_optimisation:
+                additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[j], list_of_frames[j]) for j
+                                        in range(len(additional_input))]
+                additional_mag_inputs.append(additional_mag_input)
+
+            else:
+                continue
         if magnification_optimisation:
-            additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
-                                    in range(len(additional_input))]
-            return x_shift_list_of_frames(list_of_frames, additional_set=additional_mag_input, y_shift=y_shift, saphyr=saphyr)
-        return x_shift_list_of_frames(list_of_frames, additional_set=additional_input, y_shift=y_shift, saphyr=saphyr)
+            return x_shift_list_of_frames(list_of_frames, additional_sets=additional_mag_inputs, y_shift=y_shift,
+                                          saphyr=saphyr)
+        else:
+            return x_shift_list_of_frames(list_of_frames, additional_sets=additional_inputs, y_shift=y_shift,
+                                          saphyr=saphyr)
     else:
-        return x_shift_list_of_frames(list_of_frames, additional_set=additional_set, y_shift=y_shift, saphyr=saphyr)
+        return x_shift_list_of_frames(list_of_frames, additional_sets=additional_sets, y_shift=y_shift, saphyr=saphyr)
 
 
 def get_yshift2(top_image_bottom, bottom_image_top, return_score=False):
