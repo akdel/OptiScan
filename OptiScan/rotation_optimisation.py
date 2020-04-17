@@ -260,12 +260,13 @@ def x_shift_list_of_frames(list_of_frames_in_order, additional_sets=None, y_shif
         current_additional_frames = [additional_set[0] for additional_set in additional_sets]
     for i in range(1, len(list_of_frames_in_order), 1):
         shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i], saphyr=saphyr)
-
+        print(current_frame.shape)
+        print(list_of_frames_in_order[i].shape)
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
                                               return_y_shift=True, saphyr=saphyr)
         if additional_sets:
             for j, additional_set in enumerate(additional_sets):
-                current_additional_frames[j] = x_shift_and_merge(current_additional_frames[j], additional_sets[j], shift_value,
+                current_additional_frames[j] = x_shift_and_merge(current_additional_frames[j], additional_sets[j][i], shift_value,
                                                              y_shift=True, prey_shift=_y, saphyr=True)
     if additional_sets:
         return current_frame, current_additional_frames
@@ -403,7 +404,7 @@ def merging_with_rotation_optimisation_and_xshift(list_of_frames, additional_set
                                 for x in range(len(additional_sets[i]))]
             additional_inputs.append(additional_input)
             if magnification_optimisation:
-                additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[i], list_of_frames[i]) for i
+                additional_mag_input = [get_optimal_zoom_and_obtain_new_image(additional_input[j], list_of_frames[j]) for j
                                         in range(len(additional_input))]
                 additional_mag_inputs.append(additional_mag_input)
 

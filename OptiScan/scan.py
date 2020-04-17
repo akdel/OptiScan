@@ -5,6 +5,7 @@ from OptiScan.folder_searcher import FolderSearcher, SaphyrFileTree
 from os import listdir
 import imagecodecs as imageio
 import gc
+from PIL import Image
 
 """
 TODO 1. split each col frame into frames and then stich them.
@@ -51,7 +52,7 @@ class Scan:
             if len(self.frames["CH3"]):
                 self.frames["CH3"] = sorted(self.frames["CH3"])
                 self.channel_num = 3
-            self.nof_frames = len(self.frames[0])
+            self.nof_frames = len(self.frames["CH1"])
             self.chip_dimension = (1, self.nof_frames)
 
     def _record_frames(self):
@@ -88,9 +89,11 @@ class AnalyzeScan(Scan):
                       saphyr_folder_searcher=saphyr_folder_searcher)
         self.current_column_id = 0
         self.current_lab_column = None
+        self.current_lab_column2 = None
         self.current_mol_column = None
         self.mol_slices = list()
         self.lab_slices = list()
+        self.lab_slices2 = list()
         self.slice_coordinates = list()
 
         self.molecules = {i: list() for i in range(self.chip_dimension[1])}
@@ -126,6 +129,19 @@ class AnalyzeScan(Scan):
         else:
             nick_label, backbone_label = outcome
             self.molecules[self.current_column_id].append((molecule_id, nick_label, backbone_label))
+
+    def create_molecule_additional(self, molecule_id: str, nick_label: np.ndarray, nick_label2: np.ndarray,
+                                   backbone_label: np.ndarray,
+                                   check_function=lambda x,y,z:(x,y,z)):
+        if nick_label.shape != backbone_label.shape or nick_label.shape != nick_label2.shape:
+            print("backbone and nicklength did not match!")
+            return None
+        outcome = check_function(nick_label, nick_label2, backbone_label)
+        if not outcome:
+            return None
+        else:
+            nick_label, nick_label2, backbone_label = outcome
+            self.molecules[self.current_column_id].append((molecule_id, nick_label, backbone_label, nick_label2))
 
     def define_molecules(self, minimum_molecule_length=50*5, abstraction_threshold=100, m=1):
         """
@@ -174,6 +190,10 @@ class AnalyzeScan(Scan):
                 new_slice = np.s_[_slice[0].start:_slice[0].stop, _slice[1].start:_slice[1].stop] #+3]
             self.mol_slices.append(self.current_mol_column[new_slice])
             self.lab_slices.append(self.current_lab_column[new_slice])
+            if self.channel_num == 3:
+                self.lab_slices2.append(self.current_lab_column2[new_slice])
+            else:
+                continue
 
     def obtain_column_summary(self, column_id: int):
         """
@@ -186,7 +206,10 @@ class AnalyzeScan(Scan):
         fills in number of molecules and mean molecule length fields in self.column_info.
         """
         self.column_info[column_id]["number_of_molecules"] = len(self.molecules[column_id])
-        mean_length = np.mean([len(mol) for mol_id, nick, mol in self.molecules[column_id]])
+        if self.channel_num == 3:
+            mean_length = np.mean([len(mol) for mol_id, nick, mol, nick2 in self.molecules[column_id]])
+        else:
+            mean_length = np.mean([len(mol) for mol_id, nick, mol in self.molecules[column_id]])
         try:
             self.column_info[column_id]["mean_molecule_length"] = int(mean_length)
         except ValueError:
@@ -217,6 +240,20 @@ class AnalyzeScan(Scan):
         backbone_signal = backbone_slice[:, index]
         return top_signal, backbone_signal
 
+    def _get_1d_signal_additional(self, molecule_id: int):
+        label_slice = self.lab_slices2[molecule_id]
+        backbone_slice = self.mol_slices[molecule_id]
+        signal_set = label_slice[:,:]
+        try:
+            print(signal_set.shape)
+            signal_averages = np.average(signal_set, axis=0)
+        except ZeroDivisionError:
+            print("zero division error")
+            return np.array([]), np.array([])
+        index = np.argmax(signal_averages)
+        top_signal = signal_set[:, index]
+        return top_signal
+
     def get_all_signals(self):
         """
         Obtains all signals from the current column.
@@ -227,7 +264,11 @@ class AnalyzeScan(Scan):
         for i in range(len(self.lab_slices)):
             molecule_id = str(self.current_column_id) + str(i)
             nick_label, backbone_label = self._get_1d_signal(i)
-            self.create_molecule(molecule_id, nick_label, backbone_label)
+            if self.channel_num == 3:
+                nick_label2 = self._get_1d_signal_additional(i)
+                self.create_molecule_additional(molecule_id, nick_label, nick_label2, backbone_label)
+            else:
+                self.create_molecule(molecule_id, nick_label, backbone_label)
         self.obtain_column_summary(self.current_column_id)
 
     def _clean_and_progress_column(self):
@@ -240,6 +281,7 @@ class AnalyzeScan(Scan):
             self.current_column_id += 1
         self.current_lab_column = None
         self.current_mol_column = None
+        self.current_lab_column2 = None
         self._clean_slices()
         gc.collect()
 
@@ -249,6 +291,7 @@ class AnalyzeScan(Scan):
         """
         self.mol_slices = []
         self.lab_slices = []
+        self.lab_slices2 = []
         self.slice_coordinates = []
 
     def stitch_and_load_column(self):
@@ -261,21 +304,29 @@ class AnalyzeScan(Scan):
         if not self.saphyr:
             backbone_label_column, nick_label_column = return_column(self.frames, self.current_column_id,
                                                                     self.chip_dimension)
-            backbone_label_column, nick_label_column = stitch_column(backbone_label_column, nick_label_column)
+            backbone_label_column, [nick_label_column] = stitch_column(backbone_label_column, [nick_label_column])
             self.current_lab_column = ndimage.zoom(nick_label_column, 0.5)
             self.current_mol_column = ndimage.zoom(backbone_label_column, 0.5)
         else:
-            print(self.frames[0][self.current_column_id])
-            concat_mol_column = imageio.imread(self.frames["CH2"][self.current_column_id]).astype(float)
-            concat_lab_column = imageio.imread(self.frames["CH1"][self.current_column_id]).astype(float)
+            print(self.frames["CH1"][self.current_column_id])
+            concat_mol_column = imageio.imread(self.frames["CH1"][self.current_column_id]).astype(float)
+            concat_lab_column = imageio.imread(self.frames["CH2"][self.current_column_id]).astype(float)
             if self.channel_num == 3:
-                concat_mol_column_2nd_channel = imageio.imread(self.frames["CH3"][self.current_column_id]).astype(float)
-            print(concat_mol_column.shape, concat_lab_column.shape)
-            print("Zooming!")
+                concat_lab_column_2nd_channel = imageio.imread(self.frames["CH3"][self.current_column_id]).astype(float)
             backbone_frames = [ndimage.white_tophat(concat_mol_column[i:i+2048], structure=np.ones((1,3))) for i in range(0, concat_mol_column.shape[0], 2048)]
-            lab_frames = [ndimage.white_tophat(concat_lab_column[i:i+2048], structure=disk(6)) for i in range(0, concat_lab_column.shape[0], 2048)]
-            print([f.shape for f in backbone_frames],[ff.shape for ff in lab_frames])
-            self.current_mol_column, self.current_lab_column = stitch_column(backbone_frames, lab_frames, saphyr=self.saphyr)
+            if self.channel_num == 3:
+                lab_frames = [[ndimage.white_tophat(concat_lab_column[i:i + 2048], structure=disk(6)) for i in
+                              range(0, concat_lab_column.shape[0], 2048)],
+                              [ndimage.white_tophat(concat_lab_column_2nd_channel[i:i + 2048], structure=disk(6)) for i in
+                               range(0, concat_lab_column_2nd_channel.shape[0], 2048)]]
+            else:
+                lab_frames = [[ndimage.white_tophat(concat_lab_column[i:i + 2048], structure=disk(6)) for i in
+                               range(0, concat_lab_column.shape[0], 2048)]]
+            # print([f.shape for f in backbone_frames],[ff.shape for ff in lab_frames])
+            if self.channel_num == 3:
+                self.current_mol_column, (self.current_lab_column, self.current_lab_column2) = stitch_column(backbone_frames, lab_frames, saphyr=self.saphyr)
+            else:
+                self.current_mol_column, [self.current_lab_column] = stitch_column(backbone_frames, lab_frames, saphyr=self.saphyr)
             
             # self.current_mol_column = ndimage.white_tophat(self.current_mol_column, structure=disk(12))
             # self.current_lab_column = ndimage.white_tophat(self.current_lab_column , structure=disk(12))
@@ -470,10 +521,14 @@ class SaphyrExtract:
                            load_frames=True, saphyr=True,
                            saphyr_folder_searcher=self.split_channels_for_bankid(bank_id))
         bank.stitch_extract_molecules_in_scan(abstraction_threshold=abstraction_threshold)
-        for col_id in sorted(list(bank.column_info .keys())):
+        for col_id in sorted(list(bank.column_info.keys())):
             bank.current_column_id = col_id
+            if bank.channel_num == 3:
+                np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_label2.npy",
+                        [x[3] for x in bank.molecules[col_id]])
             np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_label.npy", [x[1] for x in bank.molecules[col_id]])
             np.save(f"{self.saphyr_tree.root + bank_id}/{col_id}_backbone.npy", [x[2] for x in bank.molecules[col_id]])
+
         del bank
 
     def save_molecules_for_all_bank_ids(self, abstraction_threshold=100):
@@ -652,7 +707,7 @@ def return_column(image_frames: [np.ndarray], column_no: int, dimensions: (int, 
     return backbone_frames, nick_frames
 
 
-def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray], saphyr=False) -> (np.ndarray, np.ndarray):
+def stitch_column(backbone_frames: [np.ndarray], nick_frames: list, saphyr=False) -> (np.ndarray, np.ndarray):
     """
     Wrapper function which
     Parameters
@@ -664,7 +719,7 @@ def stitch_column(backbone_frames: [np.ndarray], nick_frames: [np.ndarray], saph
     Stitched column.
     """
     return merging_with_rotation_optimisation_and_xshift(backbone_frames,
-                                                         additional_set=nick_frames,
+                                                         additional_sets=nick_frames,
                                                          y_shift=True,
                                                          tophat=True,
                                                          magnification_optimisation=True, saphyr=saphyr)
