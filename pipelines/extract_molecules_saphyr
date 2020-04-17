@@ -5,7 +5,6 @@ import multiprocessing as mp
 from sys import argv
 from os import path
 
-# TODO dual colour option
 
 def run_for_extraction(run_scan_pairs: [tuple]):
     run = SaphyrExtract(run_folder)
