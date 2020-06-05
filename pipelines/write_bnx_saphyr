@@ -26,10 +26,10 @@ def create_bnx_file():
 
 if __name__ == "__main__":
     if argv[1] == "-h" or argv[1] == "--help" or argv[1] == "help": # parameters will be the run path and snr
-        print("parameters: <run path> <signal to noise ratio> <bnx file template>\n\n"
+        print("parameters: <run path: str> <signal to noise ratio: float> <bnx file template: str>\n\n"
               "bnx file template can be found in OptiScan folder as 'bnx_header.txt'.\n"
               "\nExample Usage:\n"
-              "write_bnx /path/to/apple.db 3 ../bnx_head.txt\n\n")
+              "write_bnx /path/to/apple_run/ 3 ../bnx_head.txt False\n\n")
     else:
         try:
             assert len(argv) == 4
