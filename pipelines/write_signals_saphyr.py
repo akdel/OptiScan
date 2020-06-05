@@ -20,20 +20,17 @@ def create_bnx_file():
                 molecule_labels += list(np.load(f"{bank_path}/{i}_label.npy", allow_pickle=True))
                 molecule_backbones += list(np.load(f"{bank_path}/{i}_backbone.npy", allow_pickle=True))
                 if dual:
-                    second_labels.append(np.load(f"{bank_path}/{i}_label2.npy", allow_pickle=True))
+                    second_labels += list(np.load(f"{bank_path}/{i}_label2.npy", allow_pickle=True))
             except FileNotFoundError:
                 continue
     if not dual:
-        mols = [(ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)),
-                 molecule_backbones[x]) for x in range(len(molecule_labels))]
+        mols = [ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)) for x in range(len(molecule_labels))]
 
         np.save("labels.npy", mols)
         np.save("backbones.npy", molecule_backbones)
     else:
-        mols1 = [(ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)),
-                 molecule_backbones[x]) for x in range(len(molecule_labels))]
-        mols2 = [(ndimage.white_tophat(second_labels[x], structure=np.ones(10)),
-                 molecule_backbones[x]) for x in range(len(second_labels))]
+        mols1 = [ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)) for x in range(len(molecule_labels))]
+        mols2 = [ndimage.white_tophat(second_labels[x], structure=np.ones(10)) for x in range(len(second_labels))]
         np.save("labels.npy", mols1)
         np.save("labels2.npy", mols2)
         np.save("backbones.npy", molecule_backbones)
