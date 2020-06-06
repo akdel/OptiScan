@@ -6,15 +6,15 @@ from scipy import ndimage
 
 
 def create_bnx_file():
+    molecule_labels = list()
+    molecule_backbones = list()
+    second_labels = list()
     for bank_id in run_tree.bank_info:
         bank_path = run_tree.saphyr_tree.root + bank_id
         if dual:
             number_of_columns = len(run_tree.bank_info[bank_id])//3
         else:
             number_of_columns = len(run_tree.bank_info[bank_id]) // 2
-        molecule_labels = list()
-        molecule_backbones = list()
-        second_labels = list()
         for i in range(number_of_columns):
             try:
                 molecule_labels += list(np.load(f"{bank_path}/{i}_label.npy", allow_pickle=True))
