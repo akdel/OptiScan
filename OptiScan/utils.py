@@ -4,6 +4,7 @@ from scipy import signal
 from scipy import ndimage
 import numpy as np
 from numba import njit, jit, vectorize, prange
+from intervaltree import IntervalTree
 
 
 CMAP_HEADER = """# CMAP File Version:    0.1
