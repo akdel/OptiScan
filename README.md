@@ -8,7 +8,7 @@ the BNX format for further processing.
 
 ## Requirements
 
-* **`Python >3.6`** 
+* **`Python >=3.6`** 
 * **`sqlite`**
 
 ## Installation
