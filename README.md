@@ -8,19 +8,8 @@ the BNX format for further processing.
 
 ## Requirements
 
-**`Python >3.5`** and 
-**`sqlite`**
-
-Required Python libraries:
-
-* [Numpy and Scipy](http://www.numpy.org)
-* [Numba](http://numba.pydata.org)
-* [Sqlalchemy](https://www.sqlalchemy.org)
-* [intervaltree](https://pypi.org/project/intervaltree)
-* [scikit-image](https://scikit-image.org)
-* [Pillow](https://pillow.readthedocs.io/en/stable/)
-* [dash](https://github.com/plotly/dash) (optional for user interface)
-
+* **`Python >3.6`** 
+* **`sqlite`**
 
 ## Installation
 
