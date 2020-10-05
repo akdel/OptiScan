@@ -17,9 +17,7 @@ the BNX format for further processing.
 ```bash
 git clone https://gitlab.com/akdel/OptiScan.git
 cd OptiScan
-pip3 install . --user
-chmod +x pipelines/extract_molecules
-chmod +x pipelines/write_bnx
+pip install . --user
 ```
 
 ### Dashboard
