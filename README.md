@@ -13,22 +13,20 @@ the BNX format for further processing.
 
 ## Installation
 
-### Library
 ```bash
 git clone https://gitlab.com/akdel/OptiScan.git
 cd OptiScan
 pip install . --user
 ```
 
-### Dashboard
+## Usage - Dashboard
+OptiScan dashboard is only available for Irys platform. See command-line version for Saphyr data.
+
 1. Run the http server with:
     ```bash
-    cd dashboard
-    python3 optiscan_app.py localhost 8080 > log.txt &
+    optiscan_app localhost 8080 > log.txt &
     ```
 2. Access it from a browser at http://localhost:8080/optiscan.
-
-## Usage
 
 ### Running from OptiScan dashboard
 
@@ -65,39 +63,21 @@ Molecule detection
 ![](screenshot2.png)
 Molecule inspection
 
-### Command line scripts
-The `optiscan/pipelines/` folder contains two pipeline scripts for running OptiScan.
+### Usage - Command-line Interface
+The `optiscan/pipelines/` folder contains several scripts for running OptiScan with Irys or Saphyr data.
 
-1. `extract_molecules` is for extracting and recording optical map signals.
-
-    arguments: 
-    ```bash
-    <list of runs: use commas to separate> 
-    <chip dimension: x,y> 
-    <database name: str>
-    <number of threads: int> 
-    <organism name: str>
-    <platform name: 'irys' or 'saphyr'>
-    ```
-
+1. `extract_molecules_irys` and `extract_molecules_saphyr` are for extracting and recording optical map signals. (Details on parameters and usage are given with cli `--help`)
     example usage:
 
     ```bash
-    ./extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple irys
+   extract_molecules_irys '/path/to/run1,/path/to/run/2' '12,95' --database_name=apple.db --number_of_threads=10
+   extract_molecules_saphyr '/path/to/saphyr_data' --number_of_threads=10
     ```
 
-2. `write_bnx` is for writing extracted molecules in the BNX format.
-    
-    arguments:
-    ```bash 
-    <database name> 
-    <signal to noise ratio> 
-    <bnx file template>
-    ```
-
-    The BNX file template can be found in the OptiScan directory as 'bnx_head.txt'.
+2. `write_bnx_irys` and `write_bnx_saphyr` are for writing extracted molecules in the BNX format. (Details on parameters and usage are given with cli `--help`)
     
     example usage:
     ```bash
-    ./write_bnx /path/to/apple.db 3 ../bnx_head.txt
+   write_bnx_irys /path/to/apple.db --snr=3 --bnx_head=../bnx_head.txt
+   write_bnx_saphyr /path/to/saphyr_data --snr=3 --bnx_head=../bnx_head.txt
     ```
