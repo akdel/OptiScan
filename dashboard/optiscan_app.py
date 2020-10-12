@@ -350,14 +350,18 @@ def run_optiscan(click, db_name, dim, platform, runs_path, threads, organism_nam
         dim = f"{int(dim[0])},{int(dim[1])}"
         print(dim)
         db_name = f"database/{db_name}"
-        cmd = f"python3 ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
+        if platform.lower() == "irys":
+            cmd = f"extract_molecules_irys {runs_path} {dim} --database_name {db_name} --number_of_threads {threads} --organism_name {organism_name}"
         # scanner(db_name, dim, platform, runs_path)
+        elif platform.lower() == "saphyr":
+            cmd = f"extract_molecules_saphyr {runs_path} {dim} --number_of_threads {threads}"
+        else:
+            raise ValueError
         try:
             sp.check_call(cmd, shell=True)
         except sp.CalledProcessError:
             return box_style_lr
         return {"display": "none", "margin": 15}
-
 
 
 @app.callback(dash.dependencies.Output("run-field", "children"),
@@ -578,7 +582,6 @@ def show_backbone_histogram(avg_t, max_t, lab_num, mol_len, db_name, snr):
             return plot_graph([hist_figures], "backbone-hist", layout=layout)
 
 
-
 @app.callback(dash.dependencies.Output("link-field", "children"),
               [dash.dependencies.Input("bnx-convert-button", "n_clicks")],
               [dash.dependencies.State("db-location-bnx", "value"),
@@ -602,6 +605,7 @@ def convert_bnx(clicked, db_name, filename, snr, min_len, intensity):
     else:
         return html.A("")
 
+
 @app.callback(dash.dependencies.Output("db-location-bnx", "options"),
               [dash.dependencies.Input("connect-db", "n_clicks")],
               [dash.dependencies.State("db-location-access", "options")])
@@ -611,6 +615,7 @@ def update_bnx_db_selection(clicked, location_val):
     else:
         return ""
 
+
 @app.callback(dash.dependencies.Output("db-location-access", "options"),
               [dash.dependencies.Input("refresh", "n_clicks")])
 def update_db_dropdown(clicked):
@@ -619,6 +624,7 @@ def update_db_dropdown(clicked):
         return [{"label": x, "value": "database/%s" % x} for x in database_names if x.endswith(".db")]
     database_names = os.listdir("database")
     return [{"label": x, "value": "database/%s" % x} for x in database_names if x.endswith(".db")]
+
 
 @app.server.route('/static/<path:path>')
 def downlad_file(path):
