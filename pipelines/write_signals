@@ -2,14 +2,14 @@
 
 from sys import argv
 import numpy as np
-from scipy import ndimage
 
 
 def create_bnx_file():
     for run_id in connection.db_runs:
-        mols = [(ndimage.white_tophat(x, structure=np.ones(20)), y) for x, y in connection.yield_molecule_signals_in_run(run_id)]
-        molecules_to_bnxv2(mols, 10., 485., str(run_id) + "OptiScan.bnx", bnx_template_path=bnx_file_template_,
-                         signal_to_noise_ratio=snr_)
+        mols = connection.yield_molecule_signals_in_run(run_id)
+        np.save(str(run_id)+"OptiScan_nick.npy", np.array([x[0] for x in mols], dtype="O"))
+        mols = connection.yield_molecule_signals_in_run(run_id)
+        np.save(str(run_id)+"OptiScan_back.npy", np.array([x[1] for x in mols], dtype="O"))
 
 
 def get_number_of_molecules_in_run(run):
@@ -22,20 +22,18 @@ def get_number_of_molecules_in_run(run):
     return n
 
 
-def main(database_name: str, snr: float = 3.2, bnx_header_file_path: str = "bnx_head.txt"):
+def main(database_name: str):
     """
     :param database_name: Name of the database created by 'extract_molecules_irys'
-    :param snr: default is 3.2
-    :param bnx_header_file_path: path to the bnx_head.txt file.
     :return:
     """
-    return database_name, snr, bnx_header_file_path
+    return database_name
 
 
 if __name__ == "__main__":
     from OptiScan.database import MoleculeConnector, molecules_to_bnxv2
     import fire
-    database_name_, snr_, bnx_file_template_ = fire.Fire(main)
+    database_name_, bnx_file_template = fire.Fire(main)
     connection = MoleculeConnector(database_name_)
     connection.connect_db()
     print("Run folders in database:")
@@ -44,4 +42,3 @@ if __name__ == "__main__":
         print("\tNumber of scans in run -> %s" % len(connection.db_runs[run_id]))
         print("\tNumber of molecules in run -> %s" % get_number_of_molecules_in_run(run_id))
     create_bnx_file()
-

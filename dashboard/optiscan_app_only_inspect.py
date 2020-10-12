@@ -252,7 +252,7 @@ app.layout = html.Div([html.Div([
 #         dim = f"{int(dim[0])},{int(dim[1])}"
 #         print(dim)
 #         db_name = f"database/{db_name}"
-#         cmd = f"python ./extract_molecules.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
+#         cmd = f"python ./extract_molecules_irys.py {runs_path} {dim} {db_name} {threads} {organism_name} {platform}"
 #         # scanner(db_name, dim, platform, runs_path)
 #         sp.check_call(cmd, shell=True)
 #         return html.H6("%s, %s, %s, %s" % (db_name, dim, platform, runs_path))

@@ -24,7 +24,7 @@ if __name__ == "__main__":
     if argv[1] == "-h" or argv[1] == "--help" or argv[1] == "help":
         print("arguments: <list of runs: use commas to separate> <chip dimension: x,y> <database name: str> "
               "<number of threads: int> <organism name: str> <data type: 'irys' or 'saphyr'>\n\n"
-              "Example command: extract_molecules '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple")
+              "Example command: extract_molecules_irys '/path/to/run1,/path/to/run/2' '12,95' apple.db 10 apple")
     else:
         try:
             from os import path, remove

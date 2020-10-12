@@ -20,28 +20,24 @@ def create_bnx_file():
 
     mols = [(ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)),
              molecule_backbones[x]) for x in range(len(molecule_labels))]
-    molecules_to_bnxv2(mols, 10., 485., str(run_tree.saphyr_tree.root) + "OptiScan.bnx", bnx_template_path=bnx_file_template,
-                     signal_to_noise_ratio=snr)
+    molecules_to_bnxv2(mols, 10., 485., str(run_tree.saphyr_tree.root) + "OptiScan.bnx", bnx_template_path=bnx_header_file_path_,
+                     signal_to_noise_ratio=snr_)
+
+
+def main(run_path: str, snr: float = 3.2, bnx_header_file_path: str = "bnx_head.txt"):
+    """
+    :param database_name: Name of the database created by 'extract_molecules_saphyr'
+    :param snr: default is 3.2
+    :param bnx_header_file_path: path to the bnx_head.txt file.
+    :return:
+    """
+    return run_path, snr, bnx_header_file_path
 
 
 if __name__ == "__main__":
-    if argv[1] == "-h" or argv[1] == "--help" or argv[1] == "help": # parameters will be the run path and snr
-        print("parameters: <run path: str> <signal to noise ratio: float> <bnx file template: str>\n\n"
-              "bnx file template can be found in OptiScan folder as 'bnx_header.txt'.\n"
-              "\nExample Usage:\n"
-              "write_bnx /path/to/apple_run/ 3 ../bnx_head.txt\n\n")
-    else:
-        try:
-            assert len(argv) == 4
-        except AssertionError:
-            print("All parameters should be provided. use -h or --help for help.")
-            exit(3)
-        from OptiScan.database import molecules_to_bnxv2
-        from OptiScan.scan import SaphyrFileTree, SaphyrExtract
-        from sys import argv
-        run_path = argv[1]
-        snr = float(argv[2])
-        bnx_file_template = argv[3]
-        run_tree = SaphyrExtract(run_path)
-        create_bnx_file()
-    exit()
+    from OptiScan.database import molecules_to_bnxv2
+    from OptiScan.scan import SaphyrFileTree, SaphyrExtract
+    import fire
+    run_path_, snr_, bnx_header_file_path_ = fire.Fire(main)
+    run_tree = SaphyrExtract(run_path_)
+    create_bnx_file()

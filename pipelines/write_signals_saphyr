@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from sys import argv
 import numpy as np
 from scipy import ndimage
 
@@ -35,28 +34,23 @@ def create_bnx_file():
         np.save("labels2.npy", mols2)
         np.save("backbones.npy", molecule_backbones)
 
-if __name__ == "__main__":
-    if argv[1] == "-h" or argv[1] == "--help" or argv[1] == "help": # parameters will be the run path and snr
-        print("parameters: <run path> <signal to noise ratio> <bnx file template>\n\n"
-              "bnx file template can be found in OptiScan folder as 'bnx_header.txt'.\n"
-              "\nExample Usage:\n"
-              "write_bnx /path/to/apple.db 3 ../bnx_head.txt\n\n")
+
+def main(run_path: str, channel_id: int = 1):
+    """
+    :param run_path: path to the saphyr run folder
+    :param channel_id: channel id can be 1 or 2. default is 1
+    :return:
+    """
+    if channel_id == 1 or channel_id == 2:
+        return run_path, True if channel_id == 1 else False
     else:
-        try:
-            assert len(argv) == 5
-        except AssertionError:
-            print("All parameters should be provided. use -h or --help for help.")
-            exit(3)
-        from OptiScan.database import molecules_to_bnxv2
-        from OptiScan.scan import SaphyrFileTree, SaphyrExtract
-        from sys import argv
-        if argv[4] == "True":
-            dual = True
-        else:
-            dual = False
-        run_path = argv[1]
-        snr = float(argv[2])
-        bnx_file_template = argv[3]
-        run_tree = SaphyrExtract(run_path)
-        create_bnx_file()
-    exit()
+        raise ValueError("channel_id can be either 1 or 2")
+
+
+if __name__ == "__main__":
+    import fire
+    from OptiScan.scan import SaphyrFileTree, SaphyrExtract
+    from sys import argv
+    run_path_, dual = fire.Fire(main)
+    run_tree = SaphyrExtract(run_path_)
+    create_bnx_file()
