@@ -260,8 +260,6 @@ def x_shift_list_of_frames(list_of_frames_in_order, additional_sets=None, y_shif
         current_additional_frames = [additional_set[0] for additional_set in additional_sets]
     for i in range(1, len(list_of_frames_in_order), 1):
         shift_value = x_shift_for_bottom_image(current_frame, list_of_frames_in_order[i], saphyr=saphyr)
-        print(current_frame.shape)
-        print(list_of_frames_in_order[i].shape)
         current_frame, _y = x_shift_and_merge(current_frame, list_of_frames_in_order[i], shift_value, y_shift=y_shift,
                                               return_y_shift=True, saphyr=saphyr)
         if additional_sets:

@@ -230,7 +230,6 @@ class AnalyzeScan(Scan):
         backbone_slice = self.mol_slices[molecule_id]
         signal_set = label_slice[:,:]
         try:
-            print(signal_set.shape)
             signal_averages = np.average(signal_set, axis=0)
         except ZeroDivisionError:
             print("zero division error")
@@ -245,7 +244,6 @@ class AnalyzeScan(Scan):
         backbone_slice = self.mol_slices[molecule_id]
         signal_set = label_slice[:,:]
         try:
-            print(signal_set.shape)
             signal_averages = np.average(signal_set, axis=0)
         except ZeroDivisionError:
             print("zero division error")
@@ -433,7 +431,6 @@ class AnalyzeScan(Scan):
             memmap = np.memmap(self.memmap_path, mode="r+",
                                offset=start_mem + dsize * shift * longest_shape * 2,
                                shape=longest_shape * 2, dtype=np.float64)
-            print(memmap.shape)
             memmap[:nick_label.shape[0]] = nick_label
             memmap[longest_shape:longest_shape + back_label.shape[0]] = back_label
             memmap[-1] = np.float64(back_label.shape[0])
@@ -663,7 +660,6 @@ class Runs:
     def _flatten_scans_for_parallel(self):
         for run_id in self.analyzed_runs.keys():
             for scan_id in self.analyzed_runs[run_id].analyzed_scans.keys():
-                print(run_id, scan_id)
                 yield (run_id, scan_id)
 
     def split_scans_to_threads(self, number_of_threads: int):

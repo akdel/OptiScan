@@ -7,6 +7,7 @@ from os import path
 
 
 def run_for_extraction(run_scan_pairs: [tuple]):
+    print("run_for_extraction?")
     runs = list(set([run_id for run_id, _ in run_scan_pairs]))
     moldb_ = MoleculeDB(database_name_, runs, organism_, chip_dimension=chip_dimension_, saphyr=_saphyr_)
     for run_id, scan_id in run_scan_pairs:
@@ -36,7 +37,10 @@ def main(run_folders: str, chip_dimension: str, database_name: str = "db.db",
     run_folders = run_folders.split(",")
     for folder in run_folders:
         assert path.isdir(folder)
-    chip_dimension = tuple([int(x.strip()) for x in chip_dimension.split(',')])
+    if type(chip_dimension) == str:
+        chip_dimension = tuple([int(x.strip()) for x in chip_dimension.split(',')])
+    else:
+        chip_dimension = (int(chip_dimension[0]), int(chip_dimension[1]))
     assert len(chip_dimension) == 2
     print(number_of_threads)
     contrast_threshold = float(contrast_threshold)
@@ -57,9 +61,9 @@ if __name__ == "__main__":
     contrast_threshold_, run_folders_, number_of_jobs_, scan_jobs_ = fire.Fire(main)
     moldb = MoleculeDB(database_name_, run_folders_, organism_, chip_dimension=chip_dimension_,
                        saphyr=_saphyr_)
+    print(scan_jobs_)
     with mp.Pool(number_of_jobs_) as job:
         job.map(run_for_extraction, scan_jobs_)
-    moldb.db.close()
     mc = MoleculeConnector(database_name_)
     mc.write_molecule_metadata_to_disk()
     mc.db.close()
