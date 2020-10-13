@@ -126,8 +126,8 @@ def empty_scan_page():
                                                placeholder="Irys", id="platform"),
                                   className="three columns")],)
     p4 = html.Div(children=[html.Div(html.H6("Run Folders: ", style=styles), className="three columns"),
-                          html.Div(dcc.Input(placeholder='data/test_data/test_run', type='text',
-                                                      value='data/test_data/test_run', id="folders-name"),
+                          html.Div(dcc.Input(placeholder='data/test_run', type='text',
+                                                      value='data/test_run', id="folders-name"),
                                    className="three columns")])
     p5 = html.Div(children=[html.Div(html.H6("Num. of Threads: ", style=styles), className="two columns"),
                             html.Div(dcc.Input(placeholder="2", value="2",type="text", id="threads"),
