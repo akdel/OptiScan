@@ -22,9 +22,9 @@ pip install . --user
 ## Usage - Dashboard
 OptiScan dashboard is only available for Irys platform. See command-line version for Saphyr data.
 
-1. Run the http server with:
+1. Run the http server with permitting external access (or use `--ip=localhost` for local access) and a desired port:
     ```bash
-    optiscan_dashboard localhost 8080
+    optiscan_dashboard --ip=0.0.0.0 --port=8050
     ```
 2. Access it from a browser at http://localhost:8080/optiscan.
 

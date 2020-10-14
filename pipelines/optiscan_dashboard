@@ -653,7 +653,7 @@ def downlad_file(path):
 # TODO add error messages: possible error messages -> database name is not filled, database exists, no files found
 
 
-def parse_arguments(ip: str = "0.0.0.0", port: str = "8080"):
+def parse_arguments(ip: str = "localhost", port: str = "8080"):
     """
     :param ip: ip address for the http server.
     :param port: port for the http server.
