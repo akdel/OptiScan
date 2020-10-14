@@ -20,24 +20,23 @@ def create_bnx_file():
 
     mols = [(ndimage.white_tophat(molecule_labels[x], structure=np.ones(10)),
              molecule_backbones[x]) for x in range(len(molecule_labels))]
-    molecules_to_bnxv2(mols, 10., 485., str(run_tree.saphyr_tree.root) + "OptiScan.bnx", bnx_template_path=bnx_header_file_path_,
-                     signal_to_noise_ratio=snr_)
+    molecules_to_bnxv2(mols, 10., 485., str(run_tree.saphyr_tree.root) + "OptiScan.bnx",
+                       signal_to_noise_ratio=snr_)
 
 
-def main(run_path: str, snr: float = 3.2, bnx_header_file_path: str = "bnx_head.txt"):
+def main(run_path: str, snr: float = 3.2):
     """
     :param database_name: Name of the database created by 'extract_molecules_saphyr'
     :param snr: default is 3.2
-    :param bnx_header_file_path: path to the bnx_head.txt file.
     :return:
     """
-    return run_path, snr, bnx_header_file_path
+    return run_path, snr
 
 
 if __name__ == "__main__":
     from OptiScan.database import molecules_to_bnxv2
-    from OptiScan.scan import SaphyrFileTree, SaphyrExtract
+    from OptiScan.scan import SaphyrExtract
     import fire
-    run_path_, snr_, bnx_header_file_path_ = fire.Fire(main)
+    run_path_, snr_ = fire.Fire(main)
     run_tree = SaphyrExtract(run_path_)
     create_bnx_file()

@@ -375,8 +375,7 @@ def fix_directory_end(path: str):
 
 
 def molecules_to_bnx(molecule_stream: types.GeneratorType, zoom_ratio: float, final_ratio: float, bnx_filename: str,
-                     bnx_template_path="bnx_head.txt", filter_function=lambda x, y: (x, y),
-                     signal_to_noise_ratio=3) -> None:
+                     filter_function=lambda x, y: (x, y), signal_to_noise_ratio=3) -> None:
     """
     Converts molecules to BNX file with a given signal to noise ratio and filter function for removing unwanted
     signals.
@@ -397,9 +396,8 @@ def molecules_to_bnx(molecule_stream: types.GeneratorType, zoom_ratio: float, fi
     -------
     Bnx file to disk.
     """
-    bnx_head_file = open(bnx_template_path, "r")
-    bnx_head = bnx_head_file.read()
-    bnx_head_file.close()
+    from OptiScan import bnx_head
+    bnx_head = str(bnx_head.HEADER)
     out_file = open(bnx_filename, "w")
     out_file.write(bnx_head)
     mol_id = 1
@@ -425,8 +423,7 @@ def molecules_to_bnx(molecule_stream: types.GeneratorType, zoom_ratio: float, fi
     out_file.close()
 
 def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, bnx_filename: str,
-                     bnx_template_path="bnx_head.txt", filter_function=lambda x, y: (x, y),
-                     signal_to_noise_ratio=3):
+                       filter_function=lambda x, y: (x, y), signal_to_noise_ratio=3):
     """
     Converts molecules to BNX file with a given signal to noise ratio and filter function for removing unwanted
     signals.
@@ -447,9 +444,8 @@ def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, b
     -------
     Bnx file to disk.
     """
-    bnx_head_file = open(bnx_template_path, "r")
-    bnx_head = bnx_head_file.read()
-    bnx_head_file.close()
+    from OptiScan import bnx_head
+    bnx_head = str(bnx_head.HEADER)
     out_file = open(bnx_filename, "w")
     out_file.write(bnx_head)
     mol_id = 0

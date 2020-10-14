@@ -24,7 +24,7 @@ OptiScan dashboard is only available for Irys platform. See command-line version
 
 1. Run the http server with:
     ```bash
-    optiscan_dashboard localhost 8080 > log.txt &
+    optiscan_dashboard localhost 8080
     ```
 2. Access it from a browser at http://localhost:8080/optiscan.
 
@@ -40,10 +40,8 @@ thresholds prior to exporting the data in the BNX format.
 
 #### Using dashboard with test data
 
-You can find two scans in the directory `dashboard/test_data/test_run/`
-in `test_scans.tar.gz`.  After extracting the scans with `tar -xvf
-test_scans.tar.gz`, the path to the `test_run` directory can be specified in
-the dashboard under **Run Folders**.
+You can find two scan image files in the directory `data/test_run/` and specify this 
+path in the dashboard under **Run Folders**.
 
 Providing all the test parameters in **Molecule detection** section and
 running OptiScan is required to extract molecules and create the test

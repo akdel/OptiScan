@@ -295,7 +295,7 @@ class BnxParser:
             list_of_lines.append(line)
         return "".join(list_of_lines)
 
-    def write_bnx_for_list_of_molecules(self, list_of_molecule_ids, output_file_name, bnx_head_file="./bnx_head.txt"):
+    def write_bnx_for_list_of_molecules(self, list_of_molecule_ids, output_file_name):
         """
         Filters bnx file by given list of molecule ids.
         :param list_of_molecule_ids: List of bnx molecule ids
@@ -303,9 +303,8 @@ class BnxParser:
         :param bnx_head_file:
         :return:
         """
-        bnx_header_file = open(bnx_head_file, "r")
-        bnx_head_text = bnx_header_file.read()
-        bnx_header_file.close()
+        from OptiScan import bnx_head
+        bnx_head_text = str(bnx_head.HEADER)
         bnx_body = self._molecule_ids_to_bnx_lines(list_of_molecule_ids)
         output_file = open(output_file_name, "w")
         output_file.write(bnx_head_text + bnx_body)
