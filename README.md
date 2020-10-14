@@ -26,7 +26,7 @@ OptiScan dashboard is only available for Irys platform. See command-line version
     ```bash
     optiscan_dashboard --ip=0.0.0.0 --port=8050
     ```
-2. Access it from a browser at http://localhost:8080/optiscan.
+2. Access it from a browser at `http://0.0.0.0:8080/optiscan` (or `http://localhost:8080/optiscan`).
 
 ### Running from OptiScan dashboard
 
