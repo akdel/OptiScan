@@ -613,10 +613,11 @@ def convert_bnx(clicked, db_name, filename, snr, min_len, intensity):
         mc.load_db_to_class()
         if not pathlib.Path("static").exists():
             pathlib.Path("static").mkdir()
-        database.molecules_to_bnxv2(filter(filter_func, mc.yield_molecule_signals_in_all_runs()), 10, 510, "static/%s" % filename,
-                                    bnx_template_path="bnx_template.txt", signal_to_noise_ratio=float(snr))
+        database.molecules_to_bnxv2(filter(filter_func, mc.yield_molecule_signals_in_all_runs()),
+                                    10, 510, "static/%s" % filename,
+                                    signal_to_noise_ratio=float(snr))
         mc.db.close()
-        return html.A("Download %s here" % filename, href="/static/%s" % filename, style={"margin": "10%"})
+        return html.A("Download %s here" % filename, href="/optiscan/static/%s" % filename, style={"margin": "10%"})
     else:
         return html.A("")
 
@@ -641,15 +642,28 @@ def update_db_dropdown(clicked):
     return [{"label": x, "value": "database/%s" % x} for x in database_names if x.endswith(".db")]
 
 
-@app.server.route('/static/<path:path>')
+@app.server.route('/optiscan/static/<path:path>')
 def downlad_file(path):
     root_dir = os.getcwd()
+    print(os.path.join(root_dir, 'static'))
     return flask.send_from_directory(
         os.path.join(root_dir, 'static'), path)
 
 
 # TODO add error messages: possible error messages -> database name is not filled, database exists, no files found
 
+
+def parse_arguments(ip: str = "0.0.0.0", port: str = "8080"):
+    """
+    :param ip: ip address for the http server.
+    :param port: port for the http server.
+    :return:
+    """
+    return ip, port
+
+
 if __name__ == '__main__':
     from sys import argv
-    app.run_server(debug=True, host=argv[1], port=int(argv[2]))
+    import fire
+    ip, port = fire.Fire(parse_arguments)
+    app.run_server(debug=True, host=ip, port=port)
