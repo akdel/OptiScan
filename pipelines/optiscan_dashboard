@@ -120,8 +120,7 @@ def empty_scan_page():
                                                         value="12,1", id="chip-dimension"),
                                   className="three columns")],)
     p3 = html.Div(children=[html.Div(html.H6("Platform: ", style=styles), className="two columns"),
-                            html.Div(dcc.Dropdown(options=[{'label': 'Irys', 'value': "irys"},
-                                               {'label': 'Saphyr', 'value': "saphyr"}],
+                            html.Div(dcc.Dropdown(options=[{'label': 'Irys', 'value': "irys"}],
                                                value="irys",
                                                placeholder="Irys", id="platform"),
                                   className="three columns")],)
