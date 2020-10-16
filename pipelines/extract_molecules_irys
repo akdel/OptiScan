@@ -22,7 +22,7 @@ def create_tables(database_name, run_folders, organism, chip_dimension, saphyr_)
 
 
 def main(run_folders: str, chip_dimension: str, database_name: str = "db.db",
-         number_of_threads: int = 4, organism: str = "unknown",
+         number_of_threads: int = 2, organism: str = "unknown",
          contrast_threshold: float = 100.):
     """
     :param run_folders: Run folder paths separated by commas.
@@ -44,6 +44,8 @@ def main(run_folders: str, chip_dimension: str, database_name: str = "db.db",
     assert len(chip_dimension) == 2
     print(number_of_threads)
     contrast_threshold = float(contrast_threshold)
+    if not database_name.endswith(".db"):
+        database_name = database_name + ".db"
     create_tables(database_name, run_folders, organism, chip_dimension, False)
     print("Database initiated!")
 

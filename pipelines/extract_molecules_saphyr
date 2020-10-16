@@ -24,7 +24,7 @@ def split_banks_to_threads(bank_ids: str, number_of_threads: int):
         return current
 
 
-def main(run_folder, number_of_threads: int = 4, contrast_threshold: float = 100.):
+def main(run_folder, number_of_threads: int = 2, contrast_threshold: float = 100.):
     """
     :param run_folder: Path to saphyr run data.
     :param number_of_threads: default is 4
