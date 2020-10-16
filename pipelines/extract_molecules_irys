@@ -4,6 +4,7 @@ from OptiScan.database import MoleculeDB, MoleculeConnector
 import multiprocessing as mp
 from sys import argv
 from os import path
+import pathlib
 
 
 def run_for_extraction(run_scan_pairs: [tuple]):
@@ -46,6 +47,8 @@ def main(run_folders: str, chip_dimension: str, database_name: str = "db.db",
     contrast_threshold = float(contrast_threshold)
     if not database_name.endswith(".db"):
         database_name = database_name + ".db"
+    if pathlib.Path(database_name).exists():
+        raise FileExistsError("database name already exists.")
     create_tables(database_name, run_folders, organism, chip_dimension, False)
     print("Database initiated!")
 
