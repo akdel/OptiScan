@@ -71,7 +71,7 @@ The `optiscan/pipelines/` folder contains several scripts for running OptiScan w
    extract_molecules_irys '/path/to/run1,/path/to/run/2' '12,95' --database_name=data.db --number_of_threads=10
    extract_molecules_saphyr '/path/to/saphyr_data' --number_of_threads=10
     ```
-   Usage with test data:
+   **Usage with test data:**
    Test data scans are reduced in dimension to 12x1 frames. To run the test data, simply provide `"12,1"` as `--chip_dimension`:
    
    ```bash
