@@ -16,7 +16,7 @@ the BNX format for further processing.
 ```bash
 git clone https://gitlab.com/akdel/OptiScan.git
 cd OptiScan
-pip install . --user
+pip install .
 ```
 
 ## Usage - Dashboard
