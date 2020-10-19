@@ -84,11 +84,3 @@ The `optiscan/pipelines/` folder contains several scripts for running OptiScan w
     ```bash
    write_bnx_irys /path/to/apple.db --snr=3
    write_bnx_saphyr /path/to/saphyr_data --snr=3
-    ```
-## CLI commands for test data:
-
-Test data scans are reduced in dimension to 12x1 frames. To run the test data, simply provide `"12,1"` as `--chip_dimension`:
-
-```
-
-```
