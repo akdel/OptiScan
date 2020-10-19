@@ -8,7 +8,6 @@ import pathlib
 
 
 def run_for_extraction(run_scan_pairs: [tuple]):
-    print("run_for_extraction?")
     runs = list(set([run_id for run_id, _ in run_scan_pairs]))
     moldb_ = MoleculeDB(database_name_, runs, organism_, chip_dimension=chip_dimension_, saphyr=_saphyr_)
     for run_id, scan_id in run_scan_pairs:
