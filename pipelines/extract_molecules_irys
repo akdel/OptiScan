@@ -28,7 +28,7 @@ def main(run_folders: str, chip_dimension: str, database_name: str = "db.db",
     """
     :param run_folders: Run folder paths separated by commas.
     :param chip_dimension: Chip dimension in the format of 'x,y'. Most common sizes are '12,95', '12,108', '12,120'.
-     Test data chip size is '12,1'.
+    Default is '12,95' and the test data chip size is '12,1'.
     :param database_name: A name for the database. default is 'db.db'
     :param number_of_threads: default is 4
     :param organism: Name of the sample/source organism. default is 'unknown'

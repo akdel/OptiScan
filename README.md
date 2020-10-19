@@ -24,7 +24,7 @@ OptiScan dashboard is only available for Irys platform. See command-line version
 
 1. Run the http server with permitting external access (or use `--ip=localhost` for local access) and a desired port:
     ```bash
-    optiscan_dashboard --ip=0.0.0.0 --port=8050
+    optiscan_dashboard --ip=0.0.0.0 --port=8080
     ```
 2. Access it from a browser at `http://0.0.0.0:8080/optiscan` (or `http://localhost:8080/optiscan`).
 
@@ -66,16 +66,29 @@ The `optiscan/pipelines/` folder contains several scripts for running OptiScan w
 
 1. `extract_molecules_irys` and `extract_molecules_saphyr` are for extracting and recording optical map signals. (Details on parameters and usage are given with cli `--help`)
     example usage:
-
+    
     ```bash
-   extract_molecules_irys '/path/to/run1,/path/to/run/2' '12,95' --database_name=apple.db --number_of_threads=10
+   extract_molecules_irys '/path/to/run1,/path/to/run/2' '12,95' --database_name=data.db --number_of_threads=10
    extract_molecules_saphyr '/path/to/saphyr_data' --number_of_threads=10
     ```
-
+   Usage with test data:
+   Test data scans are reduced in dimension to 12x1 frames. To run the test data, simply provide `"12,1"` as `--chip_dimension`:
+   
+   ```bash
+   extract_molecules_irys 'data/test_run' '12,1' --database_name=test.db --number_of_threads=10
+   ```
+   
 2. `write_bnx_irys` and `write_bnx_saphyr` are for writing extracted molecules in the BNX format. (Details on parameters and usage are given with cli `--help`)
     
     example usage:
     ```bash
-   write_bnx_irys /path/to/apple.db --snr=3 --bnx_head=../bnx_head.txt
-   write_bnx_saphyr /path/to/saphyr_data --snr=3 --bnx_head=../bnx_head.txt
+   write_bnx_irys /path/to/apple.db --snr=3
+   write_bnx_saphyr /path/to/saphyr_data --snr=3
     ```
+## CLI commands for test data:
+
+Test data scans are reduced in dimension to 12x1 frames. To run the test data, simply provide `"12,1"` as `--chip_dimension`:
+
+```
+
+```
