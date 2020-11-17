@@ -798,7 +798,7 @@ class MQR:
              0.3 -MaxSE 0.5 -MaxSD 0.12 -resbias 4 64 -maxmem 64 -M 3 3 -minlen 50  -T %s -maxthreads 12 \
              -hashgen 5 3 2.4 1.5 0.05 5.0 1 1 3 -hash -hashdelta 10 -hashoffset 1 -hashmaxmem 64 -insertThreads 4 \
              -maptype 0 -PVres 2 -PVendoutlier -AlignRes 2.0 -rres 0.9 -resEstimate -ScanScaling 2 -RepeatMask 5 0.01 \
-             -RepeatRec 0.7 0.6 1.4 -maxEnd 50 -usecolor 1 -stdout -stderr -subset 1 %s"""
+             -RepeatRec 0.7 0.6 1.4 -maxEnd 50 -usecolor %s -stdout -stderr -subset 1 %s"""
         self.pairwise_command = """%s -i %s -o %s -usecolor 1 -FP 1.5 -FN 0.15 -sd 0.0 -sf 0.2 -sr 0.03 -res 3.3 -T %s -maxmem 7.5 \
             -minlen 150 -minsites 8 -MaxIntensity 20000 -usecolor 1 -maxsites 200 -mres 0.9 -usecolor 1 -A 5 \
             -S 1 -MaxSE 0.5 -outlier 0.0001 -outlierMax 40. -endoutlier 0 -RepeatMask 2 0.01 -RepeatRec 0.7 0.6 1.4 -PVres 2 \
@@ -807,10 +807,11 @@ class MQR:
         self.denovo_command = """python2 %s -l %s -t %s -b %s -R -y 1 -i 1 -a %s"""
         self.xmap = None
 
-    def run_ref_align(self, reference_cmap_path, bnx_file, number_of_molecules):
+    def run_ref_align(self, reference_cmap_path, bnx_file, number_of_molecules, color=1):
         from subprocess import check_call as ck
-        ck(self.command % (self.ref_align, reference_cmap_path, bnx_file, self.output_dir + "bnx_quality", self.score, number_of_molecules), shell=True)
-    
+        ck(self.command % (self.ref_align, reference_cmap_path, bnx_file, self.output_dir + "bnx_quality", self.score,
+                           color, number_of_molecules), shell=True)
+
     def run_ref_align_pairwise(self, bnx_file):
         from subprocess import check_call as ck
         ck(self.pairwise_command % (self.ref_align, bnx_file, self.output_dir + "bnx_quality", self.score), shell=True)
