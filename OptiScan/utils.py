@@ -185,7 +185,7 @@ class BnxParser:
         for line in self.bnx_lines:
             if line.startswith("#0h"): header_line = line; break
             if line.startswith("#"): self.bnx_head_text += line
-        self.bnx_lines = [x for x in self.bnx_lines if not x.startswith('#')]
+        self.bnx_lines = [x for x in self.bnx_lines if not x.startswith('#') and len(x)]
         self.bnx_headers = [x.strip() for x in header_line.split()][1:]
         for r in range(0, len(self.bnx_lines), 4):
             self.bnx_label_snr.append(self.bnx_lines[r+2].split()[1:])
