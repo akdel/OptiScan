@@ -8,7 +8,7 @@ from scipy import ndimage
 def create_bnx_file():
     for run_id in connection.db_runs:
         mols = [(ndimage.white_tophat(x, structure=np.ones(20)), y) for x, y in connection.yield_molecule_signals_in_run(run_id)]
-        molecules_to_bnxv2(mols, 10., 485., str(run_id) + "OptiScan.bnx", signal_to_noise_ratio=snr_)
+        molecules_to_bnxv(mols, 10., 485., str(run_id) + "OptiScan.bnx", signal_to_noise_ratio=snr_)
 
 
 def get_number_of_molecules_in_run(run):
@@ -31,7 +31,7 @@ def main(database_name: str, snr: float = 3.2):
 
 
 if __name__ == "__main__":
-    from OptiScan.database import MoleculeConnector, molecules_to_bnxv2
+    from OptiScan.database import MoleculeConnector, molecules_to_bnxv
     import fire
     database_name_, snr_ = fire.Fire(main)
     connection = MoleculeConnector(database_name_)

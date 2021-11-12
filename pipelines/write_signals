@@ -31,7 +31,7 @@ def main(database_name: str):
 
 
 if __name__ == "__main__":
-    from OptiScan.database import MoleculeConnector, molecules_to_bnxv2
+    from OptiScan.database import MoleculeConnector, molecules_to_bnxv
     import fire
     database_name_, bnx_file_template = fire.Fire(main)
     connection = MoleculeConnector(database_name_)

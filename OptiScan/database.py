@@ -374,56 +374,8 @@ def fix_directory_end(path: str):
         return path
 
 
-def molecules_to_bnx(molecule_stream: types.GeneratorType, zoom_ratio: float, final_ratio: float, bnx_filename: str,
-                     filter_function=lambda x, y: (x, y), signal_to_noise_ratio=3) -> None:
-    """
-    Converts molecules to BNX file with a given signal to noise ratio and filter function for removing unwanted
-    signals.
-    Parameters
-    ----------
-    molecule_stream: Stream of molecule signal pairs from the memmap.
-        See MoleculeConnector.yield_molecule_signals..
-    zoom_ratio: This is the zoom factor to be applied before label detection. Improves the method. 
-        Suggested to be set to 10.
-    final_ratio: The final zoom factor which indicates bases per pixel. This is usually around 480 - 520.
-    bnx_filename: Output file name.
-    bnx_template_path: Path to Template for BNX headers. Default is set to the standard template provided by
-        the OptiScan tool.
-    filter_function: Any function which filters molecule pairs and returns None or modified molecule pairs.
-    signal_to_noise_ratio : Signal to noise ratio filter for peak finding method.
-
-    Returns
-    -------
-    Bnx file to disk.
-    """
-    from OptiScan import bnx_head
-    bnx_head = str(bnx_head.HEADER)
-    out_file = open(bnx_filename, "w")
-    out_file.write(bnx_head)
-    mol_id = 1
-    for nick_signal, backbone_signal in molecule_stream:
-        nick_signal, backbone_signal = filter_function(nick_signal, backbone_signal)
-        assert nick_signal.shape == backbone_signal.shape
-        if nick_signal.shape[0] == 0 or backbone_signal.shape[0] == 0:
-            continue
-        bnx_info = get_bnx_info_with_upsampling(nick_signal, signal_to_noise_ratio, zoom_ratio, final_ratio)
-        if len(bnx_info["nick_snrs"]) > 1:
-            backbone_signal_avg = np.mean(backbone_signal)
-            first_line = "0\t" + "\t".join([str(mol_id), str(bnx_info["nick_distances"].shape[0]*final_ratio),
-                                            str(round(backbone_signal_avg, 1)), str(round(backbone_signal_avg, 1)),
-                                            str(len(bnx_info["nick_distances"])), str(mol_id), "1", "-1",
-                                            "20249,12205,10/27/2015,850020394", "1", "1", "1"]) + "\n"
-            second_line = "1\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_distances"]]) + "\n"
-            third_line = "QX11\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_snrs"]]) + "\n"
-            fourth_line = "QX12\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_intensities"]]) + "\n"
-            out_file.write(first_line + second_line + third_line + fourth_line)
-            mol_id += 1
-        else:
-            continue
-    out_file.close()
-
-def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, bnx_filename: str,
-                       filter_function=lambda x, y: (x, y), signal_to_noise_ratio=3):
+def molecules_to_bnxv(molecule_stream, zoom_ratio: float, final_ratio: float, bnx_filename: str,
+                      filter_function=lambda x, y: (x, y), signal_to_noise_ratio=3):
     """
     Converts molecules to BNX file with a given signal to noise ratio and filter function for removing unwanted
     signals.
@@ -458,15 +410,15 @@ def molecules_to_bnxv2(molecule_stream, zoom_ratio: float, final_ratio: float, b
         bnx_info = get_bnx_info_with_upsampling(nick_signal, signal_to_noise_ratio, zoom_ratio, final_ratio)
         if len(bnx_info["nick_snrs"]) > 1:
             backbone_signal_avg = np.mean(backbone_signal)
-            first_line = "0\t" + "\t".join([str(mol_id), str(int(bnx_info["nick_distances"][-1])),
+            molecule_length = str(backbone_signal.shape[0] * zoom_ratio)
+            first_line = "0\t" + "\t".join([str(mol_id), molecule_length,
                                             str(round(backbone_signal_avg, 1)), str(round(backbone_signal_avg, 1)),
-                                            str(len(bnx_info["nick_distances"]) - 1), str(mol_id), "1", "-1",
+                                            str(len(bnx_info["nick_distances"])), str(mol_id), "1", "-1",
                                             "20249,12205,10/27/2015,850020394", "1", "1", "1"]) + "\n"
-            second_line = "1\t" +"\t".join([str(round(x, 1)) for x in bnx_info["nick_distances"]][:-1]) + '\t' + str(round(bnx_info["nick_distances"][-1], 1)) + "\n"
-            third_line = "QX11\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_snrs"]][:-1]) + "\n"
-            fourth_line = "QX12\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_intensities"]][:-1]) + "\n"
+            second_line = "1\t" +"\t".join([str(round(x, 1)) for x in bnx_info["nick_distances"]]) + f'\t{molecule_length}\n'
+            third_line = "QX11\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_snrs"]]) + "\n"
+            fourth_line = "QX12\t" + "\t".join([str(round(x, 1)) for x in bnx_info["nick_intensities"]]) + "\n"
             out_file.write(first_line + second_line + third_line + fourth_line)
-            
         else:
             continue
     out_file.close()
